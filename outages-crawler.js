@@ -57,7 +57,7 @@ async function getCongTyList() {
   });
 }
 
-async function crawlMienTrung(congTy) {
+async function crawlMienTrung(congTy, totalOutages = 0) {
   try {
     const today = new Date();
     const nextMonth = new Date();
@@ -72,14 +72,19 @@ async function crawlMienTrung(congTy) {
         `https://cskh-api.cpc.vn/api/remote/outages/area?orgCode=${congTy.id_cong_ty}&subOrgCode=${subCompany.ma_cong_ty_con}&fromDate=${fromDate}&toDate=${toDate}&page=1&limit=100`
       );
 
+      let duplicateCount = 0;
+      let newCount = 0;
+
       if (response.data && response.data.items) {
         const count = response.data.items.length;
         console.log(`    → Tìm thấy ${count} lịch cúp điện`);
         totalOutages += count;
         for (const item of response.data.items) {
-          await saveLichCupDien({
+          const result = await saveLichCupDien({
             ma_dien_luc: congTy.id_cong_ty,
             ten_dien_luc: congTy.ten_cong_ty,
+            ma_cong_ty_con: subCompany.ma_cong_ty_con,
+            ten_cong_ty_con: subCompany.ten_cong_ty_con,
             ma_tram: item.stationCode,
             ten_tram: item.stationName,
             thoi_gian_bat_dau: item.fromDate,
@@ -90,18 +95,26 @@ async function crawlMienTrung(congTy) {
             loai_cat_dien: item.outageType,
             zone: congTy.zone
           });
+          
+          if (result.isDuplicate) duplicateCount++;
+          if (result.isNew) newCount++;
         }
+        
+        console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+        totalOutages += newCount;
       } else {
         console.log('    → Không tìm thấy lịch cúp điện');
       }
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
+    return totalOutages;
   } catch (error) {
     console.error(`  ❌ Lỗi khi cào ${congTy.ten_cong_ty}: ${error.message}`);
+    return totalOutages;
   }
 }
 
-async function crawlMienNam(congTy) {
+async function crawlMienNam(congTy, totalOutages = 0) {
   try {
     const today = new Date();
     const nextMonth = new Date();
@@ -118,6 +131,9 @@ async function crawlMienNam(congTy) {
 
       const $ = cheerio.load(response.data);
       let count = 0;
+      let duplicateCount = 0;
+      let newCount = 0;
+
       $('table tbody tr').each(async (index, element) => {
         count++;
         const tds = $(element).find('td');
@@ -131,9 +147,11 @@ async function crawlMienNam(congTy) {
         const thoiGianBatDau = formatDateTime($(tds[0]).text().trim());
         const thoiGianKetThuc = formatDateTime($(tds[1]).text().trim());
 
-        await saveLichCupDien({
+        const result = await saveLichCupDien({
           ma_dien_luc: congTy.id_cong_ty,
           ten_dien_luc: congTy.ten_cong_ty,
+          ma_cong_ty_con: subCompany.ma_cong_ty_con,
+          ten_cong_ty_con: subCompany.ten_cong_ty_con,
           ma_tram: '',
           ten_tram: '',
           thoi_gian_bat_dau: thoiGianBatDau,
@@ -144,17 +162,22 @@ async function crawlMienNam(congTy) {
           loai_cat_dien: '',
           zone: congTy.zone
         });
+        
+        if (result.isDuplicate) duplicateCount++;
+        if (result.isNew) newCount++;
       });
-      console.log(`    → Tìm thấy ${count} lịch cúp điện`);
-      totalOutages += count;
+      console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+      totalOutages += newCount;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
+    return totalOutages;
   } catch (error) {
     console.error(`  ❌ Lỗi khi cào ${congTy.ten_cong_ty}: ${error.message}`);
+    return totalOutages;
   }
 }
 
-async function crawlMienBac(congTy) {
+async function crawlMienBac(congTy, totalOutages = 0) {
   try {
     const today = new Date();
     const nextMonth = new Date();
@@ -171,12 +194,17 @@ async function crawlMienBac(congTy) {
 
       const $ = cheerio.load(response.data);
       let count = 0;
+      let duplicateCount = 0;
+      let newCount = 0;
+
       $('.table tbody tr').each(async (index, element) => {
         count++;
         const tds = $(element).find('td');
-        await saveLichCupDien({
+        const result = await saveLichCupDien({
           ma_dien_luc: congTy.id_cong_ty,
           ten_dien_luc: congTy.ten_cong_ty,
+          ma_cong_ty_con: subCompany.ma_cong_ty_con,
+          ten_cong_ty_con: subCompany.ten_cong_ty_con,
           ma_tram: '',
           ten_tram: '',
           thoi_gian_bat_dau: $(tds[2]).text().trim(),
@@ -187,13 +215,18 @@ async function crawlMienBac(congTy) {
           loai_cat_dien: '',
           zone: congTy.zone
         });
+        
+        if (result.isDuplicate) duplicateCount++;
+        if (result.isNew) newCount++;
       });
-      console.log(`    → Tìm thấy ${count} lịch cúp điện`);
-      totalOutages += count;
+      console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+      totalOutages += newCount;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
+    return totalOutages;
   } catch (error) {
     console.error(`  ❌ Lỗi khi cào ${congTy.ten_cong_ty}: ${error.message}`);
+    return totalOutages;
   }
 }
 
@@ -222,11 +255,11 @@ async function main() {
       console.log(`[${index + 1}/${congTyMienBac.length}] Đang cào ${congTy.ten_cong_ty}...`);
       for (const subCompany of congTy.subCompanies) {
         console.log(`  → Đang cào ${subCompany.ten_cong_ty_con}...`);
-        await crawlMienBac({
+        totalOutages = await crawlMienBac({
           ...congTy,
           ma_cong_ty_con: subCompany.ma_cong_ty_con,
           ten_cong_ty_con: subCompany.ten_cong_ty_con
-        });
+        }, totalOutages);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
@@ -236,7 +269,7 @@ async function main() {
     console.log(`\n=== Đang cào dữ liệu ${congTyMienTrung.length} công ty miền Trung ===`);
     for (const [index, congTy] of congTyMienTrung.entries()) {
       console.log(`[${index + 1}/${congTyMienTrung.length}] Đang cào ${congTy.ten_cong_ty}...`);
-      await crawlMienTrung(congTy);
+      totalOutages = await crawlMienTrung(congTy, totalOutages);
     }
     console.log('✓ Hoàn thành cào dữ liệu miền Trung');
 
@@ -244,7 +277,7 @@ async function main() {
     console.log(`\n=== Đang cào dữ liệu ${congTyMienNam.length} công ty miền Nam ===`);
     for (const [index, congTy] of congTyMienNam.entries()) {
       console.log(`[${index + 1}/${congTyMienNam.length}] Đang cào ${congTy.ten_cong_ty}...`);
-      await crawlMienNam(congTy);
+      totalOutages = await crawlMienNam(congTy, totalOutages);
     }
     console.log('✓ Hoàn thành cào dữ liệu miền Nam');
 
