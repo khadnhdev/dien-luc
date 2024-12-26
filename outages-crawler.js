@@ -130,12 +130,12 @@ async function crawlMienNam(congTy, totalOutages = 0) {
       );
 
       const $ = cheerio.load(response.data);
-      let count = 0;
       let duplicateCount = 0;
       let newCount = 0;
 
-      $('table tbody tr').each(async (index, element) => {
-        count++;
+      // Lấy tất cả các rows và xử lý tuần tự
+      const rows = $('table tbody tr').toArray();
+      for (const element of rows) {
         const tds = $(element).find('td');
         
         const formatDateTime = (dateTimeStr) => {
@@ -165,8 +165,9 @@ async function crawlMienNam(congTy, totalOutages = 0) {
         
         if (result.isDuplicate) duplicateCount++;
         if (result.isNew) newCount++;
-      });
-      console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+      }
+
+      console.log(`    → Tìm thấy ${rows.length} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
       totalOutages += newCount;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
@@ -193,12 +194,12 @@ async function crawlMienBac(congTy, totalOutages = 0) {
       );
 
       const $ = cheerio.load(response.data);
-      let count = 0;
       let duplicateCount = 0;
       let newCount = 0;
 
-      $('.table tbody tr').each(async (index, element) => {
-        count++;
+      // Lấy tất cả các rows và xử lý tuần tự
+      const rows = $('.table tbody tr').toArray();
+      for (const element of rows) {
         const tds = $(element).find('td');
         const result = await saveLichCupDien({
           ma_dien_luc: congTy.id_cong_ty,
@@ -218,8 +219,9 @@ async function crawlMienBac(congTy, totalOutages = 0) {
         
         if (result.isDuplicate) duplicateCount++;
         if (result.isNew) newCount++;
-      });
-      console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+      }
+
+      console.log(`    → Tìm thấy ${rows.length} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
       totalOutages += newCount;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
@@ -253,15 +255,7 @@ async function main() {
     console.log(`\n=== Đang cào dữ liệu ${congTyMienBac.length} công ty miền Bắc ===`);
     for (const [index, congTy] of congTyMienBac.entries()) {
       console.log(`[${index + 1}/${congTyMienBac.length}] Đang cào ${congTy.ten_cong_ty}...`);
-      for (const subCompany of congTy.subCompanies) {
-        console.log(`  → Đang cào ${subCompany.ten_cong_ty_con}...`);
-        totalOutages = await crawlMienBac({
-          ...congTy,
-          ma_cong_ty_con: subCompany.ma_cong_ty_con,
-          ten_cong_ty_con: subCompany.ten_cong_ty_con
-        }, totalOutages);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+      totalOutages = await crawlMienBac(congTy, totalOutages);
     }
     console.log('✓ Hoàn thành cào dữ liệu miền Bắc');
 
