@@ -68,43 +68,59 @@ async function crawlMienTrung(congTy, totalOutages = 0) {
 
     for (const subCompany of congTy.subCompanies) {
       console.log(`  → Đang cào ${subCompany.ten_cong_ty_con}...`);
-      const response = await axiosInstance.get(
-        `https://cskh-api.cpc.vn/api/remote/outages/area?orgCode=${congTy.id_cong_ty}&subOrgCode=${subCompany.ma_cong_ty_con}&fromDate=${fromDate}&toDate=${toDate}&page=1&limit=100`
-      );
+      
+      try {
+        const response = await axiosInstance.get(
+          `https://cskh-api.cpc.vn/api/remote/outages/area?orgCode=${congTy.id_cong_ty}&subOrgCode=${subCompany.ma_cong_ty_con}&fromDate=${fromDate}&toDate=${toDate}&page=1&limit=100`
+        );
 
-      let duplicateCount = 0;
-      let newCount = 0;
+        let duplicateCount = 0;
+        let newCount = 0;
 
-      if (response.data && response.data.items) {
-        const count = response.data.items.length;
-        console.log(`    → Tìm thấy ${count} lịch cúp điện`);
-        totalOutages += count;
-        for (const item of response.data.items) {
-          const result = await saveLichCupDien({
-            ma_dien_luc: congTy.id_cong_ty,
-            ten_dien_luc: congTy.ten_cong_ty,
-            ma_cong_ty_con: subCompany.ma_cong_ty_con,
-            ten_cong_ty_con: subCompany.ten_cong_ty_con,
-            ma_tram: item.stationCode,
-            ten_tram: item.stationName,
-            thoi_gian_bat_dau: item.fromDate,
-            thoi_gian_ket_thuc: item.toDate,
-            khu_vuc: item.stationName,
-            ly_do: item.reason,
-            trang_thai: item.statusStr,
-            loai_cat_dien: item.outageType,
-            zone: congTy.zone
-          });
+        if (response.data && response.data.items) {
+          const count = response.data.items.length;
+          console.log(`    → Tìm thấy ${count} lịch cúp điện`);
           
-          if (result.isDuplicate) duplicateCount++;
-          if (result.isNew) newCount++;
+          for (const item of response.data.items) {
+            try {
+              const result = await saveLichCupDien({
+                ma_dien_luc: congTy.id_cong_ty,
+                ten_dien_luc: congTy.ten_cong_ty,
+                ma_cong_ty_con: subCompany.ma_cong_ty_con,
+                ten_cong_ty_con: subCompany.ten_cong_ty_con,
+                ma_tram: item.stationCode,
+                ten_tram: item.stationName,
+                thoi_gian_bat_dau: item.fromDate,
+                thoi_gian_ket_thuc: item.toDate,
+                khu_vuc: item.stationName,
+                ly_do: item.reason,
+                trang_thai: item.statusStr,
+                loai_cat_dien: item.outageType,
+                zone: congTy.zone
+              });
+              
+              if (result.isDuplicate) duplicateCount++;
+              if (result.isNew) newCount++;
+            } catch (itemError) {
+              console.error(`    ❌ Lỗi khi lưu item: ${itemError.message}`);
+              console.error('    Item data:', JSON.stringify(item, null, 2));
+              continue; // Bỏ qua item lỗi, tiếp tục với item tiếp theo
+            }
+          }
+          
+          console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
+          totalOutages += newCount;
+        } else {
+          console.log('    → Không tìm thấy lịch cúp điện');
         }
-        
-        console.log(`    → Tìm thấy ${count} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
-        totalOutages += newCount;
-      } else {
-        console.log('    → Không tìm thấy lịch cúp điện');
+      } catch (subCompanyError) {
+        console.error(`  ❌ Lỗi khi cào ${subCompany.ten_cong_ty_con}: ${subCompanyError.message}`);
+        if (subCompanyError.response) {
+          console.error('    Response:', subCompanyError.response.data);
+        }
+        continue; // Bỏ qua công ty con bị lỗi, tiếp tục với công ty con tiếp theo
       }
+
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     return totalOutages;
