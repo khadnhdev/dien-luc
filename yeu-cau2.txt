@@ -1,0 +1,149 @@
+[
+  {
+    "value": "PC",
+    "label": "Tổng Công Ty Điện lực Miền Trung"
+  },
+  {
+    "value": "PC01",
+    "label": "Công ty Điện lực Quảng Bình"
+  },
+  {
+    "value": "PC02",
+    "label": "Công ty Điện lực Quảng Trị"
+  },
+  {
+    "value": "PC03",
+    "label": "Công ty Điện lực TT Huế"
+  },
+  {
+    "value": "PP",
+    "label": "Công ty TNHH MTV Điện lực Đà Nẵng"
+  },
+  {
+    "value": "PC05",
+    "label": "Công ty Điện lực Quảng Nam"
+  },
+  {
+    "value": "PC06",
+    "label": "Công ty Điện lực Quảng Ngãi"
+  },
+  {
+    "value": "PC07",
+    "label": "Công ty Điện lực Bình Định"
+  },
+  {
+    "value": "PC08",
+    "label": "Công ty Điện lực Phú Yên"
+  },
+  {
+    "value": "PQ",
+    "label": "Công ty CP Điện lực Khánh Hoà"
+  },
+  {
+    "value": "PC10",
+    "label": "Công ty Điện lực Gia Lai"
+  },
+  {
+    "value": "PC11",
+    "label": "Công ty Điện lực Kon Tum"
+  },
+  {
+    "value": "PC12",
+    "label": "Công ty Điện lực Đăk Lăk"
+  },
+  {
+    "value": "PC13",
+    "label": "Công ty Điện lực Đăk Nông"
+  }
+]
+
+
+
+https://cskh-api.cpc.vn/api/remote/organizations?maDonViCapTren=PC02
+
+[
+    {
+        "id": "f7c7b2b2-90e6-4f15-b55a-edc653e366df",
+        "organizationName": "ĐL Đông Hà",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "f7c7b2b2-90e6-4f15-b55a-edc653e366df",
+        "code": "PC02AA"
+    },
+    {
+        "id": "a93bd6de-d1f1-4000-a051-17ae3a1dfca1",
+        "organizationName": "Điện lực Thành Cổ",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "a93bd6de-d1f1-4000-a051-17ae3a1dfca1",
+        "code": "PC02BB"
+    },
+    {
+        "id": "dd1020e6-47f7-43f6-b519-0171c46a7b88",
+        "organizationName": "ĐL Gio Linh",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "dd1020e6-47f7-43f6-b519-0171c46a7b88",
+        "code": "PC02CC"
+    },
+    {
+        "id": "c15d7175-9662-4a48-9241-19a22d72ac5b",
+        "organizationName": "ĐL Vinh Linh",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "c15d7175-9662-4a48-9241-19a22d72ac5b",
+        "code": "PC02DD"
+    },
+    {
+        "id": "3a72d3d4-8a6d-43a3-9d85-243a8a849513",
+        "organizationName": "ĐL Khe Sanh",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "3a72d3d4-8a6d-43a3-9d85-243a8a849513",
+        "code": "PC02FF"
+    },
+    {
+        "id": "5cc00c2d-96b0-46f2-b942-1623b754f554",
+        "organizationName": "Điện lực Cam Lộ",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "5cc00c2d-96b0-46f2-b942-1623b754f554",
+        "code": "PC02GG"
+    },
+    {
+        "id": "04038080-defa-48fb-ac6a-450a9ccaba04",
+        "organizationName": "Điện lực Triệu Phong",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "04038080-defa-48fb-ac6a-450a9ccaba04",
+        "code": "PC02HH"
+    },
+    {
+        "id": "b410e743-46db-4036-aa8b-a3e499857dd5",
+        "organizationName": "ĐL Hải Lăng",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "b410e743-46db-4036-aa8b-a3e499857dd5",
+        "code": "PC02KK"
+    },
+    {
+        "id": "1dc5cc12-6bec-4f5b-a3b6-0482681dbd85",
+        "organizationName": "ĐL ĐaKrông",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "1dc5cc12-6bec-4f5b-a3b6-0482681dbd85",
+        "code": "PC02LL"
+    },
+    {
+        "id": "ad3a02c1-589d-48a5-a05d-c79962d2f4eb",
+        "organizationName": "Chi nhánh Bán điện Lào",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "ad3a02c1-589d-48a5-a05d-c79962d2f4eb",
+        "code": "PC02EE"
+    },
+    {
+        "id": "e0fe4a74-9617-40f8-834d-fd889601a1ef",
+        "organizationName": "Trạm điện Cồn Cỏ",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "e0fe4a74-9617-40f8-834d-fd889601a1ef",
+        "code": "PC02MM"
+    },
+    {
+        "id": "1404f3c8-0278-4608-aa1d-af7d1d944d04",
+        "organizationName": "Đội QLVH Lưới điện Cao thế",
+        "closestManagementUnitId": "228c2b37-a548-4ad1-b140-ebbc9b095e18",
+        "closestSubManagementUnit1Id": "1404f3c8-0278-4608-aa1d-af7d1d944d04",
+        "code": "PC02ZZ"
+    }
+]

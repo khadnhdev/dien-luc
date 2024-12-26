@@ -1,0 +1,29 @@
+{
+  "name": "evn-parser",
+  "version": "1.0.0",
+  "description": "EVN Company Data Parser",
+  "main": "webapp.js",
+  "scripts": {
+    "start": "node webapp.js",
+    "crawl:mien-nam": "node index.js",
+    "crawl:mien-trung": "node index-mien-trung.js",
+    "crawl:mien-bac": "node index-mien-bac.js",
+    "crawl:all": "npm run crawl:mien-nam && npm run crawl:mien-trung && npm run crawl:mien-bac",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "evn",
+    "parser",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "cheerio": "^1.0.0-rc.12",
+    "sqlite3": "^5.1.7",
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "body-parser": "^1.20.2"
+  }
+} 

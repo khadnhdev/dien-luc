@@ -1,0 +1,126 @@
+[
+  {
+    "value": "PA01",
+    "label": "Công ty Điện lực Nam Định"
+  },
+  {
+    "value": "PA02",
+    "label": "Công ty Điện lực Phú Thọ"
+  },
+  {
+    "value": "PA03",
+    "label": "Công ty Điện lực Quảng Ninh"
+  },
+  {
+    "value": "PA04",
+    "label": "Công ty Điện lực Thái Nguyên"
+  },
+  {
+    "value": "PA05",
+    "label": "Công ty Điện lực Bắc Giang"
+  },
+  {
+    "value": "PA07",
+    "label": "Công ty Điện lực Thanh Hóa"
+  },
+  {
+    "value": "PA09",
+    "label": "Công ty Điện lực Thái Bình"
+  },
+  {
+    "value": "PA10",
+    "label": "Công ty Điện lực Yên Bái"
+  },
+  {
+    "value": "PA11",
+    "label": "Công ty Điện lực Lạng Sơn"
+  },
+  {
+    "value": "PA12",
+    "label": "Công ty Điện lực Tuyên Quang"
+  },
+  {
+    "value": "PA13",
+    "label": "Công ty Điện lực Nghệ An"
+  },
+  {
+    "value": "PA14",
+    "label": "Công ty Điện lực Cao Bằng"
+  },
+  {
+    "value": "PA15",
+    "label": "Công ty Điện lực Sơn La"
+  },
+  {
+    "value": "PA16",
+    "label": "Công ty Điện lực Hà Tĩnh"
+  },
+  {
+    "value": "PA17",
+    "label": "Công ty Điện lực Hòa Bình"
+  },
+  {
+    "value": "PA18",
+    "label": "Công ty Điện lực Lào Cai"
+  },
+  {
+    "value": "PA19",
+    "label": "Công ty Điện lực Điện Biên"
+  },
+  {
+    "value": "PA20",
+    "label": "Công ty Điện lực Hà Giang"
+  },
+  {
+    "value": "PA22",
+    "label": "Công ty Điện lực Bắc Ninh"
+  },
+  {
+    "value": "PA23",
+    "label": "Công ty Điện lực Hưng Yên"
+  },
+  {
+    "value": "PA25",
+    "label": "Công ty Điện lực Vĩnh Phúc"
+  },
+  {
+    "value": "PA24",
+    "label": "Công ty Điện lực Hà Nam"
+  },
+  {
+    "value": "PA26",
+    "label": "Công ty Điện lực Bắc Kạn"
+  },
+  {
+    "value": "PA29",
+    "label": "Công ty Điện lực Lai Châu"
+  },
+  {
+    "value": "PH",
+    "label": "Công ty TNHH MTV Điện lực Hải Phòng"
+  },
+  {
+    "value": "PM",
+    "label": "Công ty TNHH MTV Điện lực Hải Dương"
+  },
+  {
+    "value": "PN",
+    "label": "Công ty TNHH MTV Điện lực Ninh Bình"
+  }
+]
+
+
+
+https://cskh.npc.com.vn/ThongTinKhachHang/GetDienLuc?macty=PA19
+
+            <option value="PA1901">ĐIỆN LỰC MƯỜNG CH&#192;</option>
+            <option value="PA1902">Điện lực th&#224;nh phố Điện Bi&#234;n Phủ</option>
+            <option value="PA1903">Điện lực Tuần Gi&#225;o</option>
+            <option value="PA1905">Điện lực Điện Bi&#234;n</option>
+            <option value="PA1906">Điện lực Mường Ch&#224;</option>
+            <option value="PA1907">Điện lực Điện Bi&#234;n Đ&#244;ng</option>
+            <option value="PA1909">X&#237; nghiệp Lưới điện cao thế Điện Bi&#234;n</option>
+            <option value="PA1910">Điện lực Tủa Ch&#249;a</option>
+            <option value="PA1911">ĐIỆN LỰC TH&#192;NH PHỐ ĐIỆN BI&#202;N PHỦ</option>
+            <option value="PA1912">Điện lực Mường Nh&#233;</option>
+
