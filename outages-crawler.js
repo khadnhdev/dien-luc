@@ -113,15 +113,22 @@ async function crawlMienTrung(congTy, totalOutages = 0) {
         } else {
           console.log('    → Không tìm thấy lịch cúp điện');
         }
+
+        // Nghỉ 1 giây sau mỗi request thành công
+        console.log('    → Đợi 1 giây...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
       } catch (subCompanyError) {
         console.error(`  ❌ Lỗi khi cào ${subCompany.ten_cong_ty_con}: ${subCompanyError.message}`);
         if (subCompanyError.response) {
           console.error('    Response:', subCompanyError.response.data);
         }
-        continue; // Bỏ qua công ty con bị lỗi, tiếp tục với công ty con tiếp theo
-      }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        // Nghỉ 1 giây sau mỗi lỗi
+        console.log('    → Đợi 1 giây...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        continue;
+      }
     }
     return totalOutages;
   } catch (error) {
@@ -150,7 +157,6 @@ async function crawlMienNam(congTy, totalOutages = 0) {
     for (const subCompany of congTy.subCompanies) {
       console.log(`  → Đang cào ${subCompany.ten_cong_ty_con}...`);
       
-      // Log URL để debug
       const url = `https://www.cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamMaKhachHang?madvi=${subCompany.ma_cong_ty_con}&tuNgay=${tuNgay}&denNgay=${denNgay}&ChucNang=MaDonVi`;
       console.log(`    URL: ${url}`);
       
@@ -199,7 +205,10 @@ async function crawlMienNam(congTy, totalOutages = 0) {
 
       console.log(`    → Tìm thấy ${rows.length} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
       totalOutages += newCount;
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Nghỉ 1 giây sau mỗi request
+      console.log('    → Đợi 1 giây...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
     return totalOutages;
   } catch (error) {
@@ -207,6 +216,10 @@ async function crawlMienNam(congTy, totalOutages = 0) {
     if (error.response) {
       console.error('    Response:', error.response.data);
     }
+
+    // Nghỉ 1 giây sau lỗi
+    console.log('    → Đợi 1 giây...');
+    await new Promise(resolve => setTimeout(resolve, 3000));
     return totalOutages;
   }
 }
@@ -256,11 +269,18 @@ async function crawlMienBac(congTy, totalOutages = 0) {
 
       console.log(`    → Tìm thấy ${rows.length} lịch cúp điện (${newCount} mới, ${duplicateCount} trùng)`);
       totalOutages += newCount;
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Nghỉ 1 giây sau mỗi request
+      console.log('    → Đợi 1 giây...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
     return totalOutages;
   } catch (error) {
     console.error(`  ❌ Lỗi khi cào ${congTy.ten_cong_ty}: ${error.message}`);
+
+    // Nghỉ 1 giây sau lỗi
+    console.log('    → Đợi 1 giây...');
+    await new Promise(resolve => setTimeout(resolve, 3000));
     return totalOutages;
   }
 }
@@ -284,7 +304,7 @@ async function mainMienBac() {
     }
 
     const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000;
+    const totalTime = (endTime - startTime) / 3000;
     
     await saveCapNhat({
       thoi_gian_bat_dau: startTime.toISOString(),
@@ -323,7 +343,7 @@ async function mainMienTrung() {
     }
 
     const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000;
+    const totalTime = (endTime - startTime) / 3000;
     
     await saveCapNhat({
       thoi_gian_bat_dau: startTime.toISOString(),
@@ -362,7 +382,7 @@ async function mainMienNam() {
     }
 
     const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000;
+    const totalTime = (endTime - startTime) / 3000;
     
     await saveCapNhat({
       thoi_gian_bat_dau: startTime.toISOString(),
@@ -420,7 +440,7 @@ async function main() {
     }
 
     const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000;
+    const totalTime = (endTime - startTime) / 3000;
     
     await saveCapNhat({
       thoi_gian_bat_dau: startTime.toISOString(),
