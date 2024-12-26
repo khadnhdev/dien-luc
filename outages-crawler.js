@@ -120,14 +120,25 @@ async function crawlMienNam(congTy, totalOutages = 0) {
     const nextMonth = new Date();
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     
-    const tuNgay = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
-    const denNgay = `${nextMonth.getDate()}-${nextMonth.getMonth() + 1}-${nextMonth.getFullYear()}`;
+    // Sửa format ngày thành dd-mm-yyyy
+    const formatDate = (date) => {
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const tuNgay = formatDate(today);
+    const denNgay = formatDate(nextMonth);
 
     for (const subCompany of congTy.subCompanies) {
       console.log(`  → Đang cào ${subCompany.ten_cong_ty_con}...`);
-      const response = await axios.get(
-        `https://www.cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamMaKhachHang?madvi=${subCompany.ma_cong_ty_con}&tuNgay=${tuNgay}&denNgay=${denNgay}&ChucNang=MaDonVi`
-      );
+      
+      // Log URL để debug
+      const url = `https://www.cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamMaKhachHang?madvi=${subCompany.ma_cong_ty_con}&tuNgay=${tuNgay}&denNgay=${denNgay}&ChucNang=MaDonVi`;
+      console.log(`    URL: ${url}`);
+      
+      const response = await axios.get(url);
 
       const $ = cheerio.load(response.data);
       let duplicateCount = 0;
@@ -139,13 +150,16 @@ async function crawlMienNam(congTy, totalOutages = 0) {
         const tds = $(element).find('td');
         
         const formatDateTime = (dateTimeStr) => {
+          // Format: "26/12/2024 07:00:00"
           const [date, time] = dateTimeStr.split(' ');
           const [day, month, year] = date.split('/');
           return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${time}`;
         };
 
-        const thoiGianBatDau = formatDateTime($(tds[0]).text().trim());
-        const thoiGianKetThuc = formatDateTime($(tds[1]).text().trim());
+        // Decode HTML entities trong nội dung
+        const decodeHtml = (html) => {
+          return $('<div>').html(html).text();
+        };
 
         const result = await saveLichCupDien({
           ma_dien_luc: congTy.id_cong_ty,
@@ -154,10 +168,10 @@ async function crawlMienNam(congTy, totalOutages = 0) {
           ten_cong_ty_con: subCompany.ten_cong_ty_con,
           ma_tram: '',
           ten_tram: '',
-          thoi_gian_bat_dau: thoiGianBatDau,
-          thoi_gian_ket_thuc: thoiGianKetThuc,
-          khu_vuc: $(tds[2]).text().trim(),
-          ly_do: $(tds[3]).text().trim(),
+          thoi_gian_bat_dau: formatDateTime($(tds[0]).text().trim()),
+          thoi_gian_ket_thuc: formatDateTime($(tds[1]).text().trim()),
+          khu_vuc: decodeHtml($(tds[2]).html()),
+          ly_do: decodeHtml($(tds[3]).html()),
           trang_thai: '',
           loai_cat_dien: '',
           zone: congTy.zone
@@ -174,6 +188,9 @@ async function crawlMienNam(congTy, totalOutages = 0) {
     return totalOutages;
   } catch (error) {
     console.error(`  ❌ Lỗi khi cào ${congTy.ten_cong_ty}: ${error.message}`);
+    if (error.response) {
+      console.error('    Response:', error.response.data);
+    }
     return totalOutages;
   }
 }
