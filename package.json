@@ -11,9 +11,13 @@
     "crawl:all": "npm run crawl:mien-nam && npm run crawl:mien-trung && npm run crawl:mien-bac",
     "crawl:outages": "node outages-crawler.js",
     "crawl:outages:bac": "node outages-crawler.js mien_bac",
-    "crawl:outages:trung": "node outages-crawler.js mien_trung", 
+    "crawl:outages:bac:desc": "node outages-crawler.js mien_bac desc",
+    "crawl:outages:trung": "node outages-crawler.js mien_trung",
+    "crawl:outages:trung:desc": "node outages-crawler.js mien_trung desc",
     "crawl:outages:nam": "node outages-crawler.js mien_nam",
+    "crawl:outages:nam:desc": "node outages-crawler.js mien_nam desc",
     "crawl:outages:all": "npm run crawl:outages:bac && npm run crawl:outages:trung && npm run crawl:outages:nam",
+    "crawl:outages:all:desc": "npm run crawl:outages:bac:desc && npm run crawl:outages:trung:desc && npm run crawl:outages:nam:desc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
