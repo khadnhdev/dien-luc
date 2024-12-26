@@ -232,6 +232,123 @@ async function crawlMienBac(congTy, totalOutages = 0) {
   }
 }
 
+async function mainMienBac() {
+  const startTime = new Date();
+  let totalOutages = 0;
+  
+  try {
+    console.log('=== Bắt đầu quá trình cào dữ liệu lịch cúp điện miền Bắc ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    
+    await initializeOutagesDatabase();
+    const congTyList = await getCongTyList();
+    const congTyMienBac = congTyList.filter(c => c.zone === 'mien_bac');
+
+    console.log(`\nTìm thấy ${congTyMienBac.length} công ty điện lực miền Bắc`);
+    for (const [index, congTy] of congTyMienBac.entries()) {
+      console.log(`[${index + 1}/${congTyMienBac.length}] Đang cào ${congTy.ten_cong_ty}...`);
+      totalOutages = await crawlMienBac(congTy, totalOutages);
+    }
+
+    const endTime = new Date();
+    const totalTime = (endTime - startTime) / 1000;
+    
+    await saveCapNhat({
+      thoi_gian_bat_dau: startTime.toISOString(),
+      thoi_gian_ket_thuc: endTime.toISOString(),
+      tong_thoi_gian: totalTime,
+      so_lich_cup_dien: totalOutages
+    });
+
+    console.log('\n=== Thống kê quá trình cào dữ liệu ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    console.log(`Thời gian kết thúc: ${endTime.toLocaleString('vi-VN')}`);
+    console.log(`Tổng thời gian: ${Math.floor(totalTime / 60)} phút ${Math.floor(totalTime % 60)} giây`);
+    console.log(`Tổng số lịch cúp điện: ${totalOutages}`);
+
+  } catch (error) {
+    console.error('\n❌ Lỗi:', error);
+  }
+}
+
+async function mainMienTrung() {
+  const startTime = new Date();
+  let totalOutages = 0;
+  
+  try {
+    console.log('=== Bắt đầu quá trình cào dữ liệu lịch cúp điện miền Trung ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    
+    await initializeOutagesDatabase();
+    const congTyList = await getCongTyList();
+    const congTyMienTrung = congTyList.filter(c => c.zone === 'mien_trung');
+
+    console.log(`\nTìm thấy ${congTyMienTrung.length} công ty điện lực miền Trung`);
+    for (const [index, congTy] of congTyMienTrung.entries()) {
+      console.log(`[${index + 1}/${congTyMienTrung.length}] Đang cào ${congTy.ten_cong_ty}...`);
+      totalOutages = await crawlMienTrung(congTy, totalOutages);
+    }
+
+    const endTime = new Date();
+    const totalTime = (endTime - startTime) / 1000;
+    
+    await saveCapNhat({
+      thoi_gian_bat_dau: startTime.toISOString(),
+      thoi_gian_ket_thuc: endTime.toISOString(),
+      tong_thoi_gian: totalTime,
+      so_lich_cup_dien: totalOutages
+    });
+
+    console.log('\n=== Thống kê quá trình cào dữ liệu ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    console.log(`Thời gian kết thúc: ${endTime.toLocaleString('vi-VN')}`);
+    console.log(`Tổng thời gian: ${Math.floor(totalTime / 60)} phút ${Math.floor(totalTime % 60)} giây`);
+    console.log(`Tổng số lịch cúp điện: ${totalOutages}`);
+
+  } catch (error) {
+    console.error('\n❌ Lỗi:', error);
+  }
+}
+
+async function mainMienNam() {
+  const startTime = new Date();
+  let totalOutages = 0;
+  
+  try {
+    console.log('=== Bắt đầu quá trình cào dữ liệu lịch cúp điện miền Nam ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    
+    await initializeOutagesDatabase();
+    const congTyList = await getCongTyList();
+    const congTyMienNam = congTyList.filter(c => c.zone === 'mien_nam');
+
+    console.log(`\nTìm thấy ${congTyMienNam.length} công ty điện lực miền Nam`);
+    for (const [index, congTy] of congTyMienNam.entries()) {
+      console.log(`[${index + 1}/${congTyMienNam.length}] Đang cào ${congTy.ten_cong_ty}...`);
+      totalOutages = await crawlMienNam(congTy, totalOutages);
+    }
+
+    const endTime = new Date();
+    const totalTime = (endTime - startTime) / 1000;
+    
+    await saveCapNhat({
+      thoi_gian_bat_dau: startTime.toISOString(),
+      thoi_gian_ket_thuc: endTime.toISOString(),
+      tong_thoi_gian: totalTime,
+      so_lich_cup_dien: totalOutages
+    });
+
+    console.log('\n=== Thống kê quá trình cào dữ liệu ===');
+    console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
+    console.log(`Thời gian kết thúc: ${endTime.toLocaleString('vi-VN')}`);
+    console.log(`Tổng thời gian: ${Math.floor(totalTime / 60)} phút ${Math.floor(totalTime % 60)} giây`);
+    console.log(`Tổng số lịch cúp điện: ${totalOutages}`);
+
+  } catch (error) {
+    console.error('\n❌ Lỗi:', error);
+  }
+}
+
 async function main() {
   const startTime = new Date();
   let totalOutages = 0;
@@ -241,44 +358,37 @@ async function main() {
     console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
     
     await initializeOutagesDatabase();
-    console.log('✓ Đã khởi tạo database lịch cúp điện');
-
     const congTyList = await getCongTyList();
-    console.log(`\nTìm thấy tổng cộng ${congTyList.length} công ty điện lực`);
 
     // Phân loại công ty theo miền
     const congTyMienBac = congTyList.filter(c => c.zone === 'mien_bac');
     const congTyMienTrung = congTyList.filter(c => c.zone === 'mien_trung');
     const congTyMienNam = congTyList.filter(c => c.zone === 'mien_nam');
 
-    // Crawl miền Bắc
+    // Cào miền Bắc
     console.log(`\n=== Đang cào dữ liệu ${congTyMienBac.length} công ty miền Bắc ===`);
     for (const [index, congTy] of congTyMienBac.entries()) {
       console.log(`[${index + 1}/${congTyMienBac.length}] Đang cào ${congTy.ten_cong_ty}...`);
       totalOutages = await crawlMienBac(congTy, totalOutages);
     }
-    console.log('✓ Hoàn thành cào dữ liệu miền Bắc');
 
-    // Crawl miền Trung
+    // Cào miền Trung
     console.log(`\n=== Đang cào dữ liệu ${congTyMienTrung.length} công ty miền Trung ===`);
     for (const [index, congTy] of congTyMienTrung.entries()) {
       console.log(`[${index + 1}/${congTyMienTrung.length}] Đang cào ${congTy.ten_cong_ty}...`);
       totalOutages = await crawlMienTrung(congTy, totalOutages);
     }
-    console.log('✓ Hoàn thành cào dữ liệu miền Trung');
 
-    // Crawl miền Nam
+    // Cào miền Nam
     console.log(`\n=== Đang cào dữ liệu ${congTyMienNam.length} công ty miền Nam ===`);
     for (const [index, congTy] of congTyMienNam.entries()) {
       console.log(`[${index + 1}/${congTyMienNam.length}] Đang cào ${congTy.ten_cong_ty}...`);
       totalOutages = await crawlMienNam(congTy, totalOutages);
     }
-    console.log('✓ Hoàn thành cào dữ liệu miền Nam');
 
     const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000; // Đổi sang giây
+    const totalTime = (endTime - startTime) / 1000;
     
-    // Lưu thông tin cập nhật
     await saveCapNhat({
       thoi_gian_bat_dau: startTime.toISOString(),
       thoi_gian_ket_thuc: endTime.toISOString(),
@@ -286,13 +396,11 @@ async function main() {
       so_lich_cup_dien: totalOutages
     });
 
-    // In thống kê
     console.log('\n=== Thống kê quá trình cào dữ liệu ===');
     console.log(`Thời gian bắt đầu: ${startTime.toLocaleString('vi-VN')}`);
     console.log(`Thời gian kết thúc: ${endTime.toLocaleString('vi-VN')}`);
     console.log(`Tổng thời gian: ${Math.floor(totalTime / 60)} phút ${Math.floor(totalTime % 60)} giây`);
     console.log(`Tổng số lịch cúp điện: ${totalOutages}`);
-    console.log('\n=== Kết thúc quá trình cào dữ liệu ===');
 
   } catch (error) {
     console.error('\n❌ Lỗi:', error);
@@ -302,9 +410,29 @@ async function main() {
 module.exports = {
   crawlMienTrung,
   crawlMienNam,
-  crawlMienBac
+  crawlMienBac,
+  mainMienBac,
+  mainMienTrung,
+  mainMienNam,
+  main
 };
 
+// Xử lý command line arguments
 if (require.main === module) {
-  main().catch(console.error);
+  const args = process.argv.slice(2);
+  const zone = args[0];
+
+  switch(zone) {
+    case 'mien_bac':
+      mainMienBac().catch(console.error);
+      break;
+    case 'mien_trung':
+      mainMienTrung().catch(console.error);
+      break;
+    case 'mien_nam':
+      mainMienNam().catch(console.error);
+      break;
+    default:
+      main().catch(console.error);
+  }
 } 
