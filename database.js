@@ -2,28 +2,50 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const dbPath = path.resolve(__dirname, 'evn.db');
-const db = new sqlite3.Database(dbPath);
+console.log('Database path:', dbPath);
+
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error('Lỗi khi mở database:', err);
+  } else {
+    console.log('✓ Đã kết nối database thành công');
+  }
+});
 
 function initializeDatabase() {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      // Tạo bảng công ty chính với thêm cột zone
-      db.run(`CREATE TABLE IF NOT EXISTS cong_ty_dien_luc (
-        id_cong_ty TEXT PRIMARY KEY,
-        ten_cong_ty TEXT NOT NULL,
-        zone TEXT NOT NULL
-      )`);
+      // Xóa bảng cũ nếu tồn tại
+      db.run(`DROP TABLE IF EXISTS cong_ty_dien_luc`, (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        
+        // Tạo bảng công ty điện lực
+        db.run(`CREATE TABLE IF NOT EXISTS cong_ty_dien_luc (
+          id_cong_ty TEXT PRIMARY KEY,
+          ten_cong_ty TEXT,
+          zone TEXT NOT NULL
+        )`, (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-      // Tạo bảng công ty con với thêm cột zone
-      db.run(`CREATE TABLE IF NOT EXISTS cong_ty_con (
-        ma_cong_ty_con TEXT PRIMARY KEY,
-        ten_cong_ty_con TEXT NOT NULL,
-        id_cong_ty_cha TEXT,
-        zone TEXT NOT NULL,
-        FOREIGN KEY (id_cong_ty_cha) REFERENCES cong_ty_dien_luc(id_cong_ty)
-      )`, (err) => {
-        if (err) reject(err);
-        else resolve();
+          // Tạo bảng công ty con
+          db.run(`CREATE TABLE IF NOT EXISTS cong_ty_con (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_cong_ty_cha TEXT,
+            ma_cong_ty_con TEXT,
+            ten_cong_ty_con TEXT,
+            zone TEXT NOT NULL,
+            FOREIGN KEY (id_cong_ty_cha) REFERENCES cong_ty_dien_luc(id_cong_ty)
+          )`, (err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
       });
     });
   });
@@ -31,12 +53,17 @@ function initializeDatabase() {
 
 function saveCongTyDienLuc(congTy) {
   return new Promise((resolve, reject) => {
+    console.log('Đang lưu công ty:', congTy);
     const stmt = db.prepare(
       'INSERT OR REPLACE INTO cong_ty_dien_luc (id_cong_ty, ten_cong_ty, zone) VALUES (?, ?, ?)'
     );
-    stmt.run(congTy.id_cong_ty, congTy.ten_cong_ty, congTy.zone || 'mien_nam', (err) => {
-      if (err) reject(err);
-      else resolve();
+    stmt.run(congTy.id_cong_ty, congTy.ten_cong_ty, congTy.zone, (err) => {
+      if (err) {
+        console.error('Lỗi khi lưu công ty:', err);
+        reject(err);
+      } else {
+        resolve();
+      }
     });
     stmt.finalize();
   });
@@ -44,17 +71,26 @@ function saveCongTyDienLuc(congTy) {
 
 function saveCongTyCon(congTyCon, idCongTyCha) {
   return new Promise((resolve, reject) => {
+    console.log('Đang lưu công ty con:', congTyCon);
     const stmt = db.prepare(
       'INSERT OR REPLACE INTO cong_ty_con (ma_cong_ty_con, ten_cong_ty_con, id_cong_ty_cha, zone) VALUES (?, ?, ?, ?)'
     );
+
+    // Đảm bảo có zone, nếu không có thì lấy từ tham số hoặc default
+    const zone = congTyCon.zone || 'mien_nam';
+
     stmt.run(
       congTyCon.ma_cong_ty_con, 
       congTyCon.ten_cong_ty_con, 
       idCongTyCha,
-      'mien_nam',
+      zone,  // Sử dụng zone đã kiểm tra
       (err) => {
-        if (err) reject(err);
-        else resolve();
+        if (err) {
+          console.error('Lỗi khi lưu công ty con:', err);
+          reject(err);
+        } else {
+          resolve();
+        }
       }
     );
     stmt.finalize();

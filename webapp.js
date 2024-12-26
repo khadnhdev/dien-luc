@@ -92,6 +92,127 @@ app.post('/update/:id', (req, res) => {
   );
 });
 
+app.get('/lich-cup-dien', async (req, res) => {
+  const { zone, date, org_code, sub_org_code } = req.query;
+
+  try {
+    // Kiểm tra xem bảng có tồn tại không
+    const tableExists = await new Promise((resolve) => {
+      db.get(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='lich_cup_dien'",
+        [],
+        (err, row) => {
+          if (err || !row) resolve(false);
+          else resolve(true);
+        }
+      );
+    });
+
+    if (!tableExists) {
+      return res.render('lich-cup-dien', {
+        lichCupDien: [],
+        orgs: [],
+        subOrgs: [],
+        currentZone: zone,
+        currentDate: date,
+        currentOrg: org_code,
+        currentSubOrg: sub_org_code
+      });
+    }
+
+    // Nếu bảng tồn tại, thực hiện các truy vấn
+    let query = `
+      SELECT * FROM lich_cup_dien
+      WHERE 1=1
+    `;
+    
+    if (zone) {
+      query += ` AND zone = '${zone}'`;
+    }
+    
+    if (date) {
+      query += ` AND date(thoi_gian_bat_dau) = date('${date}')`;
+    }
+
+    if (org_code) {
+      query += ` AND org_code = '${org_code}'`;
+    }
+
+    if (sub_org_code) {
+      query += ` AND sub_org_code = '${sub_org_code}'`;
+    }
+    
+    query += ` ORDER BY thoi_gian_bat_dau DESC`;
+
+    // Thực hiện các truy vấn song song
+    const [lichCupDien, orgs, subOrgs] = await Promise.all([
+      new Promise((resolve, reject) => {
+        db.all(query, [], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        });
+      }),
+      new Promise((resolve, reject) => {
+        db.all(`
+          SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
+          FROM lich_cup_dien
+          ORDER BY zone, ten_dien_luc
+        `, [], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        });
+      }),
+      new Promise((resolve, reject) => {
+        db.all(`
+          SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
+          FROM lich_cup_dien
+          ORDER BY ten_dien_luc
+        `, [], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        });
+      })
+    ]);
+
+    // Lấy thông tin cập nhật gần nhất
+    const lastUpdate = await new Promise((resolve, reject) => {
+      db.get(`
+        SELECT * FROM cap_nhat_lich_cup_dien 
+        ORDER BY id DESC LIMIT 1
+      `, [], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    res.render('lich-cup-dien', {
+      lichCupDien,
+      orgs,
+      subOrgs,
+      currentZone: zone,
+      currentDate: date,
+      currentOrg: org_code,
+      currentSubOrg: sub_org_code,
+      lastUpdate
+    });
+
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).send('Lỗi server');
+  }
+});
+
+// API để xóa toàn bộ lịch cúp điện
+app.post('/lich-cup-dien/delete-all', (req, res) => {
+  db.run('DELETE FROM lich_cup_dien', (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Lỗi khi xóa dữ liệu');
+    }
+    res.redirect('/lich-cup-dien');
+  });
+});
+
 app.listen(port, () => {
   console.log(`Webapp đang chạy tại http://localhost:${port}`);
 }); 

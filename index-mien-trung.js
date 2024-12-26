@@ -78,35 +78,43 @@ async function getDienLucList(maCongTy) {
   }
 }
 
-async function main() {
+async function crawlMienTrung() {
   try {
-    // Khởi tạo database
-    await initializeDatabase();
-    console.log('Đã khởi tạo database thành công');
-
     for (const congTy of congTyDienLucMienTrung) {
       if (congTy.value) { // Bỏ qua option trống
         // Lưu thông tin công ty chính
-        const congTyData = {
+        await saveCongTyDienLuc({
           id_cong_ty: congTy.value,
           ten_cong_ty: congTy.label,
           zone: 'mien_trung'
-        };
-        await saveCongTyDienLuc(congTyData);
+        });
         
         // Lấy và lưu thông tin công ty con
         const danhSachCongTyCon = await getDienLucList(congTy.value);
         for (const congTyCon of danhSachCongTyCon) {
-          await saveCongTyCon({
-            ...congTyCon,
-            zone: 'mien_trung'
-          }, congTy.value);
+          if (congTyCon.ma_cong_ty_con) { // Kiểm tra để bỏ qua option trống
+            await saveCongTyCon({
+              ...congTyCon,
+              zone: 'mien_trung'
+            }, congTy.value);
+          }
         }
         
         console.log(`Đã lưu dữ liệu cho công ty ${congTy.label}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
       }
     }
+  } catch (error) {
+    console.error('Lỗi khi crawl miền Trung:', error);
+  }
+}
 
+async function main() {
+  try {
+    await initializeDatabase();
+    console.log('Đã khởi tạo database thành công');
+
+    await crawlMienTrung();
     console.log('Hoàn thành việc lưu dữ liệu miền Trung');
   } catch (error) {
     console.error('Lỗi:', error);

@@ -1,0 +1,315 @@
+Miền trung:
+
+https://cskh-api.cpc.vn/api/remote/outages/area?orgCode=PC01&subOrgCode=PC01AA&fromDate=2024-12-23%2000%3A00%3A00&toDate=2024-12-31%2023%3A59%3A59&page=1&limit=10
+
+response:
+{
+    "totalCount": 93,
+    "items": [
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC138112",
+            "stationName": "TBA Tây Hữu Nghị (TA)",
+            "fromDate": "2024-12-23T07:00:00",
+            "toDate": "2024-12-23T15:00:00",
+            "reason": "-  Thay các tủ hạ thế trong khu Dân cư Tây Hữu Nghị (xữ lý sau bão số 3)",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "07:00 23/12/2024",
+            "toDateStr": "15:00 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC138113",
+            "stationName": "TBA Tây Hữu Nghị (TB)",
+            "fromDate": "2024-12-23T07:00:00",
+            "toDate": "2024-12-23T15:00:00",
+            "reason": "-  Thay các tủ hạ thế trong khu Dân cư Tây Hữu Nghị (xữ lý sau bão số 3)",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "07:00 23/12/2024",
+            "toDateStr": "15:00 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC139017",
+            "stationName": "TBA HẢI ĐĂNG 3",
+            "fromDate": "2024-12-23T07:00:00",
+            "toDate": "2024-12-23T11:00:00",
+            "reason": "- Thay tủ hạ thế TBA Hải Đăng 3 thuộc XT 473 BDH",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "07:00 23/12/2024",
+            "toDateStr": "11:00 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC139026",
+            "stationName": "TBA ĐỒNG SƠN 8",
+            "fromDate": "2024-12-23T07:00:00",
+            "toDate": "2024-12-23T10:30:00",
+            "reason": "- Nâng công suất MBA Đồng Sơn 8 lên 250kVA\n- Kéo dây mới, cắt cung san tải TBA Đồng Sơn 8, Cộn 2, Bưu Điện Cộn",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "07:00 23/12/2024",
+            "toDateStr": "10:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC139084",
+            "stationName": "TBA TRUNG BÍNH 2",
+            "fromDate": "2024-12-23T07:00:00",
+            "toDate": "2024-12-23T09:00:00",
+            "reason": "- Đấu nối xử lý đường dây hạ thế mất an toàn sau TBA Trung Bính 2, chuyễn công tơ.",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "07:00 23/12/2024",
+            "toDateStr": "09:00 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC133009",
+            "stationName": "TBA Cộn 2",
+            "fromDate": "2024-12-23T08:00:00",
+            "toDate": "2024-12-23T10:30:00",
+            "reason": "- Kéo dây mới, căng dây tại cột TBA, ép nối tủ hạ thế, cắt cung san tải TBA Đồng Sơn 8, Cộn 2, Bưu Điện Cộn",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "08:00 23/12/2024",
+            "toDateStr": "10:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC133027",
+            "stationName": "TBA Bưu Điện Cộn",
+            "fromDate": "2024-12-23T08:00:00",
+            "toDate": "2024-12-23T10:30:00",
+            "reason": "- Kéo dây mới, căng dây tại cột TBA, ép nối tủ hạ thế, cắt cung san tải TBA Đồng Sơn 8, Cộn 2, Bưu Điện Cộn",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "08:00 23/12/2024",
+            "toDateStr": "10:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC133020",
+            "stationName": "TBA Đức Ninh 1",
+            "fromDate": "2024-12-23T13:00:00",
+            "toDate": "2024-12-23T16:30:00",
+            "reason": "- Cắt cung tại B-5 về phía B-4 cho TBA Đức Thị 2 XDM\n- Cắt cung tại AB-3 về phía B-4, Kéo ĐZ XD mới từ TBA Đức Thị 2 đến B-3 TBA Đức Ninh 1 và đến AB-10 cho TBA Đức Thị 2 XDM",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "13:00 23/12/2024",
+            "toDateStr": "16:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC139019",
+            "stationName": "TBA ĐỒNG CHÀI",
+            "fromDate": "2024-12-23T13:00:00",
+            "toDate": "2024-12-23T16:30:00",
+            "reason": "- Cắt cung tại B-5 về phía B-4 cho TBA Đức Thị 2 XDM\n- Cắt cung tại AB-3 về phía B-4, Kéo ĐZ XD mới từ TBA Đức Thị 2 đến B-3 TBA Đức Ninh 1 và đến AB-10 cho TBA Đức Thị 2 XDM",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "13:00 23/12/2024",
+            "toDateStr": "16:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        },
+        {
+            "subOrganizationCode": "PC01AA",
+            "subOrganizationName": "ĐL Đồпg Hới",
+            "stationCode": "AC139047",
+            "stationName": "TBA GIAO TẾ 2",
+            "fromDate": "2024-12-23T13:00:00",
+            "toDate": "2024-12-23T16:30:00",
+            "reason": "- Cắt cung tại B-5 về phía B-4 cho TBA Đức Thị 2 XDM\n- Cắt cung tại AB-3 về phía B-4, Kéo ĐZ XD mới từ TBA Đức Thị 2 đến B-3 TBA Đức Ninh 1 và đến AB-10 cho TBA Đức Thị 2 XDM",
+            "status": "",
+            "outageType": "Kế hoạch",
+            "fromDateStr": "13:00 23/12/2024",
+            "toDateStr": "16:30 23/12/2024",
+            "statusStr": "Đã duyệt"
+        }
+    ]
+}
+
+
+
+Miền nam: 
+https://www.cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamMaKhachHang?madvi=PB1605&tuNgay=26-12-2024&denNgay=02-01-2025&ChucNang=MaDonVi
+
+response:
+
+    <div class="search-result">
+        <div class="result-tbl sp-has-scroll">
+            <table>
+                <thead>
+                    <tr>
+                                              
+                        <th>Thời gian bắt đầu ngừng cung cấp điện</th>
+                        <th>Thời gian dự kiến đóng điện trở lại</th>
+                        <th>Địa điểm ngừng cung cấp điện</th>
+                        <th>Lý do ngừng cung cấp điện</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+
+                        <tr>
+                                                     
+                            <td>28/12/2024 07:30:00</td>
+                            <td>28/12/2024 16:30:00</td>
+                            <td>X&#227; Đại Phước</td>
+                            <td>Bảo tr&#236;, sửa chữa lưới điện</td>
+                        </tr>
+                        <tr>
+                                                     
+                            <td>29/12/2024 07:30:00</td>
+                            <td>29/12/2024 15:00:00</td>
+                            <td>Ấp Rạch Dừa x&#227; Đại Phước</td>
+                            <td>Bảo tr&#236;, sửa chữa lưới điện</td>
+                        </tr>
+                        <tr>
+                                                     
+                            <td>26/12/2024 08:00:00</td>
+                            <td>26/12/2024 10:00:00</td>
+                            <td>Kh&#225;ch h&#224;ng CS Cống C&#225;i H&#243;p</td>
+                            <td>Qu&#225; tải đường d&#226;y/TBA t&#224;i sản kh&#225;ch h&#224;ng</td>
+                        </tr>
+                        <tr>
+                                                     
+                            <td>28/12/2024 08:00:00</td>
+                            <td>28/12/2024 12:00:00</td>
+                            <td>Ấp An Thạnh x&#227; T&#226;n B&#236;nh</td>
+                            <td>Bảo tr&#236;, sửa chữa lưới điện</td>
+                        </tr>
+                        <tr>
+                                                     
+                            <td>26/12/2024 11:00:00</td>
+                            <td>26/12/2024 16:00:00</td>
+                            <td>Kh&#225;ch h&#224;ng XX Nguyễn Văn T&#249;ng</td>
+                            <td>Qu&#225; tải đường d&#226;y/TBA t&#224;i sản kh&#225;ch h&#224;ng</td>
+                        </tr>
+                        <tr>
+                                                     
+                            <td>28/12/2024 13:00:00</td>
+                            <td>28/12/2024 16:30:00</td>
+                            <td>Ấp 4 x&#227; An Trường</td>
+                            <td>Bảo tr&#236;, sửa chữa lưới điện</td>
+                        </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+Miền bắc:
+
+https://cskh.npc.com.vn/ThongTinKhachHang/LichNgungGiamCungCapDienSPC?madvi=PA1905&tuNgay=26%2F12%2F2024&denNgay=10%2F01%2F2025
+
+    <div class="table" style="overflow:auto;">
+        <table class="uk-table uk-table-small uk-table-middle uk-table-divider table2">
+            <thead>
+                <tr>
+                    <th width="15%">Điện lực</th>
+                    <th>Ng&#224;y</th>
+                    <th>Thời Gian Từ</th>
+                    <th>Thời Gian Đến</th>
+                    <th>Khu Vực</th>
+                    <th width="10%">L&#253; Do</th>
+                </tr>
+            </thead>
+            <tbody>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-27 08:30:00.000</td>
+                                <td style="text-align: center">2024-12-27 09:30:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA: bản Mển</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-27 10:00:00.000</td>
+                                <td style="text-align: center">2024-12-27 11:00:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA TTSH L&#225;i Xe</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-27 13:30:00.000</td>
+                                <td style="text-align: center">2024-12-27 14:30:00.000</td>
+                                <td>kh&#225;ch h&#224;ng sau TBA: Đội 5 Thanh Lu&#244;ng</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-27 15:30:00.000</td>
+                                <td style="text-align: center">2024-12-27 16:30:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA Đồn Bi&#234;n Ph&#242;ng 423</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-28 08:30:00.000</td>
+                                <td style="text-align: center">2024-12-28 09:30:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA Đội 7 Thanh Chăn</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-28 08:30:00.000</td>
+                                <td style="text-align: center">2024-12-28 10:30:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng Bệnh viện huyện</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-28 08:30:00.000</td>
+                                <td style="text-align: center">2024-12-28 11:30:00.000</td>
+                                <td>x&#227; N&#250;a Ngam</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-28 10:00:00.000</td>
+                                <td style="text-align: center">2024-12-28 11:30:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA Pa S&#225;ng</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">Điện lực Điện Bi&#234;n</td>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">2024-12-28 14:00:00.000</td>
+                                <td style="text-align: center">2024-12-28 18:00:00.000</td>
+                                <td>Kh&#225;ch h&#224;ng sau TBA: UB Thanh Chăn</td>
+                                <td style="text-align: center"></td>
+                            </tr>
+
+            </tbody>
+        </table>
+    </div>

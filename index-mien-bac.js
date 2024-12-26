@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const https = require('https');
-const { initializeDatabase, saveCongTyDienLuc, saveCongTyCon } = require('./database');
+const { initializeDatabase, saveCongTyDienLuc, saveCongTyCon, db } = require('./database');
 
 // Tạo instance axios với cấu hình bỏ qua verify SSL
 const axiosInstance = axios.create({
@@ -123,17 +123,20 @@ const congTyDienLucMienBac = [
 
 async function getDienLucList(maCongTy) {
   try {
-    // Sử dụng axiosInstance thay vì axios
     const response = await axiosInstance.get(`https://cskh.npc.com.vn/ThongTinKhachHang/GetDienLuc?macty=${maCongTy}`);
     const $ = cheerio.load(response.data);
     
     const danhSachCongTyCon = [];
     
     $('option').each((index, element) => {
-      danhSachCongTyCon.push({
-        ma_cong_ty_con: $(element).attr('value'),
-        ten_cong_ty_con: $(element).text().trim()
-      });
+      const value = $(element).attr('value');
+      const text = $(element).text().trim();
+      if (value && text) { // Chỉ lấy những option có giá trị
+        danhSachCongTyCon.push({
+          ma_cong_ty_con: value,
+          ten_cong_ty_con: text
+        });
+      }
     });
 
     return danhSachCongTyCon;
@@ -143,42 +146,81 @@ async function getDienLucList(maCongTy) {
   }
 }
 
-async function main() {
+async function crawlMienBac() {
   try {
-    // Khởi tạo database
-    await initializeDatabase();
-    console.log('Đã khởi tạo database thành công');
-
+    // Sử dụng danh sách cứng thay vì gọi API
     for (const congTy of congTyDienLucMienBac) {
       if (congTy.value) { // Bỏ qua option trống
-        // Lưu thông tin công ty chính
-        const congTyData = {
+        console.log(`Đang xử lý công ty: ${congTy.label}`);
+        
+        // Lưu công ty chính
+        await saveCongTyDienLuc({
           id_cong_ty: congTy.value,
           ten_cong_ty: congTy.label,
           zone: 'mien_bac'
-        };
-        await saveCongTyDienLuc(congTyData);
-        
-        // Lấy và lưu thông tin công ty con
+        });
+
+        // Lấy và lưu danh sách công ty con
         const danhSachCongTyCon = await getDienLucList(congTy.value);
+        console.log(`Tìm thấy ${danhSachCongTyCon.length} công ty con`);
+        
         for (const congTyCon of danhSachCongTyCon) {
-          await saveCongTyCon({
-            ...congTyCon,
-            zone: 'mien_bac'
-          }, congTy.value);
+          if (congTyCon.ma_cong_ty_con) {
+            await saveCongTyCon({
+              ma_cong_ty_con: congTyCon.ma_cong_ty_con,
+              ten_cong_ty_con: congTyCon.ten_cong_ty_con,
+              zone: 'mien_bac'
+            }, congTy.value);
+            console.log(`  → Đã lưu: ${congTyCon.ten_cong_ty_con}`);
+          }
         }
         
-        console.log(`Đã lưu dữ liệu cho công ty ${congTy.label}`);
-        
-        // Thêm delay để tránh bị block
+        console.log(`✓ Đã lưu dữ liệu cho công ty ${congTy.label}`);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
-
-    console.log('Hoàn thành việc lưu dữ liệu miền Bắc');
   } catch (error) {
-    console.error('Lỗi:', error);
+    console.error('Lỗi khi crawl miền Bắc:', error);
+    throw error; // Ném lỗi để main function có thể bắt được
   }
 }
+
+async function main() {
+  try {
+    await initializeDatabase();
+    console.log('✓ Đã khởi tạo database thành công');
+
+    // Kiểm tra database đã được tạo đúng chưa
+    await new Promise((resolve, reject) => {
+      db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='cong_ty_dien_luc'", [], (err, row) => {
+        if (err) reject(err);
+        if (!row) reject(new Error('Bảng cong_ty_dien_luc chưa được tạo'));
+        console.log('✓ Đã tìm thấy bảng cong_ty_dien_luc');
+        resolve();
+      });
+    });
+
+    await crawlMienBac();
+    
+    // Kiểm tra dữ liệu đã được lưu
+    await new Promise((resolve, reject) => {
+      db.all("SELECT * FROM cong_ty_dien_luc WHERE zone = 'mien_bac'", [], (err, rows) => {
+        if (err) reject(err);
+        console.log(`✓ Đã lưu ${rows.length} công ty điện lực miền Bắc`);
+        resolve();
+      });
+    });
+
+    console.log('✓ Hoàn thành việc lưu dữ liệu miền Bắc');
+  } catch (error) {
+    console.error('❌ Lỗi:', error);
+    process.exit(1);
+  }
+}
+
+// Thêm đoạn này để đảm bảo đóng kết nối database khi kết thúc
+process.on('exit', () => {
+  db.close();
+});
 
 main().catch(console.error); 

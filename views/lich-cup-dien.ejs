@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lịch Cúp Điện</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="/">EVN Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Công ty điện lực</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/lich-cup-dien">Lịch cúp điện</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a href="/" class="btn btn-secondary">Quay lại</a>
+      <div class="text-muted">
+        <% if (lastUpdate) { %>
+          Cập nhật lần cuối: <%= new Date(lastUpdate.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
+          (<%= Math.floor(lastUpdate.tong_thoi_gian / 60) %> phút <%= Math.floor(lastUpdate.tong_thoi_gian % 60) %> giây)
+          - <%= lastUpdate.so_lich_cup_dien %> lịch cúp điện
+        <% } %>
+      </div>
+      <form action="/lich-cup-dien/delete-all" method="POST" style="display: inline;">
+        <button type="submit" class="btn btn-danger" 
+          onclick="return confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch cúp điện?')">
+          Xóa toàn bộ dữ liệu
+        </button>
+      </form>
+    </div>
+    
+    <h1>Lịch Cúp Điện</h1>
+    
+    <div class="mb-3">
+      <form class="row g-3">
+        <div class="col-auto">
+          <select name="zone" class="form-select">
+            <option value="">Tất cả khu vực</option>
+            <option value="mien_bac" <%= currentZone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
+            <option value="mien_trung" <%= currentZone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
+            <option value="mien_nam" <%= currentZone === 'mien_nam' ? 'selected' : '' %>>Miền Nam</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <select name="org_code" class="form-select" onchange="this.form.submit()">
+            <option value="">Tất cả công ty điện lực</option>
+            <% orgs.forEach(function(org) { %>
+              <option value="<%= org.ma_dien_luc %>" 
+                <%= currentOrg === org.ma_dien_luc ? 'selected' : '' %>
+                data-zone="<%= org.zone %>">
+                <%= org.ten_dien_luc %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <select name="sub_org_code" class="form-select" onchange="this.form.submit()">
+            <option value="">Tất cả điện lực</option>
+            <% subOrgs.filter(s => !currentOrg || s.ma_dien_luc === currentOrg).forEach(function(subOrg) { %>
+              <option value="<%= subOrg.ma_dien_luc %>" 
+                <%= currentSubOrg === subOrg.ma_dien_luc ? 'selected' : '' %>>
+                <%= subOrg.ten_dien_luc %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <input type="date" name="date" class="form-control" value="<%= currentDate %>">
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">Lọc</button>
+        </div>
+      </form>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Điện lực</th>
+          <th>Trạm</th>
+          <th>Thời gian bắt đầu</th>
+          <th>Thời gian kết thúc</th>
+          <th>Khu vực</th>
+          <th>Lý do</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% lichCupDien.forEach(function(item) { %>
+          <tr>
+            <td><%= item.ten_dien_luc %></td>
+            <td><%= item.ten_tram %></td>
+            <td><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
+            <td><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
+            <td><%= item.khu_vuc %></td>
+            <td><%= item.ly_do %></td>
+            <td><%= item.trang_thai %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

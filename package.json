@@ -9,6 +9,7 @@
     "crawl:mien-trung": "node index-mien-trung.js",
     "crawl:mien-bac": "node index-mien-bac.js",
     "crawl:all": "npm run crawl:mien-nam && npm run crawl:mien-trung && npm run crawl:mien-bac",
+    "crawl:outages": "node outages-crawler.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
