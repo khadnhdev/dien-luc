@@ -16,11 +16,11 @@ function initializeDatabase() {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       // Xóa bảng cũ nếu tồn tại
-      db.run(`DROP TABLE IF EXISTS cong_ty_dien_luc`, (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      db.run(``, (err) => {
+        // if (err) {
+        //   //reject(err);
+        //   //return;
+        // }
         
         // Tạo bảng công ty điện lực
         db.run(`CREATE TABLE IF NOT EXISTS cong_ty_dien_luc (
