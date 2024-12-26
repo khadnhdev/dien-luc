@@ -57,9 +57,9 @@
     <h1>Lịch Cúp Điện</h1>
     
     <div class="mb-3">
-      <form class="row g-3">
+      <form class="row g-3" id="filterForm">
         <div class="col-auto">
-          <select name="zone" class="form-select" onchange="this.form.submit()">
+          <select name="zone" class="form-select" onchange="onZoneChange(this)">
             <option value="">Tất cả khu vực</option>
             <option value="mien_bac" <%= currentZone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
             <option value="mien_trung" <%= currentZone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
@@ -67,7 +67,7 @@
           </select>
         </div>
         <div class="col-auto">
-          <select name="ma_dien_luc" class="form-select" onchange="this.form.submit()">
+          <select name="ma_dien_luc" class="form-select" onchange="onCongTyChange(this)" <%= !currentZone ? 'disabled' : '' %>>
             <option value="">Tất cả công ty điện lực</option>
             <% congTyList.forEach(function(congTy) { %>
               <option value="<%= congTy.ma_dien_luc %>" 
@@ -79,7 +79,7 @@
           </select>
         </div>
         <div class="col-auto">
-          <select name="ma_cong_ty_con" class="form-select" onchange="this.form.submit()">
+          <select name="ma_cong_ty_con" class="form-select" onchange="this.form.submit()" <%= !currentMaDienLuc ? 'disabled' : '' %>>
             <option value="">Tất cả điện lực</option>
             <% congTyConList.forEach(function(congTyCon) { %>
               <option value="<%= congTyCon.ma_cong_ty_con %>" 
@@ -141,5 +141,32 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  function onZoneChange(select) {
+    const form = document.getElementById('filterForm');
+    const congTySelect = form.querySelector('[name="ma_dien_luc"]');
+    const congTyConSelect = form.querySelector('[name="ma_cong_ty_con"]');
+    
+    // Reset và disable các select phía sau
+    congTySelect.value = '';
+    congTyConSelect.value = '';
+    
+    congTySelect.disabled = !select.value;
+    congTyConSelect.disabled = true;
+    
+    form.submit();
+  }
+
+  function onCongTyChange(select) {
+    const form = document.getElementById('filterForm');
+    const congTyConSelect = form.querySelector('[name="ma_cong_ty_con"]');
+    
+    // Reset và enable/disable select công ty con
+    congTyConSelect.value = '';
+    congTyConSelect.disabled = !select.value;
+    
+    form.submit();
+  }
+  </script>
 </body>
 </html> 

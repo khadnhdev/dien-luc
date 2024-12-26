@@ -100,7 +100,6 @@ app.get('/lich-cup-dien', async (req, res) => {
       SELECT * FROM lich_cup_dien
       WHERE 1=1
     `;
-    
     const params = [];
 
     if (zone) {
@@ -135,19 +134,24 @@ app.get('/lich-cup-dien', async (req, res) => {
         });
       }),
       
-      // Lấy danh sách công ty điện lực
+      // Lấy danh sách công ty điện lực theo miền
       new Promise((resolve, reject) => {
-        db.all(`
-          SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
-          FROM lich_cup_dien
-          ORDER BY zone, ten_dien_luc
-        `, [], (err, rows) => {
+        const congTyQuery = zone 
+          ? `SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
+             FROM lich_cup_dien 
+             WHERE zone = ?
+             ORDER BY ten_dien_luc`
+          : `SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
+             FROM lich_cup_dien 
+             ORDER BY zone, ten_dien_luc`;
+        
+        db.all(congTyQuery, zone ? [zone] : [], (err, rows) => {
           if (err) reject(err);
           else resolve(rows || []);
         });
       }),
 
-      // Lấy danh sách công ty con
+      // Lấy danh sách công ty con theo công ty cha
       new Promise((resolve, reject) => {
         const congTyConQuery = ma_dien_luc 
           ? `SELECT DISTINCT ma_cong_ty_con, ten_cong_ty_con 
@@ -156,6 +160,7 @@ app.get('/lich-cup-dien', async (req, res) => {
              ORDER BY ten_cong_ty_con`
           : `SELECT DISTINCT ma_cong_ty_con, ten_cong_ty_con 
              FROM lich_cup_dien 
+             WHERE ma_dien_luc IS NOT NULL
              ORDER BY ten_cong_ty_con`;
         
         db.all(congTyConQuery, ma_dien_luc ? [ma_dien_luc] : [], (err, rows) => {
