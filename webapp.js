@@ -93,65 +93,49 @@ app.post('/update/:id', (req, res) => {
 });
 
 app.get('/lich-cup-dien', async (req, res) => {
-  const { zone, date, org_code, sub_org_code } = req.query;
+  const { zone, date, ma_dien_luc, ma_cong_ty_con } = req.query;
 
   try {
-    // Kiểm tra xem bảng có tồn tại không
-    const tableExists = await new Promise((resolve) => {
-      db.get(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='lich_cup_dien'",
-        [],
-        (err, row) => {
-          if (err || !row) resolve(false);
-          else resolve(true);
-        }
-      );
-    });
-
-    if (!tableExists) {
-      return res.render('lich-cup-dien', {
-        lichCupDien: [],
-        orgs: [],
-        subOrgs: [],
-        currentZone: zone,
-        currentDate: date,
-        currentOrg: org_code,
-        currentSubOrg: sub_org_code
-      });
-    }
-
-    // Nếu bảng tồn tại, thực hiện các truy vấn
     let query = `
       SELECT * FROM lich_cup_dien
       WHERE 1=1
     `;
     
+    const params = [];
+
     if (zone) {
-      query += ` AND zone = '${zone}'`;
+      query += ` AND zone = ?`;
+      params.push(zone);
     }
     
     if (date) {
-      query += ` AND date(thoi_gian_bat_dau) = date('${date}')`;
+      query += ` AND date(thoi_gian_bat_dau) = date(?)`;
+      params.push(date);
     }
 
-    if (org_code) {
-      query += ` AND org_code = '${org_code}'`;
+    if (ma_dien_luc) {
+      query += ` AND ma_dien_luc = ?`;
+      params.push(ma_dien_luc);
     }
 
-    if (sub_org_code) {
-      query += ` AND sub_org_code = '${sub_org_code}'`;
+    if (ma_cong_ty_con) {
+      query += ` AND ma_cong_ty_con = ?`;
+      params.push(ma_cong_ty_con);
     }
     
     query += ` ORDER BY thoi_gian_bat_dau DESC`;
 
     // Thực hiện các truy vấn song song
-    const [lichCupDien, orgs, subOrgs] = await Promise.all([
+    const [lichCupDien, congTyList, congTyConList, capNhatGanNhat] = await Promise.all([
+      // Lấy danh sách lịch cúp điện
       new Promise((resolve, reject) => {
-        db.all(query, [], (err, rows) => {
+        db.all(query, params, (err, rows) => {
           if (err) reject(err);
           else resolve(rows || []);
         });
       }),
+      
+      // Lấy danh sách công ty điện lực
       new Promise((resolve, reject) => {
         db.all(`
           SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
@@ -162,38 +146,45 @@ app.get('/lich-cup-dien', async (req, res) => {
           else resolve(rows || []);
         });
       }),
+
+      // Lấy danh sách công ty con
       new Promise((resolve, reject) => {
-        db.all(`
-          SELECT DISTINCT ma_dien_luc, ten_dien_luc, zone
-          FROM lich_cup_dien
-          ORDER BY ten_dien_luc
-        `, [], (err, rows) => {
+        const congTyConQuery = ma_dien_luc 
+          ? `SELECT DISTINCT ma_cong_ty_con, ten_cong_ty_con 
+             FROM lich_cup_dien 
+             WHERE ma_dien_luc = ?
+             ORDER BY ten_cong_ty_con`
+          : `SELECT DISTINCT ma_cong_ty_con, ten_cong_ty_con 
+             FROM lich_cup_dien 
+             ORDER BY ten_cong_ty_con`;
+        
+        db.all(congTyConQuery, ma_dien_luc ? [ma_dien_luc] : [], (err, rows) => {
           if (err) reject(err);
           else resolve(rows || []);
+        });
+      }),
+
+      // Lấy thông tin cập nhật gần nhất
+      new Promise((resolve, reject) => {
+        db.get(`
+          SELECT * FROM cap_nhat 
+          ORDER BY id DESC LIMIT 1
+        `, [], (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
         });
       })
     ]);
 
-    // Lấy thông tin cập nhật gần nhất
-    const lastUpdate = await new Promise((resolve, reject) => {
-      db.get(`
-        SELECT * FROM cap_nhat_lich_cup_dien 
-        ORDER BY id DESC LIMIT 1
-      `, [], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
-
     res.render('lich-cup-dien', {
       lichCupDien,
-      orgs,
-      subOrgs,
+      congTyList,
+      congTyConList,
       currentZone: zone,
       currentDate: date,
-      currentOrg: org_code,
-      currentSubOrg: sub_org_code,
-      lastUpdate
+      currentMaDienLuc: ma_dien_luc,
+      currentMaCongTyCon: ma_cong_ty_con,
+      capNhatGanNhat
     });
 
   } catch (error) {

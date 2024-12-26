@@ -3,6 +3,18 @@
 <head>
   <title>Lịch Cúp Điện</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .table td {
+      white-space: nowrap;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reason-cell {
+      max-width: 300px !important;
+      white-space: normal !important;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
@@ -24,14 +36,14 @@
     </div>
   </nav>
 
-  <div class="container mt-4">
+  <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <a href="/" class="btn btn-secondary">Quay lại</a>
       <div class="text-muted">
-        <% if (lastUpdate) { %>
-          Cập nhật lần cuối: <%= new Date(lastUpdate.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
-          (<%= Math.floor(lastUpdate.tong_thoi_gian / 60) %> phút <%= Math.floor(lastUpdate.tong_thoi_gian % 60) %> giây)
-          - <%= lastUpdate.so_lich_cup_dien %> lịch cúp điện
+        <% if (capNhatGanNhat) { %>
+          Cập nhật lần cuối: <%= new Date(capNhatGanNhat.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
+          (<%= Math.floor(capNhatGanNhat.tong_thoi_gian / 60) %> phút <%= Math.floor(capNhatGanNhat.tong_thoi_gian % 60) %> giây)
+          - <%= capNhatGanNhat.so_lich_cup_dien %> lịch cúp điện
         <% } %>
       </div>
       <form action="/lich-cup-dien/delete-all" method="POST" style="display: inline;">
@@ -47,7 +59,7 @@
     <div class="mb-3">
       <form class="row g-3">
         <div class="col-auto">
-          <select name="zone" class="form-select">
+          <select name="zone" class="form-select" onchange="this.form.submit()">
             <option value="">Tất cả khu vực</option>
             <option value="mien_bac" <%= currentZone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
             <option value="mien_trung" <%= currentZone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
@@ -55,63 +67,77 @@
           </select>
         </div>
         <div class="col-auto">
-          <select name="org_code" class="form-select" onchange="this.form.submit()">
+          <select name="ma_dien_luc" class="form-select" onchange="this.form.submit()">
             <option value="">Tất cả công ty điện lực</option>
-            <% orgs.forEach(function(org) { %>
-              <option value="<%= org.ma_dien_luc %>" 
-                <%= currentOrg === org.ma_dien_luc ? 'selected' : '' %>
-                data-zone="<%= org.zone %>">
-                <%= org.ten_dien_luc %>
+            <% congTyList.forEach(function(congTy) { %>
+              <option value="<%= congTy.ma_dien_luc %>" 
+                <%= currentMaDienLuc === congTy.ma_dien_luc ? 'selected' : '' %>
+                data-zone="<%= congTy.zone %>">
+                <%= congTy.ten_dien_luc %>
               </option>
             <% }); %>
           </select>
         </div>
         <div class="col-auto">
-          <select name="sub_org_code" class="form-select" onchange="this.form.submit()">
+          <select name="ma_cong_ty_con" class="form-select" onchange="this.form.submit()">
             <option value="">Tất cả điện lực</option>
-            <% subOrgs.filter(s => !currentOrg || s.ma_dien_luc === currentOrg).forEach(function(subOrg) { %>
-              <option value="<%= subOrg.ma_dien_luc %>" 
-                <%= currentSubOrg === subOrg.ma_dien_luc ? 'selected' : '' %>>
-                <%= subOrg.ten_dien_luc %>
+            <% congTyConList.forEach(function(congTyCon) { %>
+              <option value="<%= congTyCon.ma_cong_ty_con %>" 
+                <%= currentMaCongTyCon === congTyCon.ma_cong_ty_con ? 'selected' : '' %>>
+                <%= congTyCon.ten_cong_ty_con %>
               </option>
             <% }); %>
           </select>
         </div>
         <div class="col-auto">
-          <input type="date" name="date" class="form-control" value="<%= currentDate %>">
+          <input type="date" name="date" class="form-control" value="<%= currentDate %>" onchange="this.form.submit()">
         </div>
         <div class="col-auto">
           <button type="submit" class="btn btn-primary">Lọc</button>
+          <a href="/lich-cup-dien" class="btn btn-secondary">Xóa bộ lọc</a>
         </div>
       </form>
     </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Điện lực</th>
-          <th>Trạm</th>
-          <th>Thời gian bắt đầu</th>
-          <th>Thời gian kết thúc</th>
-          <th>Khu vực</th>
-          <th>Lý do</th>
-          <th>Trạng thái</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% lichCupDien.forEach(function(item) { %>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
           <tr>
-            <td><%= item.ten_dien_luc %></td>
-            <td><%= item.ten_tram %></td>
-            <td><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
-            <td><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
-            <td><%= item.khu_vuc %></td>
-            <td><%= item.ly_do %></td>
-            <td><%= item.trang_thai %></td>
+            <th>STT</th>
+            <th>Công ty điện lực</th>
+            <th>Điện lực</th>
+            <th>Trạm</th>
+            <th>Thời gian bắt đầu</th>
+            <th>Thời gian kết thúc</th>
+            <th>Khu vực</th>
+            <th>Lý do</th>
+            <th>Trạng thái</th>
+            <th>Loại cắt điện</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% lichCupDien.forEach(function(item, index) { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= item.ten_dien_luc %></td>
+              <td><%= item.ten_cong_ty_con %></td>
+              <td><%= item.ten_tram || '—' %></td>
+              <td><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
+              <td><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
+              <td><%= item.khu_vuc %></td>
+              <td class="reason-cell"><%= item.ly_do %></td>
+              <td><%= item.trang_thai || '—' %></td>
+              <td><%= item.loai_cat_dien || '—' %></td>
+            </tr>
+          <% }); %>
+          <% if (lichCupDien.length === 0) { %>
+            <tr>
+              <td colspan="10" class="text-center">Không có dữ liệu</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
