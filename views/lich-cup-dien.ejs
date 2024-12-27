@@ -620,7 +620,12 @@
           </div>
           <div class="filter-item">
             <label class="form-label">Ngày</label>
-            <input type="date" name="date" class="form-control" value="<%= currentDate %>" onchange="this.form.submit()">
+            <input type="date" 
+                   name="date" 
+                   class="form-control" 
+                   value="<%= currentDate || new Date().toISOString().split('T')[0] %>" 
+                   min="<%= new Date().toISOString().split('T')[0] %>"
+                   onchange="this.form.submit()">
           </div>
           <div class="filter-buttons">
             <button type="submit" class="btn btn-primary">

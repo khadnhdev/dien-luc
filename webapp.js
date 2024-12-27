@@ -352,8 +352,14 @@ app.get('/congty/:id', (req, res) => {
 });
 
 app.get('/lich-cup-dien', async (req, res) => {
-  const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
+  let { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
   
+  // Nếu không có date được chọn, sử dụng ngày hiện tại
+  if (!date) {
+    const today = new Date();
+    date = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+  }
+
   // Hàm helper để tạo URL phân trang
   const getPageUrl = (pageNum) => {
     const url = new URL(`${req.protocol}://${req.get('host')}${req.path}`);
@@ -405,7 +411,7 @@ app.get('/lich-cup-dien', async (req, res) => {
     }
     
     if (date) {
-      const whereClause = ` AND date(thoi_gian_bat_dau) = date(?)`;
+      const whereClause = ` AND date(thoi_gian_bat_dau) >= date(?)`;
       query += whereClause;
       countQuery += whereClause;
       params.push(date);
