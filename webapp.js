@@ -731,6 +731,30 @@ app.get('/api', (req, res) => {
   res.render('api');
 });
 
+// Route điều khoản sử dụng
+app.get('/terms', (req, res) => {
+  res.render('terms', { 
+    user: req.user,
+    path: '/terms'
+  });
+});
+
+// Route chính sách bảo mật
+app.get('/privacy', (req, res) => {
+  res.render('privacy', { 
+    user: req.user,
+    path: '/privacy'
+  });
+});
+
+// Route nguồn dữ liệu
+app.get('/data-sources', (req, res) => {
+  res.render('data-sources', { 
+    user: req.user,
+    path: '/data-sources'
+  });
+});
+
 app.listen(port, () => {
   console.log(`Webapp đang chạy tại http://localhost:${port}`);
 }); 

@@ -1,0 +1,125 @@
+<%- include('header', { 
+  title: 'Chính sách Bảo mật',
+  customStyles: `
+    .privacy-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 24px 24px;
+    }
+    
+    .privacy-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .privacy-section {
+      margin-bottom: 3rem;
+    }
+
+    .privacy-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .privacy-section h3 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .privacy-section p, .privacy-section li {
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .privacy-section ul {
+      padding-left: 1.5rem;
+    }
+
+    .privacy-section li {
+      margin-bottom: 0.5rem;
+    }
+  `
+}) %>
+
+<div class="privacy-header">
+  <div class="container">
+    <h1>Chính sách Bảo mật</h1>
+    <p class="mb-0">Cập nhật lần cuối: <%= new Date().toLocaleDateString('vi-VN') %></p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="privacy-content">
+    <div class="privacy-section">
+      <h2>1. Thông tin Chúng tôi Thu thập</h2>
+      <h3>1.1. Thông tin Tài khoản</h3>
+      <p>Khi bạn đăng ký tài khoản, chúng tôi thu thập:</p>
+      <ul>
+        <li>Địa chỉ email Google của bạn</li>
+        <li>Tên hiển thị từ tài khoản Google</li>
+        <li>Google ID để xác thực API</li>
+      </ul>
+
+      <h3>1.2. Thông tin Sử dụng</h3>
+      <p>Chúng tôi cũng thu thập thông tin về:</p>
+      <ul>
+        <li>Các khu vực bạn đăng ký theo dõi</li>
+        <li>Lịch sử truy cập và sử dụng dịch vụ</li>
+        <li>Thông tin thiết bị và trình duyệt</li>
+      </ul>
+    </div>
+
+    <div class="privacy-section">
+      <h2>2. Cách Chúng tôi Sử dụng Thông tin</h2>
+      <p>Chúng tôi sử dụng thông tin thu thập để:</p>
+      <ul>
+        <li>Cung cấp dịch vụ thông báo lịch cúp điện</li>
+        <li>Cải thiện trải nghiệm người dùng</li>
+        <li>Gửi thông báo qua email khi có lịch cúp điện mới</li>
+        <li>Phân tích và tối ưu hóa hiệu suất hệ thống</li>
+      </ul>
+    </div>
+
+    <div class="privacy-section">
+      <h2>3. Bảo mật Thông tin</h2>
+      <p>
+        Chúng tôi cam kết bảo vệ thông tin của bạn bằng các biện pháp bảo mật phù hợp,
+        bao gồm mã hóa dữ liệu, firewall, và kiểm soát truy cập.
+      </p>
+    </div>
+
+    <div class="privacy-section">
+      <h2>4. Chia sẻ Thông tin</h2>
+      <p>
+        Chúng tôi không chia sẻ thông tin cá nhân của bạn với bên thứ ba, 
+        trừ khi được yêu cầu bởi pháp luật hoặc có sự đồng ý của bạn.
+      </p>
+    </div>
+
+    <div class="privacy-section">
+      <h2>5. Quyền của Người dùng</h2>
+      <p>Bạn có quyền:</p>
+      <ul>
+        <li>Truy cập và xem thông tin cá nhân của mình</li>
+        <li>Yêu cầu cập nhật hoặc xóa thông tin</li>
+        <li>Hủy đăng ký nhận thông báo</li>
+        <li>Yêu cầu giải thích về chính sách bảo mật</li>
+      </ul>
+    </div>
+
+    <div class="privacy-section">
+      <h2>6. Liên hệ</h2>
+      <p>
+        Nếu bạn có bất kỳ câu hỏi nào về chính sách bảo mật của chúng tôi,
+        vui lòng liên hệ qua email: support@lichcupdien.com
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %> 

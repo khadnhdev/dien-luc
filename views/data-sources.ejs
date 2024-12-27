@@ -1,0 +1,190 @@
+<%- include('header', { 
+  title: 'Nguồn Dữ liệu',
+  customStyles: `
+    .sources-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 24px 24px;
+    }
+    
+    .sources-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .source-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+      transition: transform 0.2s;
+    }
+
+    .source-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .source-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .source-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--primary-color);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .source-title {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .source-subtitle {
+      color: #6c757d;
+      margin: 0;
+    }
+
+    .source-content {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
+    .disclaimer {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .disclaimer h3 {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .disclaimer p {
+      color: #6c757d;
+      margin: 0;
+    }
+  `
+}) %>
+
+<div class="sources-header">
+  <div class="container">
+    <h1>Nguồn Dữ liệu</h1>
+    <p class="mb-0">Thông tin được tổng hợp từ các nguồn chính thống</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="sources-content">
+    <!-- EVN Miền Bắc -->
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-icon">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div>
+          <h2 class="source-title">EVN Miền Bắc</h2>
+          <p class="source-subtitle">Tổng Công ty Điện lực Miền Bắc</p>
+        </div>
+      </div>
+      <div class="source-content">
+        <p>
+          Cung cấp thông tin lịch cúp điện cho khu vực miền Bắc Việt Nam. 
+          Dữ liệu được cập nhật thường xuyên từ cổng thông tin chăm sóc khách hàng chính thức.
+        </p>
+        <a href="https://cskh.npc.com.vn/" target="_blank" class="source-link">
+          <i class="bi bi-box-arrow-up-right"></i>
+          Truy cập trang chính thức
+        </a>
+      </div>
+    </div>
+
+    <!-- EVN Miền Trung -->
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-icon">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div>
+          <h2 class="source-title">EVN Miền Trung</h2>
+          <p class="source-subtitle">Tổng Công ty Điện lực Miền Trung</p>
+        </div>
+      </div>
+      <div class="source-content">
+        <p>
+          Cung cấp thông tin lịch cúp điện cho khu vực miền Trung Việt Nam.
+          Thông tin được đồng bộ trực tiếp từ hệ thống quản lý của EVN Miền Trung.
+        </p>
+        <a href="https://cskh.cpc.vn/" target="_blank" class="source-link">
+          <i class="bi bi-box-arrow-up-right"></i>
+          Truy cập trang chính thức
+        </a>
+      </div>
+    </div>
+
+    <!-- EVN Miền Nam -->
+    <div class="source-card">
+      <div class="source-header">
+        <div class="source-icon">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div>
+          <h2 class="source-title">EVN Miền Nam</h2>
+          <p class="source-subtitle">Tổng Công ty Điện lực Miền Nam</p>
+        </div>
+      </div>
+      <div class="source-content">
+        <p>
+          Cung cấp thông tin lịch cúp điện cho khu vực miền Nam Việt Nam.
+          Dữ liệu được cập nhật liên tục từ hệ thống thông tin khách hàng của EVN Miền Nam.
+        </p>
+        <a href="https://cskh.evnspc.vn/" target="_blank" class="source-link">
+          <i class="bi bi-box-arrow-up-right"></i>
+          Truy cập trang chính thức
+        </a>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <h3>Lưu ý quan trọng</h3>
+      <p>
+        Dữ liệu trên trang web của chúng tôi được tổng hợp tự động từ các nguồn chính thống nêu trên.
+        Tuy nhiên, để đảm bảo chính xác nhất, chúng tôi khuyến nghị người dùng nên kiểm tra thêm
+        thông tin từ các trang web chính thức của các Tổng Công ty Điện lực.
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %> 

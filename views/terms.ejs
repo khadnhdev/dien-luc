@@ -1,0 +1,119 @@
+<%- include('header', { 
+  title: 'Điều khoản Sử dụng',
+  customStyles: `
+    .terms-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 24px 24px;
+    }
+    
+    .terms-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .terms-section {
+      margin-bottom: 3rem;
+    }
+
+    .terms-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .terms-section h3 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .terms-section p, .terms-section li {
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .terms-section ul {
+      padding-left: 1.5rem;
+    }
+
+    .terms-section li {
+      margin-bottom: 0.5rem;
+    }
+  `
+}) %>
+
+<div class="terms-header">
+  <div class="container">
+    <h1>Điều khoản Sử dụng</h1>
+    <p class="mb-0">Cập nhật lần cuối: <%= new Date().toLocaleDateString('vi-VN') %></p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="terms-content">
+    <div class="terms-section">
+      <h2>1. Giới thiệu</h2>
+      <p>
+        Chào mừng bạn đến với Lịch Cúp Điện. Bằng việc truy cập và sử dụng dịch vụ của chúng tôi, 
+        bạn đồng ý tuân thủ và chịu ràng buộc bởi các điều khoản và điều kiện này.
+      </p>
+    </div>
+
+    <div class="terms-section">
+      <h2>2. Sử dụng Dịch vụ</h2>
+      <h3>2.1. Đăng ký Tài khoản</h3>
+      <p>
+        Để sử dụng đầy đủ các tính năng của dịch vụ, bạn cần đăng ký tài khoản bằng tài khoản Google.
+        Bạn đồng ý cung cấp thông tin chính xác và cập nhật khi được yêu cầu trong quá trình đăng ký.
+      </p>
+
+      <h3>2.2. Bảo mật Tài khoản</h3>
+      <p>
+        Bạn chịu trách nhiệm duy trì tính bảo mật của tài khoản và mật khẩu của mình.
+        Thông báo cho chúng tôi ngay lập tức nếu phát hiện bất kỳ truy cập trái phép nào.
+      </p>
+    </div>
+
+    <div class="terms-section">
+      <h2>3. Quyền và Trách nhiệm</h2>
+      <h3>3.1. Quyền của Người dùng</h3>
+      <ul>
+        <li>Truy cập và sử dụng các tính năng của dịch vụ</li>
+        <li>Nhận thông báo về lịch cúp điện qua email</li>
+        <li>Quản lý danh sách theo dõi của mình</li>
+        <li>Yêu cầu hỗ trợ kỹ thuật khi cần thiết</li>
+      </ul>
+
+      <h3>3.2. Trách nhiệm của Người dùng</h3>
+      <ul>
+        <li>Không chia sẻ thông tin đăng nhập với người khác</li>
+        <li>Không sử dụng dịch vụ cho mục đích bất hợp pháp</li>
+        <li>Không gây quá tải hoặc làm gián đoạn hệ thống</li>
+      </ul>
+    </div>
+
+    <div class="terms-section">
+      <h2>4. Giới hạn Trách nhiệm</h2>
+      <p>
+        Chúng tôi cố gắng cung cấp thông tin chính xác nhất về lịch cúp điện, 
+        tuy nhiên không đảm bảo tính chính xác tuyệt đối của thông tin. 
+        Người dùng nên kiểm tra thêm từ các nguồn chính thống khác.
+      </p>
+    </div>
+
+    <div class="terms-section">
+      <h2>5. Thay đổi Điều khoản</h2>
+      <p>
+        Chúng tôi có quyền thay đổi các điều khoản này vào bất kỳ lúc nào. 
+        Những thay đổi sẽ có hiệu lực ngay sau khi được đăng tải trên website. 
+        Việc tiếp tục sử dụng dịch vụ sau khi thay đổi đồng nghĩa với việc bạn chấp nhận những thay đổi đó.
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %> 

@@ -7,25 +7,44 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse bg-white shadow-sm rounded-bottom" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/">
-            <i class="bi bi-building"></i> Công ty điện lực
-          </a>
+          <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">Trang chủ</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/lich-cup-dien">
-            <i class="bi bi-calendar-event"></i> Lịch cúp điện
+          <a class="nav-link <%= path === '/lich-cup-dien' ? 'active' : '' %>" href="/lich-cup-dien">
+            Lịch cúp điện
           </a>
         </li>
-        <% if (locals.user) { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/subscriptions">
-              <i class="bi bi-bell"></i> Đăng ký thông báo
-            </a>
-          </li>
-        <% } %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Thông tin
+          </a>
+          <ul class="dropdown-menu dropdown-menu-light">
+            <li>
+              <a class="dropdown-item <%= path === '/data-sources' ? 'active' : '' %>" href="/data-sources">
+                <i class="bi bi-database me-2"></i>
+                Nguồn dữ liệu
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <a class="dropdown-item <%= path === '/terms' ? 'active' : '' %>" href="/terms">
+                <i class="bi bi-file-text me-2"></i>
+                Điều khoản sử dụng
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item <%= path === '/privacy' ? 'active' : '' %>" href="/privacy">
+                <i class="bi bi-shield-check me-2"></i>
+                Chính sách bảo mật
+              </a>
+            </li>
+          </ul>
+        </li>
       </ul>
       
       <div class="navbar-nav">
@@ -49,6 +68,63 @@
           </a>
         <% } %>
       </div>
+      
+      <!-- Mobile only: Show user section when top header is hidden -->
+      <div class="d-lg-none border-top mt-2 pt-2">
+        <% if (locals.user) { %>
+          <div class="d-flex align-items-center gap-2 p-2">
+            <% if (user.picture) { %>
+              <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle" width="32" height="32">
+            <% } %>
+            <div>
+              <strong class="d-block text-dark"><%= user.name %></strong>
+              <a href="/auth/logout" class="text-muted small">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+              </a>
+            </div>
+          </div>
+        <% } else { %>
+          <a href="/login" class="btn btn-primary w-100">
+            <i class="bi bi-google me-2"></i>
+            Đăng nhập với Google
+          </a>
+        <% } %>
+      </div>
     </div>
   </div>
 </nav> 
+
+<style>
+  /* Dropdown styles */
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  
+  .dropdown-item {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+  }
+  
+  .dropdown-item.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .dropdown-divider {
+    margin: 0.5rem 0;
+  }
+  
+  /* Ensure dropdown is visible on hover */
+  .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+  }
+</style> 

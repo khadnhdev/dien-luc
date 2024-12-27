@@ -1,6 +1,115 @@
 <%- include('header', { 
-  title: 'Quản lý Đăng ký Theo dõi',
+  title: 'Theo dõi Lịch Cúp Điện',
   customStyles: `
+    /* Modern UI styles */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 24px 24px;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .stats-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .stats-content strong {
+      display: block;
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    /* Developer section */
+    .dev-section {
+      margin-top: 2rem;
+      border-top: 1px dashed #dee2e6;
+      padding-top: 2rem;
+    }
+    
+    .dev-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6c757d;
+      cursor: pointer;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .dev-header:hover {
+      color: var(--primary-color);
+    }
+    
+    .dev-header i {
+      transition: transform 0.2s;
+    }
+    
+    .dev-header.collapsed i {
+      transform: rotate(-90deg);
+    }
+    
+    .dev-content {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .api-key-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .api-docs-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+    
+    .api-docs-link:hover {
+      text-decoration: underline;
+    }
+    
     /* Google ID styles */
     code {
       background: #f8f9fa;
@@ -128,6 +237,74 @@
     .card-body {
       flex: 1;
     }
+    
+    /* Footer styles */
+    .footer {
+      background: #f8f9fa;
+      padding: 3rem 0;
+      margin-top: 4rem;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .footer-section h5 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .footer-section p {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-links a {
+      color: #6c757d;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary-color);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #e9ecef;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .footer {
+        padding: 2rem 0;
+        margin-top: 2rem;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
   `
 }) %>
 
@@ -177,48 +354,73 @@
   </div>
 </div>
 
-<div class="container mt-4">
-  <h1>Quản lý Đăng ký Theo dõi</h1>
-  
-  <!-- Google ID Section -->
-  <div class="card mb-4 mx-0">
-    <div class="card-body">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <label class="form-label mb-0">Google ID của bạn:</label>
-          <div class="d-flex align-items-center gap-2">
+<div class="container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Theo dõi Lịch Cúp Điện</h1>
+      <p class="page-subtitle">
+        Nhận thông báo qua email khi có lịch cúp điện mới tại khu vực bạn quan tâm
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Card -->
+  <div class="stats-card mb-4">
+    <div class="stats-icon">
+      <i class="bi bi-bell"></i>
+    </div>
+    <div class="stats-content">
+      <strong><%= subscriptions.length %>/<%= maxSubscriptions %> khu vực</strong>
+      <span class="text-muted">Bạn có thể theo dõi thêm <%= maxSubscriptions - subscriptions.length %> khu vực nữa</span>
+    </div>
+  </div>
+
+  <!-- Developer Section -->
+  <div class="container">
+    <div class="dev-section">
+      <div class="dev-header" onclick="toggleDevMode()" id="devHeader">
+        <i class="bi bi-chevron-down"></i>
+        <h6 class="mb-0">
+          Developer Tools
+        </h6>
+      </div>
+      <div class="dev-content collapse" id="devContent">
+        <div class="api-key-section">
+          <div class="flex-grow-1">
+            <small class="text-muted d-block mb-1">API Authentication Key</small>
             <code id="googleId" class="user-select-all">
               <span id="maskedId"><%= user.google_id.substring(0, 6) %>•••••••••••</span>
               <span id="fullId" style="display: none"><%= user.google_id %></span>
             </code>
-            <button class="btn btn-link btn-sm p-0" onclick="toggleGoogleId()" title="Hiện/Ẩn">
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-light btn-sm" onclick="toggleGoogleId()" title="Hiện/Ẩn">
               <i class="bi bi-eye" id="toggleIcon"></i>
             </button>
-            <button class="btn btn-link btn-sm p-0" onclick="copyGoogleId()" title="Copy">
+            <button class="btn btn-light btn-sm" onclick="copyGoogleId()" title="Copy">
               <i class="bi bi-clipboard"></i>
             </button>
           </div>
         </div>
-        <div class="text-muted small">
-          <i class="bi bi-info-circle"></i>
-          Sử dụng Google ID này để gọi API
-        </div>
+        <a href="/api" class="api-docs-link">
+          <i class="bi bi-book"></i>
+          Xem tài liệu API
+        </a>
       </div>
     </div>
   </div>
-  
-  <div class="alert alert-info">
-    Bạn có thể đăng ký theo dõi tối đa <%= maxSubscriptions %> công ty.
-    Hiện tại: <%= subscriptions.length %>/<%= maxSubscriptions %>
-  </div>
 
   <% if (subscriptions.length < maxSubscriptions) { %>
-    <div class="row subscription-steps">
+    <div class="row subscription-steps g-4">
       <!-- Chọn miền -->
       <div class="col-md-4">
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">1. Chọn khu vực</h5>
+            <h5 class="mb-0">
+              <i class="bi bi-geo-alt me-2"></i>
+              Chọn khu vực
+            </h5>
           </div>
           <div class="card-body company-select">
             <div class="company-item zone-item <%= !selectedZone ? 'selected' : '' %>" 
@@ -273,7 +475,10 @@
   <% } %>
 
   <div class="mt-4">
-    <h2>Danh sách đăng ký</h2>
+    <h2 class="d-flex align-items-center gap-2 mb-4">
+      <i class="bi bi-bell"></i>
+      Khu vực đang theo dõi
+    </h2>
     <% if (subscriptions.length === 0) { %>
       <div class="alert alert-warning">
         Bạn chưa đăng ký theo dõi công ty nào
@@ -317,6 +522,55 @@
   </div>
 </div>
 
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h5>Về Lịch Cúp Điện</h5>
+        <p>
+          Dịch vụ thông báo lịch cúp điện tự động, giúp bạn luôn cập nhật 
+          thông tin mới nhất về lịch cúp điện tại khu vực quan tâm.
+        </p>
+      </div>
+      
+      <div class="footer-section">
+        <h5>Tính năng</h5>
+        <ul class="footer-links">
+          <li><a href="#"><i class="bi bi-bell me-2"></i>Thông báo qua email</a></li>
+          <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Theo dõi nhiều khu vực</a></li>
+          <li><a href="#"><i class="bi bi-clock-history me-2"></i>Cập nhật liên tục</a></li>
+          <li><a href="#"><i class="bi bi-shield-check me-2"></i>Thông tin chính xác</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h5>Liên kết</h5>
+        <ul class="footer-links">
+          <li><a href="/api">API Documentation</a></li>
+          <li><a href="/terms">Điều khoản sử dụng</a></li>
+          <li><a href="/privacy">Chính sách bảo mật</a></li>
+          <li><a href="/data-sources">Nguồn dữ liệu</a></li>
+          <li><a href="#">Hướng dẫn sử dụng</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h5>Hỗ trợ</h5>
+        <ul class="footer-links">
+          <li><a href="#"><i class="bi bi-envelope me-2"></i>support@lichcupdien.com</a></li>
+          <li><a href="#"><i class="bi bi-github me-2"></i>GitHub Repository</a></li>
+          <li><a href="#"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© <%= new Date().getFullYear() %> Lịch Cúp Điện. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
 <script defer>
 function toggleGoogleId() {
   const maskedId = document.getElementById('maskedId');
@@ -353,6 +607,23 @@ async function copyGoogleId() {
   } catch (err) {
     console.error('Failed to copy:', err);
   }
+}
+
+function toggleDevMode() {
+  const devContent = document.getElementById('devContent');
+  const devHeader = document.getElementById('devHeader');
+  const isVisible = devContent.classList.contains('show');
+  
+  if (isVisible) {
+    devContent.classList.remove('show');
+    devHeader.classList.add('collapsed');
+  } else {
+    devContent.classList.add('show');
+    devHeader.classList.remove('collapsed');
+  }
+  
+  // Save preference
+  localStorage.setItem('devMode', !isVisible);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -623,6 +894,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add event listener for date change
   document.getElementById('scheduleDate').addEventListener('change', (e) => {
     loadScheduleData(e.target.value);
+  });
+
+  // Restore dev mode state
+  document.addEventListener('DOMContentLoaded', function() {
+    const devMode = localStorage.getItem('devMode') === 'true';
+    if (devMode) {
+      document.getElementById('devContent').classList.add('show');
+      document.getElementById('devHeader').classList.remove('collapsed');
+    }
   });
 });
 </script>

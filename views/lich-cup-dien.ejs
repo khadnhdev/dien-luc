@@ -521,11 +521,59 @@
       align-items: center;
       gap: 0.5rem;
     }
+    
+    /* Container styles */
+    .main-container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Filter section */
+    .filter-section {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Company select styles */
+    .company-select {
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .company-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    /* Schedule table styles */
+    .schedule-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      margin-top: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Date picker styles */
+    .date-picker-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
   `
 }) %>
 
 <body>
-  <div class="container mt-4">
+  <div class="container mt-4 main-container">
     <!-- Stats Section -->
     <div class="stats-card">
       <div class="row align-items-center">
