@@ -53,6 +53,81 @@
     .table .btn i {
       margin-right: 0.25rem;
     }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .subscription-steps {
+        margin-bottom: 2rem;
+      }
+      
+      .subscription-steps .card {
+        margin-bottom: 1rem;
+      }
+      
+      .company-select {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      
+      .table-responsive {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+        width: calc(100% + 2rem);
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .action-buttons .btn,
+      .action-buttons form {
+        width: 100%;
+      }
+      
+      #scheduleModal .modal-dialog {
+        margin: 0.5rem;
+        max-width: none;
+      }
+    }
+    
+    /* Desktop enhancements */
+    @media (min-width: 769px) {
+      .subscription-steps {
+        margin: 2rem 0;
+      }
+      
+      .company-select {
+        min-height: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+    }
+    
+    /* Common styles */
+    .company-select {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,0,0,.2) transparent;
+    }
+    
+    .company-select::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .company-select::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,.2);
+      border-radius: 3px;
+    }
+    
+    .card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-body {
+      flex: 1;
+    }
   `
 }) %>
 
@@ -106,7 +181,7 @@
   <h1>Quản lý Đăng ký Theo dõi</h1>
   
   <!-- Google ID Section -->
-  <div class="card mb-4">
+  <div class="card mb-4 mx-0">
     <div class="card-body">
       <div class="d-flex align-items-center justify-content-between">
         <div>
@@ -138,7 +213,7 @@
   </div>
 
   <% if (subscriptions.length < maxSubscriptions) { %>
-    <div class="row">
+    <div class="row subscription-steps">
       <!-- Chọn miền -->
       <div class="col-md-4">
         <div class="card">
@@ -219,12 +294,12 @@
                 <td><%= sub.ten_cong_ty_con %></td>
                 <td><%= new Date(sub.created_at).toLocaleString('vi-VN') %></td>
                 <td>
-                  <div class="d-flex gap-2">
+                  <div class="d-flex gap-2 action-buttons">
                     <button type="button" class="btn btn-sm btn-info" 
                             onclick="showScheduleDirectly('<%= sub.ma_cong_ty_con %>', '<%= sub.ten_cong_ty_con %>')">
                       <i class="bi bi-calendar"></i> Xem lịch
                     </button>
-                    <form action="/subscriptions/<%= sub.id %>" method="POST" style="display:inline">
+                    <form action="/subscriptions/<%= sub.id %>" method="POST">
                       <input type="hidden" name="_method" value="DELETE">
                       <button type="submit" class="btn btn-sm btn-danger" 
                               onclick="return confirm('Bạn có chắc muốn hủy đăng ký?')">
