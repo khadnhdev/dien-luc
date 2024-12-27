@@ -349,6 +349,43 @@ app.get('/api/companies', checkApiAuth, async (req, res) => {
   }
 });
 
+app.get('/api/subcompanies', checkApiAuth, async (req, res) => {
+  const { company } = req.query;
+  
+  if (!company) {
+    return res.status(400).json({
+      success: false,
+      error: 'Missing company parameter'
+    });
+  }
+
+  try {
+    const subCompanies = await new Promise((resolve, reject) => {
+      db.all(
+        'SELECT ma_cong_ty_con, ten_cong_ty_con FROM cong_ty_con WHERE id_cong_ty_cha = ?',
+        [company],
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+
+    res.json({
+      success: true,
+      data: {
+        companies: subCompanies
+      }
+    });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Lỗi server'
+    });
+  }
+});
+
 // API lấy danh sách lịch cúp điện
 app.get('/api/outages', checkApiAuth, async (req, res) => {
   const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;

@@ -236,12 +236,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if (zone) {
       document.querySelector('#companyList').innerHTML = '<div class="text-center">Đang tải...</div>';
       // Load danh sách công ty điện lực theo zone
-      fetch(`/api/companies?zone=${zone}`)
+      fetch(`/api/companies?zone=${zone}`, {
+        headers: {
+          'X-Google-ID': document.getElementById('fullId').textContent
+        }
+      })
         .then(res => res.json())
-        .then(companies => {
+        .then(response => {
+          if (!response.success) {
+            throw new Error(response.error || 'Failed to fetch companies');
+          }
+          
+          const companies = response.data.companies;
           const html = companies.map(company => `
-            <div class="company-item" data-company-id="${company.ma_dien_luc}">
-              ${company.ten_dien_luc}
+            <div class="company-item" data-company-id="${company.id_cong_ty}">
+              ${company.ten_cong_ty}
             </div>
           `).join('');
           document.querySelector('#companyList').innerHTML = html || '<div class="text-center">Không có dữ liệu</div>';
@@ -250,6 +259,11 @@ document.addEventListener('DOMContentLoaded', function() {
           document.querySelectorAll('#companyList .company-item').forEach(item => {
             item.addEventListener('click', () => selectCompany(item.dataset.companyId));
           });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('#companyList').innerHTML = 
+            '<div class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu</div>';
         });
     } else {
       document.querySelector('#companyList').innerHTML = '<div class="text-center">Vui lòng chọn khu vực</div>';
@@ -263,9 +277,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.querySelector('#subCompanyList').innerHTML = '<div class="text-center">Đang tải...</div>';
     
-    fetch(`/api/subcompanies?company=${companyId}`)
+    fetch(`/api/subcompanies?company=${companyId}`, {
+      headers: {
+        'X-Google-ID': document.getElementById('fullId').textContent
+      }
+    })
       .then(res => res.json())
-      .then(companies => {
+      .then(response => {
+        if (!response.success) {
+          throw new Error(response.error || 'Failed to fetch sub-companies');
+        }
+        
+        const companies = response.data.companies;
         const html = companies.map(company => {
           const isSubscribed = subscriptions
             .some(s => s.ma_cong_ty_con === company.ma_cong_ty_con);
