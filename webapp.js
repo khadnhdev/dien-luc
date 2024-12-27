@@ -363,6 +363,28 @@ app.get('/lich-cup-dien', async (req, res) => {
   };
   
   try {
+    // Nếu không có zone được chọn, trả về trang mặc định
+    if (!zone) {
+      return res.render('lich-cup-dien', {
+        lichCupDien: [],
+        congTyList: [],
+        congTyConList: [],
+        currentZone: null,
+        currentDate: date,
+        currentMaDienLuc: null,
+        currentMaCongTyCon: null,
+        capNhatGanNhat: null,
+        pagination: {
+          page: 1,
+          limit,
+          totalItems: 0,
+          totalPages: 0
+        },
+        getPageUrl: () => '#',
+        user: req.user
+      });
+    }
+
     let query = `
       SELECT * FROM lich_cup_dien
       WHERE 1=1
