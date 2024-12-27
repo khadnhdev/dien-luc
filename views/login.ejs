@@ -1,39 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Đăng nhập - EVN Manager</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
+<%- include('header', { 
+  title: 'Đăng nhập',
+  customStyles: `
     .login-container {
-      min-height: calc(100vh - 200px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
+      min-height: calc(100vh - 300px);
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 3rem 1rem;
     }
     
     .login-card {
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.05);
+      border-radius: 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,.1);
       overflow: hidden;
       width: 100%;
-      max-width: 900px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary-color), #0143a3);
     }
     
     .login-row {
       display: flex;
       align-items: stretch;
+      min-height: 600px;
     }
     
     .login-content {
-      padding: 3rem;
+      padding: 4rem;
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     
     .login-image {
       background: linear-gradient(135deg, var(--primary-color), #0143a3);
-      padding: 3rem;
+      padding: 4rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -48,23 +59,82 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 600px;
-      height: 600px;
-      background: rgba(255,255,255,.1);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(255,255,255,.15) 0%, rgba(255,255,255,0) 70%);
       border-radius: 50%;
       transform: translate(-50%, -50%);
     }
     
+    .login-brand {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .login-brand-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: white;
+      font-size: 2.5rem;
+      box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2);
+      transform: rotate(-5deg);
+    }
+    
     .login-title {
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 2.5rem;
+      font-weight: 800;
       margin-bottom: 1rem;
-      position: relative;
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
     }
     
     .login-subtitle {
       font-size: 1.1rem;
-      opacity: 0.9;
+      color: #6c757d;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .google-btn {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 16px;
+      padding: 1.25rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #495057;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+    
+    .google-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,.1);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .google-btn i {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+    
+    .features-title {
+      font-size: 2rem;
+      font-weight: 700;
       margin-bottom: 2rem;
       position: relative;
     }
@@ -79,114 +149,154 @@
     .features-list li {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
       font-size: 1.1rem;
+      opacity: 0;
+      animation: fadeInRight 0.5s ease forwards;
     }
     
+    .features-list li:nth-child(1) { animation-delay: 0.2s; }
+    .features-list li:nth-child(2) { animation-delay: 0.4s; }
+    .features-list li:nth-child(3) { animation-delay: 0.6s; }
+    .features-list li:nth-child(4) { animation-delay: 0.8s; }
+    
     .features-list li i {
-      width: 32px;
-      height: 32px;
+      width: 48px;
+      height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,.2);
-      border-radius: 8px;
+      background: rgba(255,255,255,.15);
+      border-radius: 14px;
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
     }
     
-    .login-button {
-      background: white;
+    .features-list li:hover i {
+      transform: scale(1.1);
+      background: rgba(255,255,255,.25);
+    }
+    
+    .login-footer {
+      text-align: center;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    
+    .login-footer a {
       color: var(--primary-color);
-      border: none;
-      border-radius: 12px;
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: all 0.2s;
+      text-decoration: none;
     }
     
-    .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    .login-footer a:hover {
+      text-decoration: underline;
     }
     
-    .login-button i {
-      font-size: 1.2rem;
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 991px) {
       .login-row {
         flex-direction: column;
+        min-height: auto;
       }
       
       .login-content, .login-image {
-        padding: 2rem;
+        padding: 3rem 2rem;
       }
       
-      .login-title {
-        font-size: 1.75rem;
-        text-align: center;
-      }
-      
-      .login-subtitle {
-        text-align: center;
-      }
-      
-      .features-list {
+      .login-brand {
         margin-bottom: 2rem;
       }
       
-      .login-button {
-        width: 100%;
-        justify-content: center;
+      .login-title {
+        font-size: 2rem;
+      }
+      
+      .features-title {
+        text-align: center;
+      }
+      
+      .features-list li {
+        animation: fadeInUp 0.5s ease forwards;
       }
     }
-  </style>
-</head>
-<body>
-  <%- include('navbar') %>
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `
+}) %>
 
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-row">
-        <div class="login-content">
-          <h1 class="login-title">Đăng nhập</h1>
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-row">
+      <div class="login-content">
+        <div class="login-brand">
+          <div class="login-brand-icon">
+            <i class="bi bi-lightning-charge"></i>
+          </div>
+          <h1 class="login-title">Lịch Cúp Điện</h1>
           <p class="login-subtitle">
-            Đăng nhập để nhận thông báo lịch cúp điện qua email và quản lý đăng ký của bạn
+            Đăng nhập để nhận thông báo và quản lý theo dõi lịch cúp điện
           </p>
-          <a href="/auth/google" class="login-button">
-            <i class="bi bi-google"></i>
-            Đăng nhập với Google
-          </a>
         </div>
-        <div class="login-image">
-          <h2 class="login-title">Tính năng</h2>
-          <ul class="features-list">
-            <li>
-              <i class="bi bi-bell"></i>
-              <span>Nhận thông báo qua email khi có lịch cúp điện mới</span>
-            </li>
-            <li>
-              <i class="bi bi-geo-alt"></i>
-              <span>Đăng ký theo dõi nhiều khu vực khác nhau</span>
-            </li>
-            <li>
-              <i class="bi bi-clock-history"></i>
-              <span>Cập nhật thông tin liên tục từ các công ty điện lực</span>
-            </li>
-            <li>
-              <i class="bi bi-gear"></i>
-              <span>Tùy chỉnh cài đặt thông báo theo nhu cầu</span>
-            </li>
-          </ul>
+
+        <a href="/auth/google" class="google-btn">
+          <i class="bi bi-google"></i>
+          Đăng nhập với Google
+        </a>
+
+        <div class="login-footer">
+          Bằng việc đăng nhập, bạn đồng ý với 
+          <a href="#">Điều khoản sử dụng</a> và 
+          <a href="#">Chính sách bảo mật</a> của chúng tôi
         </div>
+      </div>
+
+      <div class="login-image">
+        <h2 class="features-title">Tính năng nổi bật</h2>
+        <ul class="features-list">
+          <li>
+            <i class="bi bi-bell"></i>
+            <span>Nhận thông báo qua email khi có lịch cúp điện mới</span>
+          </li>
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            <span>Đăng ký theo dõi nhiều khu vực khác nhau</span>
+          </li>
+          <li>
+            <i class="bi bi-clock-history"></i>
+            <span>Cập nhật thông tin liên tục từ các công ty điện lực</span>
+          </li>
+          <li>
+            <i class="bi bi-shield-check"></i>
+            <span>Thông tin chính xác và đáng tin cậy</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<%- include('footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
