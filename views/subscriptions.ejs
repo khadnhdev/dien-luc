@@ -429,6 +429,53 @@
         margin-bottom: 0;
       }
     }
+    
+    /* Developer API section styles */
+    .dev-section {
+      margin: 2rem auto;
+      max-width: 800px;
+    }
+    
+    .api-key-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .api-key-section code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      color: #495057;
+      font-size: 0.9rem;
+      background: transparent;
+      padding: 0;
+    }
+    
+    .api-key-section .btn-link {
+      color: #6c757d;
+      transition: all 0.2s;
+    }
+    
+    .api-key-section .btn-link:hover {
+      color: var(--primary-color);
+      transform: scale(1.1);
+    }
+    
+    .api-docs-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .api-docs-link:hover {
+      text-decoration: underline;
+    }
   `
 }) %>
 
@@ -659,6 +706,37 @@
       </button>
     </div>
   <% } %>
+
+  <!-- Developer API Section -->
+  <div class="dev-section mt-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-code-slash fs-4 text-primary"></i>
+          <h5 class="card-title mb-0">Developer API</h5>
+        </div>
+        
+        <p class="text-muted mb-3">
+          Sử dụng Google ID sau đây để xác thực khi gọi API:
+        </p>
+        
+        <div class="api-key-section">
+          <code class="flex-grow-1"><%= user.google_id %></code>
+          <button class="btn btn-link p-0" 
+                  onclick="navigator.clipboard.writeText('<%= user.google_id %>')">
+            <i class="bi bi-clipboard"></i>
+          </button>
+        </div>
+        
+        <div class="mt-3">
+          <a href="/api" class="api-docs-link">
+            <i class="bi bi-book"></i>
+            Xem tài liệu API
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="footer">
