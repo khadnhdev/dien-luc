@@ -9,6 +9,7 @@ const session = require('express-session');
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 const { initializeOutagesDatabase } = require('./database-outages');
+const emailService = require('./email-service');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -835,6 +836,52 @@ app.get('/data-sources', (req, res) => {
     user: req.user,
     path: '/data-sources'
   });
+});
+
+// Route để gửi email tổng hợp lịch cúp điện
+app.post('/send-schedule-summary', ensureAuthenticated, async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    
+    // Lấy danh sách đăng ký của user
+    const subscriptions = await new Promise((resolve, reject) => {
+      db.all('SELECT * FROM user_subscriptions WHERE user_id = ?', 
+        [user_id], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+      });
+    });
+    
+    // Lấy lịch cúp điện 3 ngày
+    const schedules = await new Promise((resolve, reject) => {
+      const maCongTyConList = subscriptions.map(s => s.ma_cong_ty_con);
+      if (maCongTyConList.length === 0) {
+        resolve([]);
+        return;
+      }
+      
+      db.all(
+        `SELECT * FROM lich_cup_dien 
+         WHERE ma_cong_ty_con IN (${maCongTyConList.map(() => '?').join(',')})
+         AND date(thoi_gian_bat_dau) >= date('now')
+         AND date(thoi_gian_bat_dau) <= date('now', '+2 days')
+         ORDER BY thoi_gian_bat_dau ASC`,
+        maCongTyConList,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        }
+      );
+    });
+    
+    // Gửi email
+    await emailService.sendScheduleSummaryEmail(req.user.email, schedules);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi server' });
+  }
 });
 
 app.listen(port, () => {

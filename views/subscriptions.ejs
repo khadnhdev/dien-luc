@@ -628,9 +628,13 @@
   <div class="row align-items-center mb-4">
     <div class="col">
       <h2 class="h4 mb-0">Danh sách theo dõi</h2>
-   
     </div>
-   
+    <div class="col-auto">
+      <button class="btn btn-outline-primary" onclick="sendScheduleSummary()">
+        <i class="bi bi-envelope me-2"></i>
+        Nhận tổng hợp lịch cúp điện
+      </button>
+    </div>
   </div>
 
   <!-- Subscription Cards -->
@@ -1101,6 +1105,28 @@
       } catch (error) {
         console.error('Error:', error);
         alert('Có lỗi xảy ra khi tải lịch cúp điện');
+      }
+    }
+
+    async function sendScheduleSummary() {
+      try {
+        const response = await fetch('/send-schedule-summary', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('Email tổng hợp đã được gửi thành công!');
+        } else {
+          alert('Có lỗi xảy ra: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi gửi email');
       }
     }
   </script>
