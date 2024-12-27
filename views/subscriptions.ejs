@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quản lý Đăng ký Theo dõi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    let selectedZone = '<%= selectedZone || "" %>';
+    let selectedCompany = '<%= selectedCompany || "" %>';
+    const subscriptions = <%- JSON.stringify(subscriptions) %>;
+
+    function selectZone(zone) {
+      selectedZone = zone;
+      selectedCompany = '';
+      
+      // Reset danh sách công ty điện lực và điện lực
+      document.querySelector('#subCompanyList').innerHTML = '<div class="text-center">Vui lòng chọn công ty điện lực</div>';
+      
+      if (zone) {
+        document.querySelector('#companyList').innerHTML = '<div class="text-center">Đang tải...</div>';
+        // Load danh sách công ty điện lực theo zone
+        fetch(`/api/companies?zone=${zone}`)
+          .then(res => res.json())
+          .then(companies => {
+            const html = companies.map(company => `
+              <div class="company-item" data-company-id="${company.ma_dien_luc}">
+                ${company.ten_dien_luc}
+              </div>
+            `).join('');
+            document.querySelector('#companyList').innerHTML = html || '<div class="text-center">Không có dữ liệu</div>';
+            
+            // Thêm event listeners cho các công ty mới
+            document.querySelectorAll('#companyList .company-item').forEach(item => {
+              item.addEventListener('click', () => selectCompany(item.dataset.companyId));
+            });
+          });
+      } else {
+        document.querySelector('#companyList').innerHTML = '<div class="text-center">Vui lòng chọn khu vực</div>';
+      }
+      
+      refreshUI();
+    }
+
+    function selectCompany(companyId) {
+      selectedCompany = companyId;
+      
+      document.querySelector('#subCompanyList').innerHTML = '<div class="text-center">Đang tải...</div>';
+      
+      fetch(`/api/subcompanies?company=${companyId}`)
+        .then(res => res.json())
+        .then(companies => {
+          const html = companies.map(company => {
+            const isSubscribed = subscriptions
+              .some(s => s.ma_cong_ty_con === company.ma_cong_ty_con);
+            
+            return `
+              <div class="company-item ${isSubscribed ? 'disabled' : ''}"
+                   data-company-con="${company.ma_cong_ty_con}"
+                   ${isSubscribed ? '' : 'data-can-subscribe="true"'}>
+                ${company.ten_cong_ty_con}
+                ${isSubscribed ? '<span class="badge bg-success float-end">Đã đăng ký</span>' : ''}
+              </div>
+            `;
+          }).join('');
+          document.querySelector('#subCompanyList').innerHTML = html || '<div class="text-center">Không có dữ liệu</div>';
+          
+          // Thêm event listeners cho các công ty con mới
+          document.querySelectorAll('#subCompanyList .company-item[data-can-subscribe]').forEach(item => {
+            item.addEventListener('click', () => submitSubscription(item.dataset.companyCon));
+          });
+        });
+      
+      refreshUI();
+    }
+
+    function submitSubscription(maCongTyCon) {
+      document.getElementById('selectedCompanyCon').value = maCongTyCon;
+      document.getElementById('subscriptionForm').submit();
+    }
+
+    function refreshUI() {
+      document.querySelectorAll('.company-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      if (selectedZone) {
+        document.querySelector(`.company-item[data-zone="${selectedZone}"]`)?.classList.add('selected');
+      }
+    }
+      
+    // Thêm event listeners cho các khu vực
+    document.querySelectorAll('.zone-item').forEach(item => {
+      item.addEventListener('click', () => selectZone(item.dataset.zone));
+    });
+  });
+  </script>
+  <style>
+    .company-select {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .company-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    .company-item:hover {
+      background-color: #f8f9fa;
+    }
+    .company-item.selected {
+      background-color: #e9ecef;
+    }
+    .company-item.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <%- include('navbar') %>
+
+  <div class="container mt-4">
+    <h1>Quản lý Đăng ký Theo dõi</h1>
+    
+    <div class="alert alert-info">
+      Bạn có thể đăng ký theo dõi tối đa <%= maxSubscriptions %> công ty.
+      Hiện tại: <%= subscriptions.length %>/<%= maxSubscriptions %>
+    </div>
+
+    <% if (subscriptions.length < maxSubscriptions) { %>
+      <div class="row">
+        <!-- Chọn miền -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">1. Chọn khu vực</h5>
+            </div>
+            <div class="card-body company-select">
+              <div class="company-item zone-item <%= !selectedZone ? 'selected' : '' %>" 
+                   data-zone="">
+                Tất cả khu vực
+              </div>
+              <div class="company-item zone-item <%= selectedZone === 'mien_bac' ? 'selected' : '' %>"
+                   data-zone="mien_bac">
+                Miền Bắc
+              </div>
+              <div class="company-item zone-item <%= selectedZone === 'mien_trung' ? 'selected' : '' %>"
+                   data-zone="mien_trung">
+                Miền Trung
+              </div>
+              <div class="company-item zone-item <%= selectedZone === 'mien_nam' ? 'selected' : '' %>"
+                   data-zone="mien_nam">
+                Miền Nam
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chọn công ty điện lực -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">2. Chọn công ty điện lực</h5>
+            </div>
+            <div class="card-body company-select" id="companyList">
+              <div class="text-center">Vui lòng chọn khu vực</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chọn điện lực -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">3. Chọn điện lực</h5>
+            </div>
+            <div class="card-body company-select" id="subCompanyList">
+              <div class="text-center">Vui lòng chọn công ty điện lực</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="subscriptionForm" action="/subscriptions" method="POST">
+        <input type="hidden" name="ma_cong_ty_con" id="selectedCompanyCon">
+      </form>
+    <% } %>
+
+    <div class="mt-4">
+      <h2>Danh sách đăng ký</h2>
+      <% if (subscriptions.length === 0) { %>
+        <div class="alert alert-warning">
+          Bạn chưa đăng ký theo dõi công ty nào
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Công ty</th>
+                <th>Ngày đăng ký</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% subscriptions.forEach(function(sub) { %>
+                <tr>
+                  <td><%= sub.ten_cong_ty_con %></td>
+                  <td><%= new Date(sub.created_at).toLocaleString('vi-VN') %></td>
+                  <td>
+                    <form action="/subscriptions/<%= sub.id %>" method="POST" style="display:inline">
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="submit" class="btn btn-sm btn-danger" 
+                              onclick="return confirm('Bạn có chắc muốn hủy đăng ký?')">
+                        Hủy đăng ký
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html> 

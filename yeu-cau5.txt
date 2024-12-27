@@ -1,0 +1,5 @@
+tôi muốn làm 1 hệ thống đăng nhập cho người dùng (bằng tài khoản google)
+khi đăng nhập thì người ta có thể lựa chọn nhắc cúp điện qua email.
+
+Người dùng có thể chọn theo dõi tối đa 5 công ty con để theo dõi.
+7 giờ sáng UTC+7 mỗi ngày, Hệ thống sẽ tự động gửi thông báo cúp điện nếu phát hiện có lịch cúp điện mới được cập nhật tại các công ty con được chọn.

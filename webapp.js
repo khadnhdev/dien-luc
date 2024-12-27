@@ -1,16 +1,241 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { db } = require('./database');
 const path = require('path');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
+const nodemailer = require('nodemailer');
+const cron = require('node-cron');
+const { initializeOutagesDatabase } = require('./database-outages');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+// Khởi tạo database
+initializeOutagesDatabase().catch(console.error);
 
 // Cấu hình middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Cấu hình session
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Cấu hình Google OAuth
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
+  },
+  async function(accessToken, refreshToken, profile, cb) {
+    try {
+      // Lưu hoặc cập nhật user
+      const user = await new Promise((resolve, reject) => {
+        db.get('SELECT * FROM users WHERE google_id = ?', [profile.id], (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        });
+      });
+
+      if (!user) {
+        // Tạo user mới
+        const result = await new Promise((resolve, reject) => {
+          db.run(
+            'INSERT INTO users (google_id, email, name, picture) VALUES (?, ?, ?, ?)',
+            [profile.id, profile.emails[0].value, profile.displayName, profile.photos[0].value],
+            function(err) {
+              if (err) reject(err);
+              else {
+                // Lấy user vừa tạo
+                db.get('SELECT * FROM users WHERE id = ?', [this.lastID], (err, newUser) => {
+                  if (err) reject(err);
+                  else resolve(newUser);
+                });
+              }
+            }
+          );
+        });
+        return cb(null, result);
+      }
+      return cb(null, user);
+    } catch (error) {
+      return cb(error);
+    }
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  db.get('SELECT * FROM users WHERE id = ?', [id], (err, user) => {
+    if (err) return done(err);
+    if (!user) return done(null, false);
+    done(err, user);
+  });
+});
+
+// Routes xác thực
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/subscriptions');
+  }
+);
+
+// Route quản lý đăng ký theo dõi
+app.get('/subscriptions', ensureAuthenticated, async (req, res) => {
+  const { zone, company } = req.query;
+  
+  try {
+    const [subscriptions, allCompanies] = await Promise.all([
+      // Lấy danh sách đăng ký của user
+      new Promise((resolve, reject) => {
+        db.all('SELECT * FROM user_subscriptions WHERE user_id = ?', 
+          [req.user.id], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows || []);
+        });
+      }),
+      // Lấy danh sách tất cả công ty con với thông tin công ty cha
+      new Promise((resolve, reject) => {
+        db.all(`
+          SELECT cc.*, c.zone, c.ten_cong_ty as ten_dien_luc, c.id_cong_ty as ma_dien_luc
+          FROM cong_ty_con cc
+          JOIN cong_ty_dien_luc c ON cc.id_cong_ty_cha = c.id_cong_ty
+          ORDER BY c.zone, c.ten_cong_ty, cc.ten_cong_ty_con
+        `, [], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        });
+      })
+    ]);
+
+    res.render('subscriptions', { 
+      user: req.user,
+      subscriptions,
+      allCompanies,
+      maxSubscriptions: 5,
+      selectedZone: zone,
+      selectedCompany: company
+    });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).send('Lỗi server');
+  }
+});
+
+// Route để thêm đăng ký theo dõi
+app.post('/subscriptions', ensureAuthenticated, async (req, res) => {
+  const { ma_cong_ty_con } = req.body;
+  const user_id = req.user.id;
+
+  try {
+    // Kiểm tra số lượng đăng ký hiện tại
+    const currentCount = await new Promise((resolve, reject) => {
+      db.get(
+        'SELECT COUNT(*) as count FROM user_subscriptions WHERE user_id = ?',
+        [user_id],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row.count);
+        }
+      );
+    });
+
+    if (currentCount >= 5) {
+      return res.status(400).send('Bạn chỉ có thể đăng ký tối đa 5 công ty');
+    }
+
+    // Lấy thông tin công ty con
+    const company = await new Promise((resolve, reject) => {
+      db.get(
+        'SELECT ma_cong_ty_con, ten_cong_ty_con FROM cong_ty_con WHERE ma_cong_ty_con = ?',
+        [ma_cong_ty_con],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        }
+      );
+    });
+
+    if (!company) {
+      return res.status(404).send('Không tìm thấy công ty');
+    }
+
+    // Thêm đăng ký mới
+    await new Promise((resolve, reject) => {
+      db.run(
+        'INSERT INTO user_subscriptions (user_id, ma_cong_ty_con, ten_cong_ty_con) VALUES (?, ?, ?)',
+        [user_id, company.ma_cong_ty_con, company.ten_cong_ty_con],
+        (err) => {
+          if (err) {
+            if (err.message.includes('UNIQUE constraint failed')) {
+              reject(new Error('Bạn đã đăng ký theo dõi công ty này'));
+            } else {
+              reject(err);
+            }
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+
+    res.redirect('/subscriptions');
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).send(error.message || 'Lỗi server');
+  }
+});
+
+// Route để hủy đăng ký theo dõi
+app.post('/subscriptions/:id', ensureAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+
+  try {
+    await new Promise((resolve, reject) => {
+      db.run(
+        'DELETE FROM user_subscriptions WHERE id = ? AND user_id = ?',
+        [id, user_id],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+
+    res.redirect('/subscriptions');
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).send('Lỗi server');
+  }
+});
+
+// Middleware kiểm tra đăng nhập
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/auth/google');
+}
 
 // Routes
 app.get('/', async (req, res) => {
@@ -219,6 +444,80 @@ app.post('/lich-cup-dien/delete-all', (req, res) => {
     }
     res.redirect('/lich-cup-dien');
   });
+});
+
+// Route đăng nhập
+app.get('/login', (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/subscriptions');
+  }
+  res.render('login');
+});
+
+// Route đăng xuất
+app.get('/auth/logout', (req, res) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
+
+// Thêm user vào tất cả các views
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
+// API lấy danh sách công ty điện lực theo zone
+app.get('/api/companies', async (req, res) => {
+  const { zone } = req.query;
+  
+  try {
+    const companies = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT DISTINCT c.id_cong_ty as ma_dien_luc, c.ten_cong_ty as ten_dien_luc
+        FROM cong_ty_dien_luc c
+        WHERE c.zone = ?
+        ORDER BY c.ten_cong_ty
+      `;
+      
+      db.all(query, [zone], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
+    
+    res.json(companies);
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// API lấy danh sách điện lực theo công ty
+app.get('/api/subcompanies', async (req, res) => {
+  const { company } = req.query;
+  
+  try {
+    const companies = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT ma_cong_ty_con, ten_cong_ty_con
+        FROM cong_ty_con
+        WHERE id_cong_ty_cha = ?
+        ORDER BY ten_cong_ty_con
+      `;
+      
+      db.all(query, [company], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
+    
+    res.json(companies);
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
 });
 
 app.listen(port, () => {

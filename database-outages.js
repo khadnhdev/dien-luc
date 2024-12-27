@@ -52,8 +52,39 @@ function initializeOutagesDatabase() {
           so_lich_cup_dien INTEGER,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
-          if (err) reject(err);
-          else resolve();
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          // Tạo bảng users
+          db.run(`CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            google_id TEXT UNIQUE,
+            email TEXT UNIQUE,
+            name TEXT,
+            picture TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          )`, (err) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            // Tạo bảng user_subscriptions
+            db.run(`CREATE TABLE IF NOT EXISTS user_subscriptions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER,
+              ma_cong_ty_con TEXT,
+              ten_cong_ty_con TEXT,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              FOREIGN KEY (user_id) REFERENCES users(id),
+              UNIQUE(user_id, ma_cong_ty_con)
+            )`, (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
         });
       });
     });
