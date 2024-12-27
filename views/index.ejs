@@ -1,46 +1,78 @@
 <%- include('header', { 
-  title: 'Quản lý Công ty Điện lực'
+  title: 'Trang chủ'
 }) %>
 
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>Danh sách Công ty Điện lực</h1>
-      <a href="/lich-cup-dien" class="btn btn-primary">Xem lịch cúp điện</a>
+<div class="container mt-5">
+  <div class="row align-items-center mb-5">
+    <div class="col-md-6">
+      <h1 class="hero-title mb-4">
+        <span class="gradient-text">Tra cứu lịch cúp điện</span>
+        <br>trên toàn quốc
+      </h1>
+      <p class="lead text-muted mb-4">
+        <i class="bi bi-check2-circle text-primary"></i> Cập nhật thông tin cúp điện mới nhất
+        <br>
+        <i class="bi bi-check2-circle text-primary"></i> Tra cứu nhanh chóng, chính xác
+        <br>
+        <i class="bi bi-check2-circle text-primary"></i> Nhận thông báo qua email
+      </p>
+      <div class="d-flex gap-3">
+        <a href="/lich-cup-dien" class="btn btn-primary btn-lg">
+          <i class="bi bi-search"></i> Tra cứu ngay
+        </a>
+        <a href="/login" class="btn btn-outline-primary btn-lg">
+          <i class="bi bi-bell"></i> Đăng ký thông báo
+        </a>
+      </div>
     </div>
-    
-    <div class="mb-3">
-      <a href="/" class="btn btn-outline-primary <%= !currentZone ? 'active' : '' %>">Tất cả</a>
-      <a href="/?zone=mien_bac" class="btn btn-outline-primary <%= currentZone === 'mien_bac' ? 'active' : '' %>">Miền Bắc</a>
-      <a href="/?zone=mien_trung" class="btn btn-outline-primary <%= currentZone === 'mien_trung' ? 'active' : '' %>">Miền Trung</a>
-      <a href="/?zone=mien_nam" class="btn btn-outline-primary <%= currentZone === 'mien_nam' ? 'active' : '' %>">Miền Nam</a>
+    <div class="col-md-6 text-center">
+      <div class="hero-illustration">
+        <div class="hero-icon">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div class="hero-circles">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+          <div class="circle circle-3"></div>
+        </div>
+      </div>
     </div>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Mã công ty</th>
-          <th>Tên công ty</th>
-          <th>Khu vực</th>
-          <th>Số công ty con</th>
-          <th>Thao tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% congty.forEach(function(cty) { %>
-          <tr>
-            <td><%= cty.id_cong_ty %></td>
-            <td><%= cty.ten_cong_ty %></td>
-            <td><%= cty.zone %></td>
-            <td><%= cty.so_cong_ty_con %></td>
-            <td>
-              <a href="/congty/<%= cty.id_cong_ty %>" class="btn btn-sm btn-info">Chi tiết</a>
-            </td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Danh sách Công ty Điện lực</h2>
+      <div class="btn-group">
+        <a href="/" class="btn btn-outline-primary <%= !currentZone ? 'active' : '' %>">Tất cả</a>
+        <a href="/?zone=mien_bac" class="btn btn-outline-primary <%= currentZone === 'mien_bac' ? 'active' : '' %>">Miền Bắc</a>
+        <a href="/?zone=mien_trung" class="btn btn-outline-primary <%= currentZone === 'mien_trung' ? 'active' : '' %>">Miền Trung</a>
+        <a href="/?zone=mien_nam" class="btn btn-outline-primary <%= currentZone === 'mien_nam' ? 'active' : '' %>">Miền Nam</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <% congty.forEach(function(cty) { %>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= cty.ten_cong_ty %></h5>
+            <p class="card-text text-muted">
+              <i class="bi bi-geo-alt"></i> <%= cty.zone === 'mien_bac' ? 'Miền Bắc' : 
+                                               cty.zone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
+            </p>
+            <p class="card-text">
+              <i class="bi bi-building"></i> <%= cty.so_cong_ty_con %> công ty con
+            </p>
+            <a href="/congty/<%= cty.id_cong_ty %>" class="btn btn-outline-primary">
+              <i class="bi bi-info-circle"></i> Xem chi tiết
+            </a>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
 </body>
 </html> 

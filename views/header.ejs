@@ -1,39 +1,189 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= title %> - EVN Manager</title>
+  <title><%= title %> - Lịch Cúp Điện</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- Các styles chung -->
+  <!-- Styles chung -->
   <style>
+    :root {
+      --primary-color: #0d6efd;
+      --secondary-color: #6c757d;
+    }
+
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      background: white;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .btn {
+      border-radius: 6px;
+      padding: 8px 16px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      border: none;
+    }
+
     .company-select {
       max-height: 400px;
       overflow-y: auto;
+      border-radius: 8px;
     }
+
     .company-item {
-      padding: 10px 15px;
+      padding: 12px 16px;
       border-bottom: 1px solid #eee;
+      transition: all 0.2s;
     }
+
     .company-item:hover {
       background-color: #f8f9fa;
+      transform: translateX(4px);
     }
-    .btn-group .badge {
-      padding: 8px 12px;
+
+    .company-item.selected {
+      background-color: #e7f1ff;
+      border-left: 4px solid var(--primary-color);
     }
-    .modal-body .btn {
-      padding: 1rem;
-      font-size: 1.1rem;
+
+    .alert {
+      border: none;
+      border-radius: 8px;
     }
-    .company-name {
-      font-size: 1.2rem;
-      text-align: center;
-      color: #666;
+
+    .table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: 12px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    /* Hero section styles */
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .hero-illustration {
+      position: relative;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hero-icon {
+      position: relative;
+      z-index: 2;
+      font-size: 6rem;
+      color: var(--primary-color);
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .hero-circles .circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+    
+    .circle-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary-color);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .circle-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--primary-color);
+      animation: pulse 2s ease-in-out infinite 0.3s;
+    }
+    
+    .circle-3 {
+      width: 100px;
+      height: 100px;
+      background: var(--primary-color);
+      animation: pulse 2s ease-in-out infinite 0.6s;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.1; }
+      50% { transform: scale(1.1); opacity: 0.2; }
+      100% { transform: scale(1); opacity: 0.1; }
+    }
+    
+    .lead i {
+      margin-right: 8px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-illustration {
+        height: 300px;
+      }
+      
+      .hero-icon {
+        font-size: 4rem;
+      }
+      
+      .circle-1 { width: 200px; height: 200px; }
+      .circle-2 { width: 150px; height: 150px; }
+      .circle-3 { width: 80px; height: 80px; }
     }
   </style>
 
-  <!-- Thêm styles tùy chỉnh nếu có -->
+  <!-- Styles tùy chỉnh -->
   <% if (locals.customStyles) { %>
     <style>
       <%- customStyles %>

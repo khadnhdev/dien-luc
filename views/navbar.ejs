@@ -1,20 +1,29 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
   <div class="container">
-    <a class="navbar-brand" href="/">EVN Manager</a>
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <i class="bi bi-lightning-charge-fill me-2"></i>
+      Lịch Cúp Điện
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/">Công ty điện lực</a>
+          <a class="nav-link" href="/">
+            <i class="bi bi-building"></i> Công ty điện lực
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/lich-cup-dien">Lịch cúp điện</a>
+          <a class="nav-link" href="/lich-cup-dien">
+            <i class="bi bi-calendar-event"></i> Lịch cúp điện
+          </a>
         </li>
         <% if (locals.user) { %>
           <li class="nav-item">
-            <a class="nav-link" href="/subscriptions">Đăng ký theo dõi</a>
+            <a class="nav-link" href="/subscriptions">
+              <i class="bi bi-bell"></i> Đăng ký thông báo
+            </a>
           </li>
         <% } %>
       </ul>
@@ -22,20 +31,22 @@
       <div class="navbar-nav">
         <% if (locals.user) { %>
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
               <% if (user.picture) { %>
-                <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle" width="24" height="24">
+                <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle me-2" width="32" height="32">
               <% } %>
               <%= user.name %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="/subscriptions">Quản lý đăng ký</a></li>
+              <li><a class="dropdown-item" href="/subscriptions"><i class="bi bi-gear"></i> Quản lý đăng ký</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
+              <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
             </ul>
           </div>
         <% } else { %>
-          <a class="nav-link" href="/login">Đăng nhập</a>
+          <a class="nav-link btn btn-outline-light" href="/login">
+            <i class="bi bi-google"></i> Đăng nhập với Google
+          </a>
         <% } %>
       </div>
     </div>
