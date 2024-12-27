@@ -1,6 +1,15 @@
 <%- include('header', { 
   title: 'Lịch Cúp Điện',
   customStyles: `
+    /* Responsive container */
+    @media (max-width: 768px) {
+      .container {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+    
+    /* Stats card */
     .stats-card {
       background: linear-gradient(135deg, #fff, #f8f9fa);
       border-radius: 20px;
@@ -11,17 +20,16 @@
       overflow: hidden;
     }
     
-    .stats-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 300px;
-      height: 300px;
-      background: linear-gradient(135deg, var(--primary-color), #0143a3);
-      opacity: 0.03;
-      border-radius: 50%;
-      transform: translate(100px, -100px);
+    @media (max-width: 768px) {
+      .stats-card {
+        padding: 1.5rem;
+        text-align: center;
+      }
+      
+      .stats-info {
+        margin-top: 1rem;
+        text-align: center;
+      }
     }
     
     .hero-title {
@@ -67,6 +75,42 @@
       margin-bottom: 2rem;
     }
     
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+    
+    .filter-item {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .filter-section {
+        padding: 1rem;
+      }
+      
+      .filter-item {
+        min-width: 100%;
+      }
+      
+      .filter-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .filter-buttons .btn {
+        flex: 1;
+      }
+    }
+    
     .table td {
       vertical-align: middle;
       max-width: 300px;
@@ -96,6 +140,30 @@
       box-shadow: 0 2px 4px rgba(0,0,0,.05);
     }
     
+    @media (max-width: 992px) {
+      .table-container {
+        padding: 1rem;
+      }
+      
+      .table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+      }
+      
+      .table td, .table th {
+        min-width: 120px;
+        max-width: none;
+      }
+      
+      .table td:first-child {
+        position: sticky;
+        left: 0;
+        background: white;
+        z-index: 1;
+      }
+    }
+    
     .pagination {
       margin-top: 2rem;
     }
@@ -108,6 +176,122 @@
     .form-select:focus, .form-control:focus {
       border-color: var(--primary-color);
       box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    }
+    
+    /* Grid system */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .grid-item {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s;
+    }
+    
+    .grid-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
+    }
+    
+    .grid-item-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .grid-item-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 110, 253, 0.1);
+      border-radius: 12px;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+    
+    .grid-item-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .grid-item-content {
+      color: #6c757d;
+    }
+    
+    /* Responsive table styles */
+    @media (max-width: 768px) {
+      .table-responsive {
+        border: 0;
+      }
+      
+      .table {
+        display: block;
+      }
+      
+      .table thead {
+        display: none;
+      }
+      
+      .table tbody {
+        display: block;
+      }
+      
+      .table tr {
+        display: block;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        padding: 1rem;
+      }
+      
+      .table td {
+        display: block;
+        text-align: left;
+        padding: 0.5rem 0;
+        border: none;
+      }
+      
+      .table td:not(:last-child) {
+        border-bottom: 1px solid #eee;
+      }
+      
+      /* Add labels before content */
+      .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6c757d;
+        display: block;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+      }
+      
+      /* Special styling for reason cell */
+      .reason-cell {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem !important;
+        border-top: 2px solid #f0f0f0 !important;
+      }
+      
+      .reason-cell::before {
+        margin-bottom: 0.5rem;
+      }
     }
   `
 }) %>
@@ -123,7 +307,7 @@
             Tra cứu thông tin cúp điện mới nhất từ các công ty điện lực trên toàn quốc
           </p>
         </div>
-        <div class="col-md-4 text-md-end">
+        <div class="col-md-4 text-md-end stats-info">
           <% if (currentZone && capNhatGanNhat) { %>
             <div class="text-muted mb-2">Cập nhật lần cuối:</div>
             <div class="stats-number">
@@ -163,58 +347,115 @@
       </div>
     <% } %>
 
+    <!-- Quick Stats Grid -->
+    <div class="grid-container">
+      <!-- Khu vực -->
+      <div class="grid-item">
+        <div class="grid-item-header">
+          <div class="grid-item-icon">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <h3 class="grid-item-title">Khu vực</h3>
+        </div>
+        <div class="grid-item-content">
+          <% if (currentZone) { %>
+            <%= currentZone === 'mien_bac' ? 'Miền Bắc' : 
+                currentZone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
+          <% } else { %>
+            Chưa chọn khu vực
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Công ty điện lực -->
+      <div class="grid-item">
+        <div class="grid-item-header">
+          <div class="grid-item-icon">
+            <i class="bi bi-building"></i>
+          </div>
+          <h3 class="grid-item-title">Công ty điện lực</h3>
+        </div>
+        <div class="grid-item-content">
+          <%= currentMaDienLuc ? congTyList.find(ct => ct.ma_dien_luc === currentMaDienLuc)?.ten_dien_luc : 'Tất cả' %>
+        </div>
+      </div>
+
+      <!-- Điện lực -->
+      <div class="grid-item">
+        <div class="grid-item-header">
+          <div class="grid-item-icon">
+            <i class="bi bi-lightning"></i>
+          </div>
+          <h3 class="grid-item-title">Điện lực</h3>
+        </div>
+        <div class="grid-item-content">
+          <%= currentMaCongTyCon ? congTyConList.find(ct => ct.ma_cong_ty_con === currentMaCongTyCon)?.ten_cong_ty_con : 'Tất cả' %>
+        </div>
+      </div>
+
+      <!-- Thời gian -->
+      <div class="grid-item">
+        <div class="grid-item-header">
+          <div class="grid-item-icon">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <h3 class="grid-item-title">Ngày tra cứu</h3>
+        </div>
+        <div class="grid-item-content">
+          <%= currentDate ? new Date(currentDate).toLocaleDateString('vi-VN') : 'Tất cả' %>
+        </div>
+      </div>
+    </div>
+
     <!-- Filter Section -->
     <div class="filter-section">
       <h5 class="mb-3"><i class="bi bi-funnel"></i> Bộ lọc tìm kiếm</h5>
-      <form class="row g-3 align-items-end" id="filterForm">
-        <div class="col-auto">
-          <label class="form-label">Khu vực</label>
-          <select name="zone" class="form-select" onchange="onZoneChange(this)">
-            <option value="">Tất cả khu vực</option>
-            <option value="mien_bac" <%= currentZone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
-            <option value="mien_trung" <%= currentZone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
-            <option value="mien_nam" <%= currentZone === 'mien_nam' ? 'selected' : '' %>>Miền Nam</option>
-          </select>
-        </div>
-        <div class="col-auto">
-          <label class="form-label">Công ty điện lực</label>
-          <select name="ma_dien_luc" class="form-select" onchange="onCongTyChange(this)" <%= !currentZone ? 'disabled' : '' %>>
-            <option value="">Tất cả công ty điện lực</option>
-            <% congTyList.forEach(function(congTy) { %>
-              <option value="<%= congTy.ma_dien_luc %>" 
-                <%= currentMaDienLuc === congTy.ma_dien_luc ? 'selected' : '' %>
-                data-zone="<%= congTy.zone %>">
-                <%= congTy.ten_dien_luc %>
-              </option>
-            <% }); %>
-          </select>
-        </div>
-        <div class="col-auto">
-          <label class="form-label">Điện lực</label>
-          <select name="ma_cong_ty_con" class="form-select" onchange="this.form.submit()" <%= !currentMaDienLuc ? 'disabled' : '' %>>
-            <option value="">Tất cả điện lực</option>
-            <% congTyConList.forEach(function(congTyCon) { %>
-              <option value="<%= congTyCon.ma_cong_ty_con %>" 
-                <%= currentMaCongTyCon === congTyCon.ma_cong_ty_con ? 'selected' : '' %>>
-                <%= congTyCon.ten_cong_ty_con %>
-              </option>
-            <% }); %>
-          </select>
-        </div>
-        <div class="col-auto">
-          <label class="form-label">Ngày</label>
-          <input type="date" name="date" class="form-control" value="<%= currentDate %>" onchange="this.form.submit()">
-        </div>
-        <div class="col-auto">
-          <label class="form-label">&nbsp;</label>
-          <div>
+      <form id="filterForm">
+        <div class="filter-row">
+          <div class="filter-item">
+            <label class="form-label">Khu vực</label>
+            <select name="zone" class="form-select" onchange="onZoneChange(this)">
+              <option value="">Tất cả khu vực</option>
+              <option value="mien_bac" <%= currentZone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
+              <option value="mien_trung" <%= currentZone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
+              <option value="mien_nam" <%= currentZone === 'mien_nam' ? 'selected' : '' %>>Miền Nam</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="form-label">Công ty điện lực</label>
+            <select name="ma_dien_luc" class="form-select" onchange="onCongTyChange(this)" <%= !currentZone ? 'disabled' : '' %>>
+              <option value="">Tất cả công ty điện lực</option>
+              <% congTyList.forEach(function(congTy) { %>
+                <option value="<%= congTy.ma_dien_luc %>" 
+                  <%= currentMaDienLuc === congTy.ma_dien_luc ? 'selected' : '' %>
+                  data-zone="<%= congTy.zone %>">
+                  <%= congTy.ten_dien_luc %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="form-label">Điện lực</label>
+            <select name="ma_cong_ty_con" class="form-select" onchange="this.form.submit()" <%= !currentMaDienLuc ? 'disabled' : '' %>>
+              <option value="">Tất cả điện lực</option>
+              <% congTyConList.forEach(function(congTyCon) { %>
+                <option value="<%= congTyCon.ma_cong_ty_con %>" 
+                  <%= currentMaCongTyCon === congTyCon.ma_cong_ty_con ? 'selected' : '' %>>
+                  <%= congTyCon.ten_cong_ty_con %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="form-label">Ngày</label>
+            <input type="date" name="date" class="form-control" value="<%= currentDate %>" onchange="this.form.submit()">
+          </div>
+          <div class="filter-buttons">
             <button type="submit" class="btn btn-primary">
-              <i class="bi bi-search"></i>
-              Lọc
+              <i class="bi bi-search"></i> Lọc
             </button>
             <a href="/lich-cup-dien" class="btn btn-outline-secondary">
-              <i class="bi bi-x-circle"></i>
-              Xóa bộ lọc
+              <i class="bi bi-x-circle"></i> Xóa bộ lọc
             </a>
           </div>
         </div>
@@ -256,13 +497,13 @@
               <% } else { %>
                 <% lichCupDien.forEach(function(item, index) { %>
                   <tr>
-                    <td><%= index + 1 %></td>
-                    <td><%= item.ten_dien_luc %></td>
-                    <td><%= item.ten_cong_ty_con %></td>
-                    <td><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
-                    <td><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
-                    <td><%= item.khu_vuc %></td>
-                    <td class="reason-cell text-wrap">
+                    <td data-label="STT"><%= index + 1 %></td>
+                    <td data-label="Công ty điện lực"><%= item.ten_dien_luc %></td>
+                    <td data-label="Điện lực"><%= item.ten_cong_ty_con %></td>
+                    <td data-label="Thời gian bắt đầu"><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
+                    <td data-label="Thời gian kết thúc"><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
+                    <td data-label="Khu vực"><%= item.khu_vuc %></td>
+                    <td data-label="Lý do" class="reason-cell text-wrap">
                       <% if (item.ten_tram) { %>
                         <small class="text-muted d-block mb-1">Trạm: <%= item.ten_tram %></small>
                       <% } %>

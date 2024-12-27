@@ -189,20 +189,72 @@
       color: white;
     }
     
+    @media (max-width: 768px) {
+      .top-header {
+        display: none; /* Ẩn top header trên mobile để tiết kiệm không gian */
+      }
+    }
+    
     .top-header a {
       color: rgba(255,255,255,0.9);
       text-decoration: none;
       font-size: 0.9rem;
     }
     
-    .top-header a:hover {
-      color: white;
-    }
-    
     .main-header {
       background: white;
       padding: 1rem 0;
       box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    }
+    
+    .main-header .container {
+      position: relative;
+    }
+    
+    .mobile-menu-toggle {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-toggle {
+        display: block;
+        border: none;
+        background: none;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+      }
+      
+      .main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,.1);
+        border-radius: 0 0 12px 12px;
+      }
+      
+      .main-nav.show {
+        display: block;
+      }
+      
+      .nav {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .nav-item {
+        width: 100%;
+      }
+      
+      .nav-link {
+        width: 100%;
+        text-align: left;
+        padding: 0.75rem 1rem !important;
+      }
     }
     
     .nav-link {
@@ -276,7 +328,10 @@
           <i class="bi bi-lightning-charge-fill me-2"></i>
           <span class="fw-bold">Lịch Cúp Điện</span>
         </a>
-        <nav>
+        <button class="mobile-menu-toggle d-md-none" type="button" onclick="toggleMobileMenu()">
+          <i class="bi bi-list"></i>
+        </button>
+        <nav class="main-nav d-md-block">
           <ul class="nav">
             <li class="nav-item">
               <a class="nav-link <%= title === 'Trang chủ' ? 'active' : '' %>" href="/">
@@ -294,6 +349,17 @@
                   <i class="bi bi-bell"></i> Đăng ký thông báo
                 </a>
               </li>
+              <li class="nav-item d-md-none">
+                <a class="nav-link" href="/auth/logout">
+                  <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </a>
+              </li>
+            <% } else { %>
+              <li class="nav-item d-md-none">
+                <a class="nav-link" href="/login">
+                  <i class="bi bi-google"></i> Đăng nhập với Google
+                </a>
+              </li>
             <% } %>
           </ul>
         </nav>
@@ -301,4 +367,9 @@
     </div>
   </header>
 
-  <%- include('navbar') %> 
+  <script>
+    function toggleMobileMenu() {
+      const nav = document.querySelector('.main-nav');
+      nav.classList.toggle('show');
+    }
+  </script> 
