@@ -1,0 +1,253 @@
+<footer class="footer mt-auto py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Thông tin chính -->
+      <div class="col-lg-4 col-md-6">
+        <h5 class="footer-title">Lịch Cúp Điện</h5>
+        <p class="text-muted mb-3">
+          Cung cấp thông tin lịch cúp điện chính xác và kịp thời từ các công ty điện lực trên toàn quốc.
+        </p>
+        <div class="social-links">
+          <a href="#" class="me-3" title="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="#" class="me-3" title="Twitter">
+            <i class="bi bi-twitter"></i>
+          </a>
+          <a href="#" class="me-3" title="LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="#" title="GitHub">
+            <i class="bi bi-github"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Liên kết nhanh -->
+      <div class="col-lg-2 col-md-6">
+        <h5 class="footer-title">Truy Cập Nhanh</h5>
+        <ul class="footer-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/lich-cup-dien">Lịch cúp điện</a></li>
+          <% if (locals.user) { %>
+            <li><a href="/subscriptions">Đăng ký thông báo</a></li>
+            <li><a href="/auth/logout">Đăng xuất</a></li>
+          <% } else { %>
+            <li><a href="/login">Đăng nhập</a></li>
+          <% } %>
+        </ul>
+      </div>
+
+      <!-- Khu vực -->
+      <div class="col-lg-3 col-md-6">
+        <h5 class="footer-title">Khu Vực</h5>
+        <ul class="footer-links">
+          <li><a href="/lich-cup-dien?zone=mien_bac">Miền Bắc</a></li>
+          <li><a href="/lich-cup-dien?zone=mien_trung">Miền Trung</a></li>
+          <li><a href="/lich-cup-dien?zone=mien_nam">Miền Nam</a></li>
+        </ul>
+      </div>
+
+      <!-- Liên hệ -->
+      <div class="col-lg-3 col-md-6">
+        <h5 class="footer-title">Liên Hệ</h5>
+        <ul class="footer-contact">
+          <li>
+            <i class="bi bi-envelope"></i>
+            <a href="mailto:contact@example.com">contact@example.com</a>
+          </li>
+          <li>
+            <i class="bi bi-telephone"></i>
+            <a href="tel:+84123456789">+84 123 456 789</a>
+          </li>
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            <span>Hà Nội, Việt Nam</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Copyright -->
+    <div class="row align-items-center">
+      <div class="col-md-6 text-center text-md-start">
+        <p class="mb-0">© <%= new Date().getFullYear() %> Lịch Cúp Điện. All rights reserved.</p>
+      </div>
+      <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+        <ul class="footer-bottom-links">
+          <li><a href="#">Điều khoản sử dụng</a></li>
+          <li><a href="#">Chính sách bảo mật</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+.footer {
+  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  border-top: 1px solid rgba(0,0,0,.05);
+}
+
+.footer-title {
+  color: #2d3436;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: var(--primary-color);
+}
+
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.footer-contact a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-contact a:hover {
+  color: var(--primary-color);
+}
+
+.footer-contact i {
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.social-links a {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.social-links a:hover {
+  color: var(--primary-color);
+}
+
+.footer-bottom-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+}
+
+.footer-bottom-links li a {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-bottom-links li a:hover {
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .footer {
+    text-align: center;
+  }
+  
+  .social-links {
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  
+  .footer-contact li {
+    justify-content: center;
+  }
+  
+  .footer-bottom-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+
+/* Hiệu ứng hover cho các liên kết */
+.footer-links a, 
+.footer-contact a, 
+.social-links a,
+.footer-bottom-links a {
+  position: relative;
+}
+
+.footer-links a::after,
+.footer-contact a::after,
+.footer-bottom-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.footer-links a:hover::after,
+.footer-contact a:hover::after,
+.footer-bottom-links a:hover::after {
+  width: 100%;
+}
+
+/* Animation cho social icons */
+.social-links a {
+  display: inline-block;
+  transform: translateY(0);
+  transition: transform 0.2s ease;
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+}
+
+/* Gradient border top */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary-color), #0143a3);
+  opacity: 0.8;
+}
+</style> 
