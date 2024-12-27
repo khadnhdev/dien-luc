@@ -17,6 +17,7 @@
     }
 
     .api-url {
+      position: relative;
       background: #2d3436;
       color: white;
       padding: 1rem;
@@ -59,18 +60,28 @@
     }
 
     .copy-btn {
-      float: right;
-      padding: 0.25rem 0.5rem;
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0.25rem 0.75rem;
       background: rgba(255,255,255,0.1);
       border: none;
       color: white;
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.875rem;
+      transition: all 0.2s ease;
     }
 
     .copy-btn:hover {
       background: rgba(255,255,255,0.2);
+    }
+
+    .api-url code {
+      display: block;
+      padding-right: 4rem; /* Để không bị button đè */
+      color: inherit;
     }
   `
 }) %>
@@ -91,7 +102,7 @@
       </h3>
       <div class="api-url">
         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-        GET /api/companies
+        <code>/api/companies</code>
       </div>
       
       <h5>Query Parameters:</h5>
@@ -144,7 +155,7 @@
       </h3>
       <div class="api-url">
         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-        GET /api/outages
+        <code>/api/outages</code>
       </div>
 
       <h5>Query Parameters:</h5>
@@ -223,15 +234,39 @@
 </div>
 
 <script>
-function copyToClipboard(button) {
-  const url = button.nextElementSibling.textContent.trim();
-  navigator.clipboard.writeText(url);
+async function copyToClipboard(button) {
+  // Lấy URL từ thẻ code trong container
+  const urlContainer = button.closest('.api-url');
+  const codeElement = urlContainer.querySelector('code');
+  const url = codeElement.textContent.trim();
   
-  const originalText = button.textContent;
-  button.textContent = 'Copied!';
-  setTimeout(() => {
-    button.textContent = originalText;
-  }, 2000);
+  try {
+    // Thêm domain vào URL
+    const fullUrl = `${window.location.origin}${url}`;
+    
+    // Copy vào clipboard
+    await navigator.clipboard.writeText(fullUrl);
+    
+    // Thay đổi text của button
+    const originalText = button.textContent;
+    button.textContent = 'Copied!';
+    button.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+    
+    // Reset button sau 2s
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.style.backgroundColor = 'rgba(255,255,255,0.1)';
+    }, 2000);
+  } catch (err) {
+    console.error('Failed to copy:', err);
+    button.textContent = 'Error!';
+    button.style.backgroundColor = 'rgba(220, 53, 69, 0.2)';
+    
+    setTimeout(() => {
+      button.textContent = 'Copy';
+      button.style.backgroundColor = 'rgba(255,255,255,0.1)';
+    }, 2000);
+  }
 }
 </script>
 
