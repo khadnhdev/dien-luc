@@ -2,16 +2,60 @@
   title: 'Lịch Cúp Điện',
   customStyles: `
     .stats-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      background: linear-gradient(135deg, #fff, #f8f9fa);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.05);
       margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stats-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      opacity: 0.03;
+      border-radius: 50%;
+      transform: translate(100px, -100px);
+    }
+    
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: #6c757d;
+      margin-bottom: 1.5rem;
     }
     
     .stats-number {
       font-size: 1.5rem;
       font-weight: 600;
+      color: #0143a3;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stats-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 110, 253, 0.1);
+      border-radius: 12px;
       color: var(--primary-color);
     }
     
@@ -74,8 +118,8 @@
     <div class="stats-card">
       <div class="row align-items-center">
         <div class="col-md-8">
-          <h1 class="mb-0">Lịch Cúp Điện</h1>
-          <p class="text-muted mt-2 mb-0">
+          <h1 class="hero-title">Lịch Cúp Điện</h1>
+          <p class="hero-subtitle">
             Tra cứu thông tin cúp điện mới nhất từ các công ty điện lực trên toàn quốc
           </p>
         </div>
@@ -83,15 +127,23 @@
           <% if (currentZone && capNhatGanNhat) { %>
             <div class="text-muted mb-2">Cập nhật lần cuối:</div>
             <div class="stats-number">
-              <i class="bi bi-clock-history"></i>
+              <span class="stats-icon">
+                <i class="bi bi-clock-history"></i>
+              </span>
               <%= new Date(capNhatGanNhat.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
             </div>
             <div class="text-muted mt-2">
-              <i class="bi bi-lightning"></i> <%= capNhatGanNhat.so_lich_cup_dien %> lịch cúp điện
+              <span class="stats-icon">
+                <i class="bi bi-lightning"></i>
+              </span>
+              <%= capNhatGanNhat.so_lich_cup_dien %> lịch cúp điện
             </div>
           <% } else { %>
             <div class="text-muted">
-              <i class="bi bi-info-circle"></i> Chọn khu vực để xem thông tin cập nhật
+              <span class="stats-icon">
+                <i class="bi bi-info-circle"></i>
+              </span>
+              Chọn khu vực để xem thông tin cập nhật
             </div>
           <% } %>
         </div>

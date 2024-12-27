@@ -181,6 +181,46 @@
       .circle-2 { width: 150px; height: 150px; }
       .circle-3 { width: 80px; height: 80px; }
     }
+
+    /* Header styles */
+    .top-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      padding: 0.5rem 0;
+      color: white;
+    }
+    
+    .top-header a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .top-header a:hover {
+      color: white;
+    }
+    
+    .main-header {
+      background: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      padding: 0.5rem 1rem !important;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    
+    .nav-link:hover {
+      background: rgba(13, 110, 253, 0.1);
+      color: var(--primary-color);
+    }
+    
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white !important;
+    }
   </style>
 
   <!-- Styles tùy chỉnh -->
@@ -191,4 +231,74 @@
   <% } %>
 </head>
 <body>
+  <!-- Top Header -->
+  <div class="top-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <a href="tel:19001909" class="me-3">
+            <i class="bi bi-telephone"></i> 1900 1909
+          </a>
+          <a href="mailto:support@lichcupdien.com">
+            <i class="bi bi-envelope"></i> support@lichcupdien.com
+          </a>
+        </div>
+        <div>
+          <% if (locals.user) { %>
+            <div class="dropdown d-inline-block">
+              <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <% if (user.picture) { %>
+                  <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle me-1" width="24" height="24">
+                <% } %>
+                <%= user.name %>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/subscriptions"><i class="bi bi-gear"></i> Quản lý đăng ký</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+              </ul>
+            </div>
+          <% } else { %>
+            <a href="/login">
+              <i class="bi bi-google"></i> Đăng nhập với Google
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="bi bi-lightning-charge-fill me-2"></i>
+          <span class="fw-bold">Lịch Cúp Điện</span>
+        </a>
+        <nav>
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link <%= title === 'Trang chủ' ? 'active' : '' %>" href="/">
+                <i class="bi bi-house"></i> Trang chủ
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <%= title === 'Lịch Cúp Điện' ? 'active' : '' %>" href="/lich-cup-dien">
+                <i class="bi bi-calendar-event"></i> Lịch cúp điện
+              </a>
+            </li>
+            <% if (locals.user) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= title === 'Quản lý Đăng ký' ? 'active' : '' %>" href="/subscriptions">
+                  <i class="bi bi-bell"></i> Đăng ký thông báo
+                </a>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
   <%- include('navbar') %> 
