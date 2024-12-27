@@ -17,7 +17,8 @@ const port = process.env.PORT || 3000;
 initializeOutagesDatabase().catch(console.error);
 
 // Cấu hình middleware
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -116,10 +117,16 @@ app.get('/subscriptions', ensureAuthenticated, async (req, res) => {
       // Lấy danh sách tất cả công ty con với thông tin công ty cha
       new Promise((resolve, reject) => {
         db.all(`
-          SELECT cc.*, c.zone, c.ten_cong_ty as ten_dien_luc, c.id_cong_ty as ma_dien_luc
+          SELECT DISTINCT 
+            c.id_cong_ty as ma_dien_luc,
+            c.ten_cong_ty as ten_dien_luc, 
+            c.zone,
+            cc.ma_cong_ty_con,
+            cc.ten_cong_ty_con
           FROM cong_ty_con cc
           JOIN cong_ty_dien_luc c ON cc.id_cong_ty_cha = c.id_cong_ty
-          ORDER BY c.zone, c.ten_cong_ty, cc.ten_cong_ty_con
+          GROUP BY c.id_cong_ty, cc.ma_cong_ty_con
+          ORDER BY c.zone, c.ten_cong_ty
         `, [], (err, rows) => {
           if (err) reject(err);
           else resolve(rows || []);
@@ -144,12 +151,38 @@ app.get('/subscriptions', ensureAuthenticated, async (req, res) => {
 
 // Route để thêm đăng ký theo dõi
 app.post('/subscriptions', ensureAuthenticated, async (req, res) => {
-  const { ma_cong_ty_con } = req.body;
+  if (!req.body) {
+    return res.status(400).json({ success: false, error: 'Request body is empty' });
+  }
+  const { zone, ma_dien_luc, ma_cong_ty_con } = req.body;
+  console.log(req.body);
   const user_id = req.user.id;
-
   try {
-    // Kiểm tra số lượng đăng ký hiện tại
-    const currentCount = await new Promise((resolve, reject) => {
+    // Kiểm tra xem đã đăng ký công ty điện lực này chưa
+    const existingSubscription = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT us.*, c.id_cong_ty as ma_dien_luc
+         FROM user_subscriptions us
+         JOIN cong_ty_con cc ON us.ma_cong_ty_con = cc.ma_cong_ty_con
+         JOIN cong_ty_dien_luc c ON cc.id_cong_ty_cha = c.id_cong_ty
+         WHERE us.user_id = ? AND c.id_cong_ty = ?`,
+         [user_id, ma_dien_luc],
+         (err, row) => {
+           if (err) reject(err);
+           else resolve(row);
+         }
+      );
+    });
+
+    if (existingSubscription) {
+      return res.status(400).json({
+        success: false,
+        error: 'Bạn đã đăng ký theo dõi một điện lực thuộc công ty điện lực này'
+      });
+    }
+
+    // Kiểm tra số lượng đăng ký
+    const subscriptionCount = await new Promise((resolve, reject) => {
       db.get(
         'SELECT COUNT(*) as count FROM user_subscriptions WHERE user_id = ?',
         [user_id],
@@ -160,49 +193,68 @@ app.post('/subscriptions', ensureAuthenticated, async (req, res) => {
       );
     });
 
-    if (currentCount >= 5) {
-      return res.status(400).send('Bạn chỉ có thể đăng ký tối đa 5 công ty');
-    }
-
-    // Lấy thông tin công ty con
-    const company = await new Promise((resolve, reject) => {
-      db.get(
-        'SELECT ma_cong_ty_con, ten_cong_ty_con FROM cong_ty_con WHERE ma_cong_ty_con = ?',
-        [ma_cong_ty_con],
-        (err, row) => {
-          if (err) reject(err);
-          else resolve(row);
-        }
-      );
-    });
-
-    if (!company) {
-      return res.status(404).send('Không tìm thấy công ty');
+    if (subscriptionCount >= 5) {
+      return res.status(400).json({
+        success: false,
+        error: 'Bạn chỉ có thể đăng ký tối đa 5 khu vực'
+      });
     }
 
     // Thêm đăng ký mới
     await new Promise((resolve, reject) => {
-      db.run(
-        'INSERT INTO user_subscriptions (user_id, ma_cong_ty_con, ten_cong_ty_con) VALUES (?, ?, ?)',
-        [user_id, company.ma_cong_ty_con, company.ten_cong_ty_con],
-        (err) => {
+      console.log('Received ma_cong_ty_con:', ma_cong_ty_con);
+      
+      // Lấy thông tin công ty con trước khi insert
+      const query = `SELECT cc.ma_cong_ty_con, cc.ten_cong_ty_con
+                    FROM cong_ty_con cc 
+                    WHERE cc.ma_cong_ty_con = ?`;
+      console.log('Query:', query);
+      console.log('Params:', [ma_cong_ty_con]);
+
+      db.get(query,
+        [ma_cong_ty_con],
+        (err, company) => {
           if (err) {
-            if (err.message.includes('UNIQUE constraint failed')) {
-              reject(new Error('Bạn đã đăng ký theo dõi công ty này'));
-            } else {
-              reject(err);
-            }
-          } else {
-            resolve();
+            console.error('Database error:', err);
+            reject(err);
+            return;
           }
+          
+          console.log('Found company:', company);
+          
+          if (!company) {
+            console.log('No company found for ma_cong_ty_con:', ma_cong_ty_con);
+            reject(new Error('Không tìm thấy thông tin công ty con'));
+            return;
+          }
+          
+          // Insert với đầy đủ thông tin
+          db.run(
+            'INSERT INTO user_subscriptions (user_id, ma_cong_ty_con, ten_cong_ty_con) VALUES (?, ?, ?)',
+            [user_id, ma_cong_ty_con, company.ten_cong_ty_con],
+            (err) => {
+              if (err) {
+                console.error('Insert error:', err);
+                reject(err);
+              }
+              else resolve();
+            }
+          );
         }
       );
     });
 
-    res.redirect('/subscriptions');
+    res.json({
+      success: true,
+      message: 'Đăng ký thành công'
+    });
+
   } catch (error) {
     console.error('Lỗi:', error);
-    res.status(500).send(error.message || 'Lỗi server');
+    res.status(500).json({
+      success: false,
+      error: 'Lỗi server'
+    });
   }
 });
 
