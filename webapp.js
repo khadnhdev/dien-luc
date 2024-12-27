@@ -237,32 +237,99 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/auth/google');
 }
 
-// Routes
+// Thêm user vào tất cả các views
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
+// API lấy danh sách công ty điện lực theo zone
+app.get('/api/companies', async (req, res) => {
+  const { zone } = req.query;
+  
+  try {
+    const companies = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT DISTINCT c.id_cong_ty as ma_dien_luc, c.ten_cong_ty as ten_dien_luc
+        FROM cong_ty_dien_luc c
+        WHERE c.zone = ?
+        ORDER BY c.ten_cong_ty
+      `;
+      
+      db.all(query, [zone], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
+    
+    res.json(companies);
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// API lấy danh sách điện lực theo công ty
+app.get('/api/subcompanies', async (req, res) => {
+  const { company } = req.query;
+  
+  try {
+    const companies = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT ma_cong_ty_con, ten_cong_ty_con
+        FROM cong_ty_con
+        WHERE id_cong_ty_cha = ?
+        ORDER BY ten_cong_ty_con
+      `;
+      
+      db.all(query, [company], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
+    
+    res.json(companies);
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// Route trang chủ
 app.get('/', async (req, res) => {
   const { zone } = req.query;
-  let query = `
-    SELECT 
-      c.id_cong_ty,
-      c.ten_cong_ty,
-      c.zone,
-      COUNT(cc.ma_cong_ty_con) as so_cong_ty_con
-    FROM cong_ty_dien_luc c
-    LEFT JOIN cong_ty_con cc ON c.id_cong_ty = cc.id_cong_ty_cha
-  `;
   
-  if (zone) {
-    query += ` WHERE c.zone = '${zone}'`;
-  }
-  
-  query += ` GROUP BY c.id_cong_ty`;
+  try {
+    const congty = await new Promise((resolve, reject) => {
+      let query = `
+        SELECT c.*, COUNT(cc.id) as so_cong_ty_con 
+        FROM cong_ty_dien_luc c
+        LEFT JOIN cong_ty_con cc ON c.id_cong_ty = cc.id_cong_ty_cha
+      `;
+      
+      const params = [];
+      if (zone) {
+        query += ' WHERE c.zone = ?';
+        params.push(zone);
+      }
+      
+      query += ' GROUP BY c.id_cong_ty ORDER BY c.ten_cong_ty';
+      
+      db.all(query, params, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
 
-  db.all(query, [], (err, congty) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Lỗi database');
-    }
-    res.render('index', { congty, currentZone: zone });
-  });
+    res.render('index', { 
+      congty,
+      currentZone: zone,
+      user: req.user
+    });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).send('Lỗi server');
+  }
 });
 
 app.get('/congty/:id', (req, res) => {
@@ -285,18 +352,16 @@ app.get('/congty/:id', (req, res) => {
 });
 
 app.get('/lich-cup-dien', async (req, res) => {
-  const { zone, date, ma_dien_luc, ma_cong_ty_con, page = 1, limit = 20 } = req.query;
-  const offset = (page - 1) * limit;
-
+  const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
+  
   // Hàm helper để tạo URL phân trang
   const getPageUrl = (pageNum) => {
     const url = new URL(`${req.protocol}://${req.get('host')}${req.path}`);
     const searchParams = new URLSearchParams(req.query);
     searchParams.set('page', pageNum);
-    url.search = searchParams.toString();
-    return url.toString();
+    return '?' + searchParams.toString();
   };
-
+  
   try {
     let query = `
       SELECT * FROM lich_cup_dien
@@ -342,7 +407,7 @@ app.get('/lich-cup-dien', async (req, res) => {
     }
     
     query += ` ORDER BY thoi_gian_bat_dau DESC LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
+    params.push(limit, (page - 1) * limit);
 
     // Thực hiện các truy vấn song song
     const [lichCupDien, totalCount, congTyList, congTyConList, capNhatGanNhat] = await Promise.all([
@@ -426,7 +491,8 @@ app.get('/lich-cup-dien', async (req, res) => {
         totalItems: totalCount,
         totalPages
       },
-      getPageUrl
+      getPageUrl,
+      user: req.user
     });
 
   } catch (error) {
@@ -460,64 +526,6 @@ app.get('/auth/logout', (req, res) => {
     if (err) { return next(err); }
     res.redirect('/');
   });
-});
-
-// Thêm user vào tất cả các views
-app.use((req, res, next) => {
-  res.locals.user = req.user;
-  next();
-});
-
-// API lấy danh sách công ty điện lực theo zone
-app.get('/api/companies', async (req, res) => {
-  const { zone } = req.query;
-  
-  try {
-    const companies = await new Promise((resolve, reject) => {
-      const query = `
-        SELECT DISTINCT c.id_cong_ty as ma_dien_luc, c.ten_cong_ty as ten_dien_luc
-        FROM cong_ty_dien_luc c
-        WHERE c.zone = ?
-        ORDER BY c.ten_cong_ty
-      `;
-      
-      db.all(query, [zone], (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows || []);
-      });
-    });
-    
-    res.json(companies);
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ error: 'Lỗi server' });
-  }
-});
-
-// API lấy danh sách điện lực theo công ty
-app.get('/api/subcompanies', async (req, res) => {
-  const { company } = req.query;
-  
-  try {
-    const companies = await new Promise((resolve, reject) => {
-      const query = `
-        SELECT ma_cong_ty_con, ten_cong_ty_con
-        FROM cong_ty_con
-        WHERE id_cong_ty_cha = ?
-        ORDER BY ten_cong_ty_con
-      `;
-      
-      db.all(query, [company], (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows || []);
-      });
-    });
-    
-    res.json(companies);
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ error: 'Lỗi server' });
-  }
 });
 
 app.listen(port, () => {
