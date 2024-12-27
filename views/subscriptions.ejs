@@ -305,6 +305,130 @@
         gap: 1.5rem;
       }
     }
+    
+    /* Empty state styles */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2rem;
+      background: linear-gradient(120deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+      margin: 2rem auto;
+      max-width: 800px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .empty-state-content {
+      max-width: 600px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .empty-state-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .empty-state-icon i {
+      font-size: 1.25rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    
+    .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 2rem auto;
+      max-width: 500px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    .benefits-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s;
+      text-align: left;
+    }
+    
+    .benefits-list li:hover {
+      transform: translateX(5px);
+    }
+    
+    .empty-state-illustration {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .illustration-icon {
+      font-size: 12rem;
+      color: var(--primary-color);
+      opacity: 0.05;
+      transform: rotate(15deg);
+      animation: float 3s ease-in-out infinite;
+      position: absolute;
+      right: -2rem;
+    }
+    
+    .pulse-button {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,.1);
+      transition: all 0.3s;
+      margin-top: 1rem;
+    }
+    
+    .pulse-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.15);
+      background: linear-gradient(135deg, #0143a3, var(--primary-color));
+    }
+    
+    @media (max-width: 768px) {
+      .empty-state {
+        padding: 2rem 1.5rem;
+      }
+      
+      .benefits-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .benefits-list li {
+        margin-bottom: 0;
+      }
+    }
   `
 }) %>
 
@@ -424,122 +548,117 @@
   </div>
 </div>
 
+<!-- Modal Xem Lịch Cúp Điện -->
+<div class="modal fade" id="lichCupDienModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-calendar-event text-primary me-2"></i>
+          Lịch Cúp Điện
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="lichCupDienContent">
+          <!-- Nội dung lịch cúp điện sẽ được load vào đây -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container">
   <!-- Page Header -->
   <div class="page-header">
     <div class="container">
-      <h1 class="page-title">Theo dõi Lịch Cúp Điện</h1>
-      <p class="page-subtitle">
-        Nhận thông báo qua email khi có lịch cúp điện mới tại khu vực bạn quan tâm
-      </p>
+      <h1 class="page-title">Khu vực đang theo dõi</h1>
+      <p class="page-subtitle">Quản lý các khu vực bạn muốn nhận thông báo về lịch cúp điện</p>
     </div>
   </div>
 
-  <!-- Stats Card -->
-  <div class="stats-card mb-4">
-    <div class="stats-icon">
-      <i class="bi bi-bell"></i>
+  <!-- Stats Section -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h2 class="h4 mb-0">Danh sách theo dõi</h2>
     </div>
-    <div class="stats-content">
-      <strong><%= subscriptions.length %>/<%= maxSubscriptions %> khu vực</strong>
-      <span class="text-muted">Bạn có thể theo dõi thêm <%= maxSubscriptions - subscriptions.length %> khu vực nữa</span>
-    </div>
+   
   </div>
 
-  <!-- Developer Section -->
-  <div class="container">
-    <div class="dev-section">
-      <div class="dev-header" onclick="toggleDevMode()" id="devHeader">
-        <i class="bi bi-chevron-down"></i>
-        <h6 class="mb-0">
-          Developer Tools
-        </h6>
-      </div>
-      <div class="dev-content collapse" id="devContent">
-        <div class="api-key-section">
-          <div class="flex-grow-1">
-            <small class="text-muted d-block mb-1">API Authentication Key</small>
-            <code id="googleId" class="user-select-all">
-              <span id="maskedId"><%= user.google_id.substring(0, 6) %>•••••••••••</span>
-              <span id="fullId" style="display: none"><%= user.google_id %></span>
-            </code>
-          </div>
-          <div class="d-flex gap-2">
-            <button class="btn btn-light btn-sm" onclick="toggleGoogleId()" title="Hiện/Ẩn">
-              <i class="bi bi-eye" id="toggleIcon"></i>
-            </button>
-            <button class="btn btn-light btn-sm" onclick="copyGoogleId()" title="Copy">
-              <i class="bi bi-clipboard"></i>
-            </button>
-          </div>
+  <!-- Subscription Cards -->
+  <% if (subscriptions.length === 0) { %>
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-state-content">
+        <div class="empty-state-icon">
+          <i class="bi bi-bell"></i>
         </div>
-        <a href="/api" class="api-docs-link">
-          <i class="bi bi-book"></i>
-          Xem tài liệu API
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="container mt-4">
-    <div class="subscriptions-header mb-4">
-      <h2>
-        <i class="bi bi-pin-map-fill text-primary"></i>
-        Khu vực đang theo dõi
-      </h2>
-      <p class="text-muted">Bạn đang theo dõi <%= subscriptions.length %> khu vực</p>
-    </div>
-
-    <div class="subscription-grid">
-      <% if (subscriptions.length === 0) { %>
-        <div class="empty-state">
-          <div class="empty-state-icon">
-            <i class="bi bi-bell-slash"></i>
-          </div>
-          <h3>Chưa có khu vực theo dõi</h3>
-          <p>Bạn chưa đăng ký theo dõi khu vực nào. Hãy thêm khu vực để nhận thông báo.</p>
-          <button class="btn btn-primary" onclick="showAddModal()">
-            <i class="bi bi-plus-circle"></i>
-            Thêm khu vực mới
-          </button>
-        </div>
-      <% } else { %>
-        <% subscriptions.forEach(function(sub) { %>
-          <div class="subscription-card">
-            <div class="subscription-card-header">
-              <div class="zone-badge <%= sub.zone === 'mien_bac' ? 'zone-north' : sub.zone === 'mien_trung' ? 'zone-central' : 'zone-south' %>">
-                <%= sub.zone === 'mien_bac' ? 'MB' : sub.zone === 'mien_trung' ? 'MT' : 'MN' %>
-              </div>
-              <button class="btn-delete" onclick="confirmDelete('<%= sub.id %>', '<%= sub.ten_cong_ty_con %>')">
-                <i class="bi bi-x-lg"></i>
-              </button>
-            </div>
-            <div class="subscription-card-body">
-              <h3 class="company-name"><%= sub.ten_cong_ty_con %></h3>
-              <div class="company-info">
-                <i class="bi bi-building text-primary"></i>
-                <span><%= sub.ten_dien_luc %></span>
-              </div>
-              <div class="notification-info">
-                <i class="bi bi-envelope-check text-success"></i>
-                <span>Đang nhận thông báo qua email</span>
-              </div>
-            </div>
-            <form id="delete-form-<%= sub.id %>" action="/subscriptions/<%= sub.id %>" method="POST" class="d-none"></form>
-          </div>
-        <% }); %>
-      <% } %>
-    </div>
-
-    <% if (subscriptions.length > 0) { %>
-      <div class="subscription-actions">
-        <button class="btn btn-primary" onclick="showAddModal()">
-          <i class="bi bi-plus-circle"></i>
-          Thêm khu vực mới
+        <h3>Chưa có khu vực theo dõi</h3>
+        <p class="text-muted">
+          Đăng ký theo dõi để nhận thông báo về lịch cúp điện tại khu vực bạn quan tâm
+        </p>
+        <ul class="benefits-list">
+          <li>
+            <i class="bi bi-bell-fill text-primary"></i>
+            <span>Nhận thông báo khi có lịch cúp điện mới</span>
+          </li>
+          <li>
+            <i class="bi bi-geo-alt-fill text-primary"></i>
+            <span>Theo dõi nhiều khu vực cùng lúc</span>
+          </li>
+          <li>
+            <i class="bi bi-clock-fill text-primary"></i>
+            <span>Cập nhật liên tục 24/7</span>
+          </li>
+        </ul>
+        <button class="btn btn-primary btn-lg pulse-button" onclick="showAddModal()">
+          <i class="bi bi-plus-circle me-2"></i>
+          Thêm khu vực theo dõi
         </button>
       </div>
-    <% } %>
-  </div>
+    </div>
+  <% } else { %>
+    <div class="row g-4 mb-4">
+      <% subscriptions.forEach(function(sub) { %>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 subscription-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <h5 class="card-title mb-0">
+                  <%= sub.ten_cong_ty_con %>
+                </h5>
+                <form id="delete-form-<%= sub.id %>" action="/subscriptions/<%= sub.id %>" method="POST" class="d-inline">
+                  <input type="hidden" name="_method" value="DELETE">
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                    onclick="confirmDelete(<%= sub.id %>, '<%= sub.ten_cong_ty_con %>')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+              <div class="d-flex gap-2">
+                <!-- Thay đổi link thành button -->
+                <button type="button"
+                        onclick="showLichCupDien('<%= sub.ma_cong_ty_con %>', '<%= sub.ten_cong_ty_con %>')"
+                        class="btn btn-sm btn-primary d-flex align-items-center gap-2">
+                  <i class="bi bi-calendar-event"></i>
+                  Xem lịch cúp điện
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (subscriptions.length > 0) { %>
+    <div class="subscription-actions">
+      <button class="btn btn-primary" onclick="showAddModal()">
+        <i class="bi bi-plus-circle"></i>
+        Thêm khu vực mới
+      </button>
+    </div>
+  <% } %>
 
   <!-- Footer -->
   <footer class="footer">
@@ -845,6 +964,62 @@
         errorDiv.textContent = 'Có lỗi xảy ra, vui lòng thử lại';
         errorDiv.classList.remove('d-none');
         return false;
+      }
+    }
+
+    let lichCupDienModal;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      lichCupDienModal = new bootstrap.Modal(document.getElementById('lichCupDienModal'));
+    });
+    
+    async function showLichCupDien(maCongTyCon, tenCongTyCon) {
+      try {
+        const response = await fetch(`/lich-cup-dien?ma_cong_ty_con=${maCongTyCon}&format=json`);
+        const data = await response.json();
+        
+        const content = document.getElementById('lichCupDienContent');
+        
+        if (data.length === 0) {
+          content.innerHTML = `
+            <div class="text-center py-5">
+              <i class="bi bi-calendar-x fs-1 text-muted"></i>
+              <p class="mt-3">Không có lịch cúp điện nào cho ${tenCongTyCon}</p>
+            </div>
+          `;
+        } else {
+          content.innerHTML = `
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Thời gian</th>
+                    <th>Khu vực</th>
+                    <th>Lý do</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(item => `
+                    <tr>
+                      <td>
+                        ${new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN')}
+                        <br>đến<br>
+                        ${new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN')}
+                      </td>
+                      <td>${item.khu_vuc}</td>
+                      <td>${item.ly_do}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        
+        lichCupDienModal.show();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi tải lịch cúp điện');
       }
     }
   </script>

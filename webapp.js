@@ -575,8 +575,31 @@ app.get('/congty/:id', (req, res) => {
 });
 
 app.get('/lich-cup-dien', async (req, res) => {
-  let { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
+  let { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20, format } = req.query;
   
+  // Nếu format là json, trả về dữ liệu dạng JSON
+  if (format === 'json') {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        db.all(
+          `SELECT * FROM lich_cup_dien 
+           WHERE ma_cong_ty_con = ? 
+           AND date(thoi_gian_bat_dau) >= date('now')
+           ORDER BY thoi_gian_bat_dau ASC`,
+           [ma_cong_ty_con],
+           (err, rows) => {
+             if (err) reject(err);
+             else resolve(rows || []);
+           }
+        );
+      });
+      return res.json(result);
+    } catch (error) {
+      console.error('Lỗi:', error);
+      return res.status(500).json({ error: 'Lỗi server' });
+    }
+  }
+
   // Nếu không có date được chọn, sử dụng ngày hiện tại
   if (!date) {
     const today = new Date();
