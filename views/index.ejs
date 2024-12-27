@@ -56,17 +56,22 @@
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title"><%= cty.ten_cong_ty %></h5>
+            <h5 class="card-title">
+              <i class="bi bi-building-fill text-primary"></i>
+              <%= cty.ten_cong_ty %>
+            </h5>
             <p class="card-text text-muted">
               <i class="bi bi-geo-alt"></i> <%= cty.zone === 'mien_bac' ? 'Miền Bắc' : 
                                                cty.zone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
             </p>
             <p class="card-text">
-              <i class="bi bi-building"></i> <%= cty.so_cong_ty_con %> công ty con
+              <i class="bi bi-lightning"></i> <%= cty.so_cong_ty_con %> công ty con
             </p>
-            <a href="/congty/<%= cty.id_cong_ty %>" class="btn btn-outline-primary">
-              <i class="bi bi-info-circle"></i> Xem chi tiết
-            </a>
+            <div class="card-action">
+              <a href="/congty/<%= cty.id_cong_ty %>" class="btn btn-outline-primary">
+                <i class="bi bi-info-circle"></i> Xem chi tiết
+              </a>
+            </div>
           </div>
         </div>
       </div>

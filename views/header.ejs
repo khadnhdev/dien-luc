@@ -27,10 +27,13 @@
       border: none;
       box-shadow: 0 2px 4px rgba(0,0,0,.05);
       transition: transform 0.2s;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     .card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
     }
 
     .card-header {
@@ -272,6 +275,81 @@
     .nav-link.active {
       background: var(--primary-color);
       color: white !important;
+    }
+
+    /* Card styles */
+    .card {
+      border: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2d3436;
+    }
+    
+    .card-text {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .card-text i {
+      width: 20px;
+      color: var(--primary-color);
+      margin-right: 0.5rem;
+    }
+    
+    .card-action {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        margin-bottom: 1rem;
+      }
+      
+      .card-body {
+        padding: 1.25rem;
+      }
+      
+      .row-cols-1 {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+      }
+      
+      .row-cols-1 > .col {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      
+      .card-action .btn {
+        width: 100%;
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .card-action .btn i {
+        font-size: 1.1rem;
+      }
     }
   </style>
 

@@ -27,8 +27,10 @@
       }
       
       .stats-info {
-        margin-top: 1rem;
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
       }
     }
     
@@ -197,7 +199,7 @@
       border-radius: 12px;
       padding: 1.5rem;
       box-shadow: 0 2px 4px rgba(0,0,0,.05);
-      transition: transform 0.2s;
+      transition: all 0.2s;
     }
     
     .grid-item:hover {
@@ -293,6 +295,232 @@
         margin-bottom: 0.5rem;
       }
     }
+    
+    /* Grid card styles */
+    .grid-item {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      transition: all 0.2s;
+    }
+    
+    .grid-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
+    }
+    
+    @media (max-width: 768px) {
+      .grid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem;
+      }
+      
+      .grid-item {
+        padding: 1.25rem;
+        border-left: 4px solid var(--primary-color);
+      }
+      
+      .grid-item-header {
+        margin-bottom: 0.75rem;
+      }
+      
+      .grid-item-title {
+        font-size: 1rem;
+      }
+      
+      .grid-item-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .grid-item-content > div {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .grid-item-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+    }
+    
+    /* Data card styles */
+    .data-cards {
+      display: none;
+    }
+    
+    .data-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      border: 1px solid #edf2f7;
+      transition: all 0.2s;
+    }
+    
+    .data-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,.1);
+    }
+    
+    .data-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .data-card-company {
+      font-weight: 600;
+      color: #2d3436;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+    
+    .data-card-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    
+    .data-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .data-card-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 110, 253, 0.1);
+      border-radius: 8px;
+      color: var(--primary-color);
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    
+    .data-card-text {
+      flex: 1;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .data-card-label {
+      display: block;
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 0.2rem;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .table-responsive {
+        display: none;
+      }
+      
+      .data-cards {
+        display: block;
+      }
+      
+      .data-card {
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      .data-card-header {
+        margin-bottom: 0.5rem;
+      }
+      
+      .data-card-content {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .data-card-item {
+        min-width: 100%;
+      }
+      
+      .data-card-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+      }
+      
+      /* Thêm border color theo trạng thái */
+      .data-card {
+        border-left: 3px solid;
+      }
+      
+      .data-card.active {
+        border-left-color: #28a745;
+      }
+      
+      .data-card.pending {
+        border-left-color: #ffc107;
+      }
+      
+      /* Tối ưu hiển thị thời gian */
+      .data-card-time {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      
+      .data-card-time span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .data-card-time i {
+        color: #6c757d;
+        font-size: 0.8rem;
+      }
+    }
+    
+    /* Stats styles */
+    .stats-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+    
+    .stats-update {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    
+    .stats-update-time {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0143a3;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stats-update-count {
+      margin-top: 0.5rem;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   `
 }) %>
 
@@ -309,18 +537,20 @@
         </div>
         <div class="col-md-4 text-md-end stats-info">
           <% if (currentZone && capNhatGanNhat) { %>
-            <div class="text-muted mb-2">Cập nhật lần cuối:</div>
-            <div class="stats-number">
-              <span class="stats-icon">
-                <i class="bi bi-clock-history"></i>
-              </span>
-              <%= new Date(capNhatGanNhat.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
-            </div>
-            <div class="text-muted mt-2">
-              <span class="stats-icon">
-                <i class="bi bi-lightning"></i>
-              </span>
-              <%= capNhatGanNhat.so_lich_cup_dien %> lịch cúp điện
+            <div class="stats-update">
+              <div class="text-muted">Cập nhật lần cuối:</div>
+              <div class="stats-update-time">
+                <span class="stats-icon">
+                  <i class="bi bi-clock-history"></i>
+                </span>
+                <%= new Date(capNhatGanNhat.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
+              </div>
+              <div class="stats-update-count">
+                <span class="stats-icon">
+                  <i class="bi bi-lightning"></i>
+                </span>
+                <%= capNhatGanNhat.so_lich_cup_dien %> lịch cúp điện
+              </div>
             </div>
           <% } else { %>
             <div class="text-muted">
@@ -347,65 +577,7 @@
       </div>
     <% } %>
 
-    <!-- Quick Stats Grid -->
-    <div class="grid-container">
-      <!-- Khu vực -->
-      <div class="grid-item">
-        <div class="grid-item-header">
-          <div class="grid-item-icon">
-            <i class="bi bi-geo-alt"></i>
-          </div>
-          <h3 class="grid-item-title">Khu vực</h3>
-        </div>
-        <div class="grid-item-content">
-          <% if (currentZone) { %>
-            <%= currentZone === 'mien_bac' ? 'Miền Bắc' : 
-                currentZone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
-          <% } else { %>
-            Chưa chọn khu vực
-          <% } %>
-        </div>
-      </div>
-
-      <!-- Công ty điện lực -->
-      <div class="grid-item">
-        <div class="grid-item-header">
-          <div class="grid-item-icon">
-            <i class="bi bi-building"></i>
-          </div>
-          <h3 class="grid-item-title">Công ty điện lực</h3>
-        </div>
-        <div class="grid-item-content">
-          <%= currentMaDienLuc ? congTyList.find(ct => ct.ma_dien_luc === currentMaDienLuc)?.ten_dien_luc : 'Tất cả' %>
-        </div>
-      </div>
-
-      <!-- Điện lực -->
-      <div class="grid-item">
-        <div class="grid-item-header">
-          <div class="grid-item-icon">
-            <i class="bi bi-lightning"></i>
-          </div>
-          <h3 class="grid-item-title">Điện lực</h3>
-        </div>
-        <div class="grid-item-content">
-          <%= currentMaCongTyCon ? congTyConList.find(ct => ct.ma_cong_ty_con === currentMaCongTyCon)?.ten_cong_ty_con : 'Tất cả' %>
-        </div>
-      </div>
-
-      <!-- Thời gian -->
-      <div class="grid-item">
-        <div class="grid-item-header">
-          <div class="grid-item-icon">
-            <i class="bi bi-calendar-event"></i>
-          </div>
-          <h3 class="grid-item-title">Ngày tra cứu</h3>
-        </div>
-        <div class="grid-item-content">
-          <%= currentDate ? new Date(currentDate).toLocaleDateString('vi-VN') : 'Tất cả' %>
-        </div>
-      </div>
-    </div>
+   
 
     <!-- Filter Section -->
     <div class="filter-section">
@@ -464,16 +636,17 @@
 
     <!-- Table Section -->
     <div class="table-container">
-      <div class="table-responsive">
-        <% if (!currentZone) { %>
-          <div class="text-center py-5">
-            <i class="bi bi-geo-alt text-muted" style="font-size: 3rem;"></i>
-            <h4 class="mt-3">Vui lòng chọn khu vực để tra cứu</h4>
-            <p class="text-muted">
-              Chọn khu vực từ bộ lọc phía trên để xem lịch cúp điện
-            </p>
-          </div>
-        <% } else { %>
+      <% if (!currentZone) { %>
+        <div class="text-center py-5">
+          <i class="bi bi-geo-alt text-muted" style="font-size: 3rem;"></i>
+          <h4 class="mt-3">Vui lòng chọn khu vực để tra cứu</h4>
+          <p class="text-muted">
+            Chọn khu vực từ bộ lọc phía trên để xem lịch cúp điện
+          </p>
+        </div>
+      <% } else { %>
+        <!-- Desktop Table View -->
+        <div class="table-responsive">
           <table class="table table-striped table-hover">
             <thead>
               <tr>
@@ -497,13 +670,13 @@
               <% } else { %>
                 <% lichCupDien.forEach(function(item, index) { %>
                   <tr>
-                    <td data-label="STT"><%= index + 1 %></td>
-                    <td data-label="Công ty điện lực"><%= item.ten_dien_luc %></td>
-                    <td data-label="Điện lực"><%= item.ten_cong_ty_con %></td>
-                    <td data-label="Thời gian bắt đầu"><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
-                    <td data-label="Thời gian kết thúc"><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
-                    <td data-label="Khu vực"><%= item.khu_vuc %></td>
-                    <td data-label="Lý do" class="reason-cell text-wrap">
+                    <td><%= index + 1 %></td>
+                    <td><%= item.ten_dien_luc %></td>
+                    <td><%= item.ten_cong_ty_con %></td>
+                    <td><%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %></td>
+                    <td><%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %></td>
+                    <td><%= item.khu_vuc %></td>
+                    <td class="reason-cell text-wrap">
                       <% if (item.ten_tram) { %>
                         <small class="text-muted d-block mb-1">Trạm: <%= item.ten_tram %></small>
                       <% } %>
@@ -514,8 +687,73 @@
               <% } %>
             </tbody>
           </table>
-        <% } %>
-      </div>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="data-cards">
+          <% if (lichCupDien.length === 0) { %>
+            <div class="text-center py-5">
+              <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+              <p class="text-muted mt-2">Không có dữ liệu</p>
+            </div>
+          <% } else { %>
+            <% lichCupDien.forEach(function(item, index) { %>
+              <div class="data-card <%= new Date(item.thoi_gian_ket_thuc) < new Date() ? 'active' : 'pending' %>">
+                <div class="data-card-header">
+                  <div class="data-card-icon">
+                    <i class="bi bi-building"></i>
+                  </div>
+                  <div>
+                    <div class="data-card-company"><%= item.ten_dien_luc %></div>
+                    <small class="text-muted"><%= item.ten_cong_ty_con %></small>
+                  </div>
+                </div>
+                <div class="data-card-content">
+                  <div class="data-card-item">
+                    <div class="data-card-icon">
+                      <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="data-card-text data-card-time">
+                      <span class="data-card-label">Thời gian</span>
+                      <span>
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Bắt đầu: <%= new Date(item.thoi_gian_bat_dau).toLocaleString('vi-VN') %>
+                      </span>
+                      <span>
+                        <i class="bi bi-arrow-left-circle"></i>
+                        Kết thúc: <%= new Date(item.thoi_gian_ket_thuc).toLocaleString('vi-VN') %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="data-card-item">
+                    <div class="data-card-icon">
+                      <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div class="data-card-text">
+                      <span class="data-card-label">Khu vực</span>
+                      <%= item.khu_vuc %>
+                    </div>
+                  </div>
+                  <div class="data-card-item">
+                    <div class="data-card-icon">
+                      <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div class="data-card-text">
+                      <span class="data-card-label">Lý do</span>
+                      <% if (item.ten_tram) { %>
+                        <small class="text-muted d-block mb-1">
+                          <i class="bi bi-lightning me-1"></i>Trạm: <%= item.ten_tram %>
+                        </small>
+                      <% } %>
+                      <%= item.ly_do %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      <% } %>
 
       <% if (pagination.totalPages > 1) { %>
         <nav aria-label="Page navigation">
