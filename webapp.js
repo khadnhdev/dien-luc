@@ -93,44 +93,80 @@ app.post('/update/:id', (req, res) => {
 });
 
 app.get('/lich-cup-dien', async (req, res) => {
-  const { zone, date, ma_dien_luc, ma_cong_ty_con } = req.query;
+  const { zone, date, ma_dien_luc, ma_cong_ty_con, page = 1, limit = 20 } = req.query;
+  const offset = (page - 1) * limit;
+
+  // Hàm helper để tạo URL phân trang
+  const getPageUrl = (pageNum) => {
+    const url = new URL(`${req.protocol}://${req.get('host')}${req.path}`);
+    const searchParams = new URLSearchParams(req.query);
+    searchParams.set('page', pageNum);
+    url.search = searchParams.toString();
+    return url.toString();
+  };
 
   try {
     let query = `
       SELECT * FROM lich_cup_dien
       WHERE 1=1
     `;
+    let countQuery = `
+      SELECT COUNT(*) as total FROM lich_cup_dien 
+      WHERE 1=1
+    `;
     const params = [];
+    const countParams = [];
 
     if (zone) {
-      query += ` AND zone = ?`;
+      const whereClause = ` AND zone = ?`;
+      query += whereClause;
+      countQuery += whereClause;
       params.push(zone);
+      countParams.push(zone);
     }
     
     if (date) {
-      query += ` AND date(thoi_gian_bat_dau) = date(?)`;
+      const whereClause = ` AND date(thoi_gian_bat_dau) = date(?)`;
+      query += whereClause;
+      countQuery += whereClause;
       params.push(date);
+      countParams.push(date);
     }
 
     if (ma_dien_luc) {
-      query += ` AND ma_dien_luc = ?`;
+      const whereClause = ` AND ma_dien_luc = ?`;
+      query += whereClause;
+      countQuery += whereClause;
       params.push(ma_dien_luc);
+      countParams.push(ma_dien_luc);
     }
 
     if (ma_cong_ty_con) {
-      query += ` AND ma_cong_ty_con = ?`;
+      const whereClause = ` AND ma_cong_ty_con = ?`;
+      query += whereClause;
+      countQuery += whereClause;
       params.push(ma_cong_ty_con);
+      countParams.push(ma_cong_ty_con);
     }
     
-    query += ` ORDER BY thoi_gian_bat_dau DESC`;
+    query += ` ORDER BY thoi_gian_bat_dau DESC LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
 
     // Thực hiện các truy vấn song song
-    const [lichCupDien, congTyList, congTyConList, capNhatGanNhat] = await Promise.all([
-      // Lấy danh sách lịch cúp điện
+    const [lichCupDien, totalCount, congTyList, congTyConList, capNhatGanNhat] = await Promise.all([
+      // Lấy danh sách lịch cúp điện có phân trang
       new Promise((resolve, reject) => {
         db.all(query, params, (err, rows) => {
           if (err) reject(err);
           else resolve(rows || []);
+        });
+      }),
+
+      // Lấy tổng số bản ghi
+      new Promise((resolve, reject) => {
+        db.get(countQuery, countParams, (err, row) => {
+          if (err) reject(err);
+          else resolve(row.total);
         });
       }),
       
@@ -181,6 +217,8 @@ app.get('/lich-cup-dien', async (req, res) => {
       })
     ]);
 
+    const totalPages = Math.ceil(totalCount / limit);
+
     res.render('lich-cup-dien', {
       lichCupDien,
       congTyList,
@@ -189,7 +227,14 @@ app.get('/lich-cup-dien', async (req, res) => {
       currentDate: date,
       currentMaDienLuc: ma_dien_luc,
       currentMaCongTyCon: ma_cong_ty_con,
-      capNhatGanNhat
+      capNhatGanNhat,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalItems: totalCount,
+        totalPages
+      },
+      getPageUrl
     });
 
   } catch (error) {
