@@ -45,6 +45,20 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <%= path === '/api' ? 'active' : '' %>" href="/api">
+            <i class="bi bi-code-slash"></i>
+            API
+          </a>
+        </li>
+        <% if (locals.user) { %>
+          <li class="nav-item">
+            <a class="nav-link <%= path === '/subscriptions' ? 'active' : '' %>" href="/subscriptions">
+              <i class="bi bi-bell"></i>
+              Đăng ký thông báo
+            </a>
+          </li>
+        <% } %>
       </ul>
       
       <div class="navbar-nav">
@@ -126,5 +140,20 @@
   /* Ensure dropdown is visible on hover */
   .nav-item.dropdown:hover .dropdown-menu {
     display: block;
+  }
+  
+  /* Dropdown styles */
+  .nav-link {
+    transition: all 0.2s;
+  }
+  
+  .nav-link.active {
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+  }
+  
+  .nav-link:hover:not(.active) {
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
   }
 </style> 

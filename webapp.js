@@ -129,6 +129,7 @@ app.get('/subscriptions', ensureAuthenticated, async (req, res) => {
 
     res.render('subscriptions', { 
       user: req.user,
+      path: '/subscriptions',
       subscriptions,
       allCompanies,
       maxSubscriptions: 5,
@@ -728,7 +729,10 @@ app.get('/auth/logout', (req, res) => {
 
 // API Routes
 app.get('/api', (req, res) => {
-  res.render('api');
+  res.render('api', {
+    user: req.user,
+    path: '/api'
+  });
 });
 
 // Route điều khoản sử dụng
