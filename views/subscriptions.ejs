@@ -1,6 +1,25 @@
 <%- include('header', { 
   title: 'Quản lý Đăng ký Theo dõi',
   customStyles: `
+    /* Google ID styles */
+    code {
+      background: #f8f9fa;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+    
+    .btn-link {
+      color: #6c757d;
+      transition: all 0.2s;
+    }
+    
+    .btn-link:hover {
+      color: var(--primary-color);
+      transform: scale(1.1);
+    }
+    
     /* Styles riêng cho trang này nếu cần */
   `
 }) %>
@@ -30,6 +49,33 @@
 
 <div class="container mt-4">
   <h1>Quản lý Đăng ký Theo dõi</h1>
+  
+  <!-- Google ID Section -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <label class="form-label mb-0">Google ID của bạn:</label>
+          <div class="d-flex align-items-center gap-2">
+            <code id="googleId" class="user-select-all">
+              <span id="maskedId"><%= user.google_id.substring(0, 6) %>•••••••••••</span>
+              <span id="fullId" style="display: none"><%= user.google_id %></span>
+            </code>
+            <button class="btn btn-link btn-sm p-0" onclick="toggleGoogleId()" title="Hiện/Ẩn">
+              <i class="bi bi-eye" id="toggleIcon"></i>
+            </button>
+            <button class="btn btn-link btn-sm p-0" onclick="copyGoogleId()" title="Copy">
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </div>
+        </div>
+        <div class="text-muted small">
+          <i class="bi bi-info-circle"></i>
+          Sử dụng Google ID này để gọi API
+        </div>
+      </div>
+    </div>
+  </div>
   
   <div class="alert alert-info">
     Bạn có thể đăng ký theo dõi tối đa <%= maxSubscriptions %> công ty.
@@ -136,6 +182,43 @@
 </div>
 
 <script defer>
+function toggleGoogleId() {
+  const maskedId = document.getElementById('maskedId');
+  const fullId = document.getElementById('fullId');
+  const toggleIcon = document.getElementById('toggleIcon');
+  
+  if (maskedId.style.display === 'none') {
+    maskedId.style.display = 'inline';
+    fullId.style.display = 'none';
+    toggleIcon.classList.remove('bi-eye-slash');
+    toggleIcon.classList.add('bi-eye');
+  } else {
+    maskedId.style.display = 'none';
+    fullId.style.display = 'inline';
+    toggleIcon.classList.remove('bi-eye');
+    toggleIcon.classList.add('bi-eye-slash');
+  }
+}
+
+async function copyGoogleId() {
+  const fullId = document.getElementById('fullId').textContent;
+  
+  try {
+    await navigator.clipboard.writeText(fullId);
+    
+    // Show tooltip
+    const btn = event.currentTarget;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check text-success"></i>';
+    
+    setTimeout(() => {
+      btn.innerHTML = originalHtml;
+    }, 2000);
+  } catch (err) {
+    console.error('Failed to copy:', err);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   let selectedZone = '<%= selectedZone || "" %>';
   let selectedCompany = '<%= selectedCompany || "" %>';
