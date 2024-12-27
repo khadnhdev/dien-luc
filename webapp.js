@@ -388,7 +388,7 @@ app.get('/api/subcompanies', checkApiAuth, async (req, res) => {
 
 // API lấy danh sách lịch cúp điện
 app.get('/api/outages', checkApiAuth, async (req, res) => {
-  const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
+  const { zone, ma_dien_luc, ma_cong_ty_con, start_date, end_date, page = 1, limit = 20 } = req.query;
   
   try {
     let query = `
@@ -402,66 +402,42 @@ app.get('/api/outages', checkApiAuth, async (req, res) => {
       WHERE 1=1
     `;
     
-    let countQuery = `
-      SELECT COUNT(*) as total 
-      FROM lich_cup_dien lcd
-      WHERE 1=1
-    `;
-    
     const params = [];
-    const countParams = [];
+    
+    if (start_date) {
+      query += ` AND datetime(thoi_gian_bat_dau) >= datetime(?)`;
+      params.push(start_date);
+    }
+    
+    if (end_date) {
+      query += ` AND datetime(thoi_gian_bat_dau) <= datetime(?)`;
+      params.push(end_date);
+    }
 
     if (zone) {
-      const whereClause = ` AND lcd.zone = ?`;
-      query += whereClause;
-      countQuery += whereClause;
+      query += ` AND lcd.zone = ?`;
       params.push(zone);
-      countParams.push(zone);
     }
     
-    if (date) {
-      const whereClause = ` AND date(lcd.thoi_gian_bat_dau) >= date(?)`;
-      query += whereClause;
-      countQuery += whereClause;
-      params.push(date);
-      countParams.push(date);
-    }
-
     if (ma_dien_luc) {
-      const whereClause = ` AND lcd.ma_dien_luc = ?`;
-      query += whereClause;
-      countQuery += whereClause;
+      query += ` AND lcd.ma_dien_luc = ?`;
       params.push(ma_dien_luc);
-      countParams.push(ma_dien_luc);
     }
 
     if (ma_cong_ty_con) {
-      const whereClause = ` AND lcd.ma_cong_ty_con = ?`;
-      query += whereClause;
-      countQuery += whereClause;
+      query += ` AND lcd.ma_cong_ty_con = ?`;
       params.push(ma_cong_ty_con);
-      countParams.push(ma_cong_ty_con);
     }
     
     query += ` ORDER BY lcd.thoi_gian_bat_dau DESC LIMIT ? OFFSET ?`;
     params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
 
-    const [items, totalCount] = await Promise.all([
-      new Promise((resolve, reject) => {
-        db.all(query, params, (err, rows) => {
-          if (err) reject(err);
-          else resolve(rows || []);
-        });
-      }),
-      new Promise((resolve, reject) => {
-        db.get(countQuery, countParams, (err, row) => {
-          if (err) reject(err);
-          else resolve(row.total);
-        });
-      })
-    ]);
-
-    const totalPages = Math.ceil(totalCount / parseInt(limit));
+    const items = await new Promise((resolve, reject) => {
+      db.all(query, params, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
 
     res.json({
       success: true,
@@ -477,13 +453,7 @@ app.get('/api/outages', checkApiAuth, async (req, res) => {
           khu_vuc: item.khu_vuc,
           ly_do: item.ly_do,
           zone: item.zone
-        })),
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          totalItems: totalCount,
-          totalPages
-        }
+        }))
       }
     });
   } catch (error) {

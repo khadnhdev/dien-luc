@@ -21,6 +21,38 @@
     }
     
     /* Styles riêng cho trang này nếu cần */
+    
+    /* Schedule Modal styles */
+    #scheduleContent {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .schedule-table th {
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    .no-data {
+      padding: 2rem;
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    /* Table styles */
+    .table td {
+      vertical-align: middle;
+    }
+    
+    .table .btn {
+      white-space: nowrap;
+    }
+    
+    .table .btn i {
+      margin-right: 0.25rem;
+    }
   `
 }) %>
 
@@ -38,9 +70,32 @@
           <button type="button" class="btn btn-primary btn-lg notify-btn">
             <i class="bi bi-bell"></i> Nhắc nhở lịch cúp điện
           </button>
-          <a href="#" class="btn btn-info btn-lg view-schedule-btn">
+          <button type="button" class="btn btn-info btn-lg" onclick="showScheduleModal()">
             <i class="bi bi-calendar"></i> Xem lịch cúp điện
-          </a>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Lịch Cúp Điện</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="flex-grow-1">
+            <h6 class="company-name mb-0"></h6>
+          </div>
+          <input type="date" class="form-control w-auto" id="scheduleDate">
+        </div>
+        <div id="scheduleContent" class="table-responsive">
+          <div class="text-center">Đang tải dữ liệu...</div>
         </div>
       </div>
     </div>
@@ -164,13 +219,19 @@
                 <td><%= sub.ten_cong_ty_con %></td>
                 <td><%= new Date(sub.created_at).toLocaleString('vi-VN') %></td>
                 <td>
-                  <form action="/subscriptions/<%= sub.id %>" method="POST" style="display:inline">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn btn-sm btn-danger" 
-                            onclick="return confirm('Bạn có chắc muốn hủy đăng ký?')">
-                      Hủy đăng ký
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-info" 
+                            onclick="showScheduleDirectly('<%= sub.ma_cong_ty_con %>', '<%= sub.ten_cong_ty_con %>')">
+                      <i class="bi bi-calendar"></i> Xem lịch
                     </button>
-                  </form>
+                    <form action="/subscriptions/<%= sub.id %>" method="POST" style="display:inline">
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="submit" class="btn btn-sm btn-danger" 
+                              onclick="return confirm('Bạn có chắc muốn hủy đăng ký?')">
+                        <i class="bi bi-trash"></i> Hủy đăng ký
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             <% }) %>
@@ -224,7 +285,29 @@ document.addEventListener('DOMContentLoaded', function() {
   let selectedCompany = '<%= selectedCompany || "" %>';
   const subscriptions = <%- JSON.stringify(subscriptions) %>;
   const actionModal = new bootstrap.Modal(document.getElementById('actionModal'));
+  const scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
   let selectedCompanyCon = null;
+  let currentCompanyInfo = null;
+
+  // Hàm mở trực tiếp modal lịch
+  window.showScheduleDirectly = async function(maCongTyCon, tenCongTyCon) {
+    currentCompanyInfo = {
+      id: maCongTyCon,
+      name: tenCongTyCon
+    };
+    
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('scheduleDate').value = today;
+    
+    // Update company name
+    document.querySelectorAll('#scheduleModal .company-name')
+      .forEach(el => el.textContent = tenCongTyCon);
+    
+    // Show modal and load data
+    scheduleModal.show();
+    await loadScheduleData(today);
+  };
 
   function selectZone(zone) {
     selectedZone = zone;
@@ -322,11 +405,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.showActionModal = function(maCongTyCon, tenCongTyCon) {
     selectedCompanyCon = maCongTyCon;
+    currentCompanyInfo = {
+      id: maCongTyCon,
+      name: tenCongTyCon
+    };
     
     // Cập nhật nội dung modal
     document.querySelector('#actionModal .company-name').textContent = tenCongTyCon;
-    document.querySelector('#actionModal .view-schedule-btn').href = 
-      `/lich-cup-dien?ma_cong_ty_con=${maCongTyCon}`;
       
     // Thêm event listener cho nút nhắc nhở
     document.querySelector('#actionModal .notify-btn').onclick = () => {
@@ -357,6 +442,113 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.zone-item').forEach(item => {
       item.addEventListener('click', () => selectZone(item.dataset.zone));
     });
+
+  window.showScheduleModal = async function() {
+    actionModal.hide();
+    scheduleModal.show();
+    
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('scheduleDate').value = today;
+    
+    // Update company name
+    document.querySelectorAll('#scheduleModal .company-name')
+      .forEach(el => el.textContent = currentCompanyInfo.name);
+    
+    // Load initial data
+    await loadScheduleData(today);
+  };
+
+  window.loadScheduleData = async function(date) {
+    const scheduleContent = document.getElementById('scheduleContent');
+    scheduleContent.innerHTML = '<div class="text-center">Đang tải dữ liệu...</div>';
+    
+    try {
+      // Đảm bảo date là ngày đầu ngày (00:00:00)
+      const startDate = new Date(date);
+      startDate.setHours(0, 0, 0, 0);
+
+      // Lấy ngày kết thúc là cuối ngày sau 7 ngày
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 7);
+      endDate.setHours(23, 59, 59, 999);
+
+      const response = await fetch(
+        `api/outages?ma_cong_ty_con=${currentCompanyInfo.id}&start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`,
+        {
+          headers: {
+            'X-Google-ID': document.getElementById('fullId').textContent
+          }
+        }
+      );
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch schedule');
+      }
+      
+      const items = data.data.items;
+      
+      if (items.length === 0) {
+        scheduleContent.innerHTML = `
+          <div class="no-data">
+            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+            Không có lịch cúp điện nào từ ${new Date(date).toLocaleDateString('vi-VN')} 
+            đến ${endDate.toLocaleDateString('vi-VN')}
+          </div>
+        `;
+        return;
+      }
+      
+      // Sắp xếp items theo thời gian bắt đầu
+      items.sort((a, b) => new Date(a.thoi_gian_bat_dau) - new Date(b.thoi_gian_bat_dau));
+
+      const html = `
+        <table class="table schedule-table">
+          <thead>
+            <tr>
+              <th>Ngày</th>
+              <th>Thời gian</th>
+              <th>Khu vực</th>
+              <th>Lý do</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(item => {
+              const date = new Date(item.thoi_gian_bat_dau);
+              const startTime = date.toLocaleTimeString('vi-VN');
+              const endTime = new Date(item.thoi_gian_ket_thuc).toLocaleTimeString('vi-VN');
+              return `
+                <tr>
+                  <td>${date.toLocaleDateString('vi-VN')}</td>
+                  <td>
+                    ${startTime} - ${endTime}
+                  </td>
+                  <td>${item.khu_vuc}</td>
+                  <td>${item.ly_do}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+      
+      scheduleContent.innerHTML = html;
+    } catch (error) {
+      console.error('Error:', error);
+      scheduleContent.innerHTML = `
+        <div class="alert alert-danger">
+          Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.
+        </div>
+      `;
+    }
+  };
+
+  // Add event listener for date change
+  document.getElementById('scheduleDate').addEventListener('change', (e) => {
+    loadScheduleData(e.target.value);
+  });
 });
 </script>
 
