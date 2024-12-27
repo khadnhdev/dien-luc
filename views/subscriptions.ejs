@@ -581,6 +581,7 @@
   <div class="row align-items-center mb-4">
     <div class="col">
       <h2 class="h4 mb-0">Danh sách theo dõi</h2>
+   
     </div>
    
   </div>
@@ -636,7 +637,6 @@
                 </form>
               </div>
               <div class="d-flex gap-2">
-                <!-- Thay đổi link thành button -->
                 <button type="button"
                         onclick="showLichCupDien('<%= sub.ma_cong_ty_con %>', '<%= sub.ten_cong_ty_con %>')"
                         class="btn btn-sm btn-primary d-flex align-items-center gap-2">
@@ -975,8 +975,11 @@
     
     async function showLichCupDien(maCongTyCon, tenCongTyCon) {
       try {
+        console.log('Fetching schedule for:', {maCongTyCon, tenCongTyCon});
         const response = await fetch(`/lich-cup-dien?ma_cong_ty_con=${maCongTyCon}&format=json`);
+        console.log('Response:', response);
         const data = await response.json();
+        console.log('Data:', data);
         
         const content = document.getElementById('lichCupDienContent');
         

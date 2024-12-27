@@ -576,10 +576,12 @@ app.get('/congty/:id', (req, res) => {
 
 app.get('/lich-cup-dien', async (req, res) => {
   let { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20, format } = req.query;
+  console.log('Received params:', req.query);
   
   // Nếu format là json, trả về dữ liệu dạng JSON
   if (format === 'json') {
     try {
+      console.log('Querying database for ma_cong_ty_con:', ma_cong_ty_con);
       const result = await new Promise((resolve, reject) => {
         db.all(
           `SELECT * FROM lich_cup_dien 
@@ -593,6 +595,7 @@ app.get('/lich-cup-dien', async (req, res) => {
            }
         );
       });
+      console.log('Query result:', result);
       return res.json(result);
     } catch (error) {
       console.error('Lỗi:', error);
