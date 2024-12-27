@@ -354,6 +354,66 @@
   </div>
 </div>
 
+<!-- Add Subscription Modal -->
+<div class="modal fade" id="addSubscriptionModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-plus-circle text-primary me-2"></i>
+          Thêm khu vực theo dõi mới
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addSubscriptionForm" action="/subscriptions" method="POST">
+          <div class="mb-3">
+            <label class="form-label">Chọn khu vực</label>
+            <select name="zone" class="form-select" onchange="onZoneChange(this)">
+              <option value="">Chọn khu vực</option>
+              <option value="mien_bac">Miền Bắc</option>
+              <option value="mien_trung">Miền Trung</option>
+              <option value="mien_nam">Miền Nam</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Chọn công ty điện lực</label>
+            <select name="ma_dien_luc" class="form-select" onchange="onCompanyChange(this)" disabled>
+              <option value="">Chọn công ty điện lực</option>
+              <% allCompanies.forEach(function(company) { %>
+                <option value="<%= company.ma_dien_luc %>" data-zone="<%= company.zone %>">
+                  <%= company.ten_dien_luc %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Chọn điện lực</label>
+            <select name="ma_cong_ty_con" class="form-select" disabled>
+              <option value="">Chọn điện lực</option>
+              <% allCompanies.forEach(function(company) { %>
+                <option value="<%= company.ma_cong_ty_con %>" 
+                        data-parent="<%= company.ma_dien_luc %>">
+                  <%= company.ten_cong_ty_con %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" form="addSubscriptionForm" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>
+          Thêm khu vực
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container">
   <!-- Page Header -->
   <div class="page-header">
@@ -474,438 +534,339 @@
     </form>
   <% } %>
 
-  <div class="mt-4">
-    <h2 class="d-flex align-items-center gap-2 mb-4">
-      <i class="bi bi-bell"></i>
-      Khu vực đang theo dõi
-    </h2>
-    <% if (subscriptions.length === 0) { %>
-      <div class="alert alert-warning">
-        Bạn chưa đăng ký theo dõi công ty nào
-      </div>
-    <% } else { %>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Công ty</th>
-              <th>Ngày đăng ký</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% subscriptions.forEach(function(sub) { %>
-              <tr>
-                <td><%= sub.ten_cong_ty_con %></td>
-                <td><%= new Date(sub.created_at).toLocaleString('vi-VN') %></td>
-                <td>
-                  <div class="d-flex gap-2 action-buttons">
-                    <button type="button" class="btn btn-sm btn-info" 
-                            onclick="showScheduleDirectly('<%= sub.ma_cong_ty_con %>', '<%= sub.ten_cong_ty_con %>')">
-                      <i class="bi bi-calendar"></i> Xem lịch
-                    </button>
-                    <form action="/subscriptions/<%= sub.id %>" method="POST">
-                      <input type="hidden" name="_method" value="DELETE">
-                      <button type="submit" class="btn btn-sm btn-danger" 
-                              onclick="return confirm('Bạn có chắc muốn hủy đăng ký?')">
-                        <i class="bi bi-trash"></i> Hủy đăng ký
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
+  <div class="container mt-4">
+    <div class="subscriptions-header mb-4">
+      <h2>
+        <i class="bi bi-pin-map-fill text-primary"></i>
+        Khu vực đang theo dõi
+      </h2>
+      <p class="text-muted">Bạn đang theo dõi <%= subscriptions.length %> khu vực</p>
+    </div>
+
+    <div class="subscription-grid">
+      <% if (subscriptions.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="bi bi-bell-slash"></i>
+          </div>
+          <h3>Chưa có khu vực theo dõi</h3>
+          <p>Bạn chưa đăng ký theo dõi khu vực nào. Hãy thêm khu vực để nhận thông báo.</p>
+          <button class="btn btn-primary" onclick="showAddModal()">
+            <i class="bi bi-plus-circle"></i>
+            Thêm khu vực mới
+          </button>
+        </div>
+      <% } else { %>
+        <% subscriptions.forEach(function(sub) { %>
+          <div class="subscription-card">
+            <div class="subscription-card-header">
+              <div class="zone-badge <%= sub.zone === 'mien_bac' ? 'zone-north' : sub.zone === 'mien_trung' ? 'zone-central' : 'zone-south' %>">
+                <%= sub.zone === 'mien_bac' ? 'MB' : sub.zone === 'mien_trung' ? 'MT' : 'MN' %>
+              </div>
+              <button class="btn-delete" onclick="confirmDelete('<%= sub.id %>', '<%= sub.ten_cong_ty_con %>')">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div class="subscription-card-body">
+              <h3 class="company-name"><%= sub.ten_cong_ty_con %></h3>
+              <div class="company-info">
+                <i class="bi bi-building text-primary"></i>
+                <span><%= sub.ten_dien_luc %></span>
+              </div>
+              <div class="notification-info">
+                <i class="bi bi-envelope-check text-success"></i>
+                <span>Đang nhận thông báo qua email</span>
+              </div>
+            </div>
+            <form id="delete-form-<%= sub.id %>" action="/subscriptions/<%= sub.id %>" method="POST" class="d-none"></form>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <% if (subscriptions.length > 0) { %>
+      <div class="subscription-actions">
+        <button class="btn btn-primary" onclick="showAddModal()">
+          <i class="bi bi-plus-circle"></i>
+          Thêm khu vực mới
+        </button>
       </div>
     <% } %>
   </div>
-</div>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h5>Về Lịch Cúp Điện</h5>
-        <p>
-          Dịch vụ thông báo lịch cúp điện tự động, giúp bạn luôn cập nhật 
-          thông tin mới nhất về lịch cúp điện tại khu vực quan tâm.
-        </p>
-      </div>
-      
-      <div class="footer-section">
-        <h5>Tính năng</h5>
-        <ul class="footer-links">
-          <li><a href="#"><i class="bi bi-bell me-2"></i>Thông báo qua email</a></li>
-          <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Theo dõi nhiều khu vực</a></li>
-          <li><a href="#"><i class="bi bi-clock-history me-2"></i>Cập nhật liên tục</a></li>
-          <li><a href="#"><i class="bi bi-shield-check me-2"></i>Thông tin chính xác</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h5>Liên kết</h5>
-        <ul class="footer-links">
-          <li><a href="/api">API Documentation</a></li>
-          <li><a href="/terms">Điều khoản sử dụng</a></li>
-          <li><a href="/privacy">Chính sách bảo mật</a></li>
-          <li><a href="/data-sources">Nguồn dữ liệu</a></li>
-          <li><a href="#">Hướng dẫn sử dụng</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h5>Hỗ trợ</h5>
-        <ul class="footer-links">
-          <li><a href="#"><i class="bi bi-envelope me-2"></i>support@lichcupdien.com</a></li>
-          <li><a href="#"><i class="bi bi-github me-2"></i>GitHub Repository</a></li>
-          <li><a href="#"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p>© <%= new Date().getFullYear() %> Lịch Cúp Điện. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
-
-<script defer>
-function toggleGoogleId() {
-  const maskedId = document.getElementById('maskedId');
-  const fullId = document.getElementById('fullId');
-  const toggleIcon = document.getElementById('toggleIcon');
-  
-  if (maskedId.style.display === 'none') {
-    maskedId.style.display = 'inline';
-    fullId.style.display = 'none';
-    toggleIcon.classList.remove('bi-eye-slash');
-    toggleIcon.classList.add('bi-eye');
-  } else {
-    maskedId.style.display = 'none';
-    fullId.style.display = 'inline';
-    toggleIcon.classList.remove('bi-eye');
-    toggleIcon.classList.add('bi-eye-slash');
-  }
-}
-
-async function copyGoogleId() {
-  const fullId = document.getElementById('fullId').textContent;
-  
-  try {
-    await navigator.clipboard.writeText(fullId);
-    
-    // Show tooltip
-    const btn = event.currentTarget;
-    const originalHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="bi bi-check text-success"></i>';
-    
-    setTimeout(() => {
-      btn.innerHTML = originalHtml;
-    }, 2000);
-  } catch (err) {
-    console.error('Failed to copy:', err);
-  }
-}
-
-function toggleDevMode() {
-  const devContent = document.getElementById('devContent');
-  const devHeader = document.getElementById('devHeader');
-  const isVisible = devContent.classList.contains('show');
-  
-  if (isVisible) {
-    devContent.classList.remove('show');
-    devHeader.classList.add('collapsed');
-  } else {
-    devContent.classList.add('show');
-    devHeader.classList.remove('collapsed');
-  }
-  
-  // Save preference
-  localStorage.setItem('devMode', !isVisible);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  let selectedZone = '<%= selectedZone || "" %>';
-  let selectedCompany = '<%= selectedCompany || "" %>';
-  const subscriptions = <%- JSON.stringify(subscriptions) %>;
-  const actionModal = new bootstrap.Modal(document.getElementById('actionModal'));
-  const scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
-  let selectedCompanyCon = null;
-  let currentCompanyInfo = null;
-
-  // Hàm mở trực tiếp modal lịch
-  window.showScheduleDirectly = async function(maCongTyCon, tenCongTyCon) {
-    currentCompanyInfo = {
-      id: maCongTyCon,
-      name: tenCongTyCon
-    };
-    
-    // Set default date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('scheduleDate').value = today;
-    
-    // Update company name
-    document.querySelectorAll('#scheduleModal .company-name')
-      .forEach(el => el.textContent = tenCongTyCon);
-    
-    // Show modal and load data
-    scheduleModal.show();
-    await loadScheduleData(today);
-  };
-
-  function selectZone(zone) {
-    selectedZone = zone;
-    selectedCompany = '';
-    
-    // Reset danh sách công ty điện lực và điện lực
-    document.querySelector('#subCompanyList').innerHTML = '<div class="text-center">Vui lòng chọn công ty điện lực</div>';
-    
-    if (zone) {
-      document.querySelector('#companyList').innerHTML = '<div class="text-center">Đang tải...</div>';
-      // Load danh sách công ty điện lực theo zone
-      fetch(`/api/companies?zone=${zone}`, {
-        headers: {
-          'X-Google-ID': document.getElementById('fullId').textContent
-        }
-      })
-        .then(res => res.json())
-        .then(response => {
-          if (!response.success) {
-            throw new Error(response.error || 'Failed to fetch companies');
-          }
-          
-          const companies = response.data.companies;
-          const html = companies.map(company => `
-            <div class="company-item" data-company-id="${company.id_cong_ty}">
-              ${company.ten_cong_ty}
-            </div>
-          `).join('');
-          document.querySelector('#companyList').innerHTML = html || '<div class="text-center">Không có dữ liệu</div>';
-          
-          // Thêm event listeners cho các công ty mới
-          document.querySelectorAll('#companyList .company-item').forEach(item => {
-            item.addEventListener('click', () => selectCompany(item.dataset.companyId));
-          });
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.querySelector('#companyList').innerHTML = 
-            '<div class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu</div>';
-        });
-    } else {
-      document.querySelector('#companyList').innerHTML = '<div class="text-center">Vui lòng chọn khu vực</div>';
-    }
-    
-    refreshUI();
-  }
-
-  function selectCompany(companyId) {
-    selectedCompany = companyId;
-    
-    document.querySelector('#subCompanyList').innerHTML = '<div class="text-center">Đang tải...</div>';
-    
-    fetch(`/api/subcompanies?company=${companyId}`, {
-      headers: {
-        'X-Google-ID': document.getElementById('fullId').textContent
-      }
-    })
-      .then(res => res.json())
-      .then(response => {
-        if (!response.success) {
-          throw new Error(response.error || 'Failed to fetch sub-companies');
-        }
-        
-        const companies = response.data.companies;
-        const html = companies.map(company => {
-          const isSubscribed = subscriptions
-            .some(s => s.ma_cong_ty_con === company.ma_cong_ty_con);
-          
-          return `
-            <div class="company-item">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>${company.ten_cong_ty_con}</div>
-                ${isSubscribed 
-                  ? '<span class="badge bg-success">Đã đăng ký nhắc nhở</span>'
-                  : `<button type="button" class="btn btn-sm btn-primary"
-                            onclick="showActionModal('${company.ma_cong_ty_con}', '${company.ten_cong_ty_con}')"
-                            title="Chọn thao tác">
-                        Chọn thao tác
-                      </button>`
-                }
-              </div>
-            </div>
-          `;
-        }).join('');
-        document.querySelector('#subCompanyList').innerHTML = html || '<div class="text-center">Không có dữ liệu</div>';
-        
-        // Thêm event listeners cho các công ty con mới
-        document.querySelectorAll('#subCompanyList .company-item[data-can-subscribe]').forEach(item => {
-          item.addEventListener('click', () => submitSubscription(item.dataset.companyCon));
-        });
-      });
-    
-    refreshUI();
-  }
-
-  window.showActionModal = function(maCongTyCon, tenCongTyCon) {
-    selectedCompanyCon = maCongTyCon;
-    currentCompanyInfo = {
-      id: maCongTyCon,
-      name: tenCongTyCon
-    };
-    
-    // Cập nhật nội dung modal
-    document.querySelector('#actionModal .company-name').textContent = tenCongTyCon;
-      
-    // Thêm event listener cho nút nhắc nhở
-    document.querySelector('#actionModal .notify-btn').onclick = () => {
-      submitSubscription(maCongTyCon, 'notify');
-      actionModal.hide();
-    };
-    
-    actionModal.show();
-  }
-
-  function submitSubscription(maCongTyCon, type) {
-    document.getElementById('selectedCompanyCon').value = maCongTyCon;
-    document.getElementById('subscriptionType').value = type;
-    document.getElementById('subscriptionForm').submit();
-  }
-
-  function refreshUI() {
-    document.querySelectorAll('.company-item').forEach(item => {
-      item.classList.remove('selected');
-    });
-    
-    if (selectedZone) {
-      document.querySelector(`.company-item[data-zone="${selectedZone}"]`)?.classList.add('selected');
-    }
-  }
-      
-    // Thêm event listeners cho các khu vực
-    document.querySelectorAll('.zone-item').forEach(item => {
-      item.addEventListener('click', () => selectZone(item.dataset.zone));
-    });
-
-  window.showScheduleModal = async function() {
-    actionModal.hide();
-    scheduleModal.show();
-    
-    // Set default date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('scheduleDate').value = today;
-    
-    // Update company name
-    document.querySelectorAll('#scheduleModal .company-name')
-      .forEach(el => el.textContent = currentCompanyInfo.name);
-    
-    // Load initial data
-    await loadScheduleData(today);
-  };
-
-  window.loadScheduleData = async function(date) {
-    const scheduleContent = document.getElementById('scheduleContent');
-    scheduleContent.innerHTML = '<div class="text-center">Đang tải dữ liệu...</div>';
-    
-    try {
-      // Đảm bảo date là ngày đầu ngày (00:00:00)
-      const startDate = new Date(date);
-      startDate.setHours(0, 0, 0, 0);
-
-      // Lấy ngày kết thúc là cuối ngày sau 7 ngày
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 7);
-      endDate.setHours(23, 59, 59, 999);
-
-      const response = await fetch(
-        `api/outages?ma_cong_ty_con=${currentCompanyInfo.id}&start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`,
-        {
-          headers: {
-            'X-Google-ID': document.getElementById('fullId').textContent
-          }
-        }
-      );
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to fetch schedule');
-      }
-      
-      const items = data.data.items;
-      
-      if (items.length === 0) {
-        scheduleContent.innerHTML = `
-          <div class="no-data">
-            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
-            Không có lịch cúp điện nào từ ${new Date(date).toLocaleDateString('vi-VN')} 
-            đến ${endDate.toLocaleDateString('vi-VN')}
-          </div>
-        `;
-        return;
-      }
-      
-      // Sắp xếp items theo thời gian bắt đầu
-      items.sort((a, b) => new Date(a.thoi_gian_bat_dau) - new Date(b.thoi_gian_bat_dau));
-
-      const html = `
-        <table class="table schedule-table">
-          <thead>
-            <tr>
-              <th>Ngày</th>
-              <th>Thời gian</th>
-              <th>Khu vực</th>
-              <th>Lý do</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map(item => {
-              const date = new Date(item.thoi_gian_bat_dau);
-              const startTime = date.toLocaleTimeString('vi-VN');
-              const endTime = new Date(item.thoi_gian_ket_thuc).toLocaleTimeString('vi-VN');
-              return `
-                <tr>
-                  <td>${date.toLocaleDateString('vi-VN')}</td>
-                  <td>
-                    ${startTime} - ${endTime}
-                  </td>
-                  <td>${item.khu_vuc}</td>
-                  <td>${item.ly_do}</td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      `;
-      
-      scheduleContent.innerHTML = html;
-    } catch (error) {
-      console.error('Error:', error);
-      scheduleContent.innerHTML = `
-        <div class="alert alert-danger">
-          Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h5>Về Lịch Cúp Điện</h5>
+          <p>
+            Dịch vụ thông báo lịch cúp điện tự động, giúp bạn luôn cập nhật 
+            thông tin mới nhất về lịch cúp điện tại khu vực quan tâm.
+          </p>
         </div>
-      `;
-    }
-  };
+        
+        <div class="footer-section">
+          <h5>Tính năng</h5>
+          <ul class="footer-links">
+            <li><a href="#"><i class="bi bi-bell me-2"></i>Thông báo qua email</a></li>
+            <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Theo dõi nhiều khu vực</a></li>
+            <li><a href="#"><i class="bi bi-clock-history me-2"></i>Cập nhật liên tục</a></li>
+            <li><a href="#"><i class="bi bi-shield-check me-2"></i>Thông tin chính xác</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h5>Liên kết</h5>
+          <ul class="footer-links">
+            <li><a href="/api">API Documentation</a></li>
+            <li><a href="/terms">Điều khoản sử dụng</a></li>
+            <li><a href="/privacy">Chính sách bảo mật</a></li>
+            <li><a href="/data-sources">Nguồn dữ liệu</a></li>
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h5>Hỗ trợ</h5>
+          <ul class="footer-links">
+            <li><a href="#"><i class="bi bi-envelope me-2"></i>support@lichcupdien.com</a></li>
+            <li><a href="#"><i class="bi bi-github me-2"></i>GitHub Repository</a></li>
+            <li><a href="#"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>© <%= new Date().getFullYear() %> Lịch Cúp Điện. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 
-  // Add event listener for date change
-  document.getElementById('scheduleDate').addEventListener('change', (e) => {
-    loadScheduleData(e.target.value);
-  });
-
-  // Restore dev mode state
-  document.addEventListener('DOMContentLoaded', function() {
-    const devMode = localStorage.getItem('devMode') === 'true';
-    if (devMode) {
-      document.getElementById('devContent').classList.add('show');
-      document.getElementById('devHeader').classList.remove('collapsed');
+  <style>
+    .subscriptions-header {
+      text-align: center;
+      padding: 2rem 0;
     }
-  });
-});
-</script>
+    
+    .subscriptions-header h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .subscription-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .subscription-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.3s;
+    }
+    
+    .subscription-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    
+    .subscription-card-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .zone-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .zone-north {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+    
+    .zone-central {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+    
+    .zone-south {
+      background: #e8f5e9;
+      color: #388e3c;
+    }
+    
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #dc3545;
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-delete:hover {
+      background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .subscription-card-body {
+      padding: 1.5rem;
+    }
+    
+    .company-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2d3436;
+    }
+    
+    .company-info,
+    .notification-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: #636e72;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .empty-state-icon {
+      font-size: 3rem;
+      color: #cbd5e0;
+      margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2d3436;
+    }
+    
+    .empty-state p {
+      color: #636e72;
+      margin-bottom: 2rem;
+    }
+    
+    .subscription-actions {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .subscription-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .subscription-card {
+        margin: 0;
+      }
+      
+      .subscriptions-header {
+        padding: 1rem 0;
+      }
+      
+      .subscriptions-header h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+
+  <script>
+    // Modal instance
+    let addModal;
+    
+    // Initialize when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      addModal = new bootstrap.Modal(document.getElementById('addSubscriptionModal'));
+    });
+    
+    // Show add subscription modal
+    function showAddModal() {
+      addModal.show();
+    }
+    
+    // Handle zone selection
+    function onZoneChange(select) {
+      const zone = select.value;
+      const companySelect = document.querySelector('select[name="ma_dien_luc"]');
+      const subCompanySelect = document.querySelector('select[name="ma_cong_ty_con"]');
+      
+      // Reset and disable dependent selects
+      companySelect.value = '';
+      subCompanySelect.value = '';
+      
+      companySelect.disabled = !zone;
+      subCompanySelect.disabled = true;
+      
+      // Filter companies by zone
+      Array.from(companySelect.options).forEach(option => {
+        if (option.dataset.zone) {
+          option.style.display = option.dataset.zone === zone ? '' : 'none';
+        }
+      });
+    }
+    
+    // Handle company selection
+    function onCompanyChange(select) {
+      const companyId = select.value;
+      const subCompanySelect = document.querySelector('select[name="ma_cong_ty_con"]');
+      
+      // Reset and enable/disable sub-company select
+      subCompanySelect.value = '';
+      subCompanySelect.disabled = !companyId;
+      
+      // Filter sub-companies by parent company
+      Array.from(subCompanySelect.options).forEach(option => {
+        if (option.dataset.parent) {
+          option.style.display = option.dataset.parent === companyId ? '' : 'none';
+        }
+      });
+    }
+    
+    // Toggle developer mode
+    function toggleDevMode() {
+      const devContent = document.getElementById('devContent');
+      const devHeader = document.querySelector('.dev-header');
+      
+      if (devContent.style.display === 'none') {
+        devContent.style.display = 'block';
+        devHeader.classList.remove('collapsed');
+      } else {
+        devContent.style.display = 'none';
+        devHeader.classList.add('collapsed');
+      }
+    }
+
+    function confirmDelete(id, name) {
+      if (confirm(`Bạn có chắc chắn muốn hủy theo dõi "${name}"?`)) {
+        document.getElementById(`delete-form-${id}`).submit();
+      }
+    }
+  </script>
+</div>
 
 <!-- Rest of the body content -->
 </body>

@@ -530,17 +530,11 @@
                 <% if (user.picture) { %>
                   <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle" width="24" height="24">
                 <% } %>
-                <span><%= user.name %></span>
+                <span style="color: white"><%= user.name %></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                  <a class="dropdown-item" href="/subscriptions">
-                    <i class="bi bi-gear"></i> Quản lý đăng ký
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a class="dropdown-item" href="/auth/logout">
+                  <a class="dropdown-item" style="color: black" href="/auth/logout">
                     <i class="bi bi-box-arrow-right"></i> Đăng xuất
                   </a>
                 </li>
