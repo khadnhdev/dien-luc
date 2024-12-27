@@ -1,0 +1,238 @@
+<%- include('header', { 
+  title: 'API Documentation',
+  customStyles: `
+    .api-section {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    }
+
+    .api-endpoint {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .api-url {
+      background: #2d3436;
+      color: white;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      margin: 1rem 0;
+    }
+
+    .api-method {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .api-method.get {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .api-params table {
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    .api-params th {
+      text-align: left;
+      background: #f1f3f5;
+    }
+
+    .api-response {
+      background: #263238;
+      color: #eeffff;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .copy-btn {
+      float: right;
+      padding: 0.25rem 0.5rem;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+  `
+}) %>
+
+<div class="container mt-4">
+  <div class="api-section">
+    <h1 class="mb-4">API Documentation</h1>
+    <p class="text-muted mb-4">
+      API để truy xuất dữ liệu về công ty điện lực và lịch cúp điện.
+      Tất cả các requests phải sử dụng <code>Content-Type: application/json</code>
+    </p>
+
+    <!-- API Lấy danh sách công ty -->
+    <div class="api-endpoint">
+      <h3>
+        <span class="api-method get">GET</span>
+        Lấy danh sách công ty điện lực
+      </h3>
+      <div class="api-url">
+        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        GET /api/companies
+      </div>
+      
+      <h5>Query Parameters:</h5>
+      <div class="api-params">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>zone</td>
+              <td>string</td>
+              <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h5>Response:</h5>
+      <div class="api-response">
+{
+  "success": true,
+  "data": {
+    "companies": [
+      {
+        "id_cong_ty": "EVN_HN",
+        "ten_cong_ty": "Tổng Công ty Điện lực Hà Nội",
+        "zone": "mien_bac",
+        "cong_ty_con": [
+          {
+            "ma_cong_ty_con": "EVN_HN_01",
+            "ten_cong_ty_con": "Công ty Điện lực Hoàn Kiếm"
+          }
+        ]
+      }
+    ]
+  }
+}</div>
+    </div>
+
+    <!-- API Lấy lịch cúp điện -->
+    <div class="api-endpoint">
+      <h3>
+        <span class="api-method get">GET</span>
+        Lấy danh sách lịch cúp điện
+      </h3>
+      <div class="api-url">
+        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        GET /api/outages
+      </div>
+
+      <h5>Query Parameters:</h5>
+      <div class="api-params">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>zone</td>
+              <td>string</td>
+              <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
+            </tr>
+            <tr>
+              <td>ma_dien_luc</td>
+              <td>string</td>
+              <td>Mã công ty điện lực</td>
+            </tr>
+            <tr>
+              <td>ma_cong_ty_con</td>
+              <td>string</td>
+              <td>Mã công ty con</td>
+            </tr>
+            <tr>
+              <td>date</td>
+              <td>string</td>
+              <td>Ngày (YYYY-MM-DD)</td>
+            </tr>
+            <tr>
+              <td>page</td>
+              <td>number</td>
+              <td>Trang (mặc định: 1)</td>
+            </tr>
+            <tr>
+              <td>limit</td>
+              <td>number</td>
+              <td>Số lượng kết quả mỗi trang (mặc định: 20)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h5>Response:</h5>
+      <div class="api-response">
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "ma_dien_luc": "EVN_HN",
+        "ten_dien_luc": "Tổng Công ty Điện lực Hà Nội",
+        "ma_cong_ty_con": "EVN_HN_01",
+        "ten_cong_ty_con": "Công ty Điện lực Hoàn Kiếm",
+        "thoi_gian_bat_dau": "2024-03-20T08:00:00.000Z",
+        "thoi_gian_ket_thuc": "2024-03-20T17:00:00.000Z",
+        "khu_vuc": "Phường Hàng Bài, Hoàn Kiếm",
+        "ly_do": "Bảo trì đường dây"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "totalItems": 45,
+      "totalPages": 3
+    }
+  }
+}</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyToClipboard(button) {
+  const url = button.nextElementSibling.textContent.trim();
+  navigator.clipboard.writeText(url);
+  
+  const originalText = button.textContent;
+  button.textContent = 'Copied!';
+  setTimeout(() => {
+    button.textContent = originalText;
+  }, 2000);
+}
+</script>
+
+<%- include('footer') %> 

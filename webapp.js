@@ -243,55 +243,179 @@ app.use((req, res, next) => {
   next();
 });
 
-// API lấy danh sách công ty điện lực theo zone
+// API lấy danh sách công ty điện lực
 app.get('/api/companies', async (req, res) => {
   const { zone } = req.query;
   
   try {
+    // Lấy danh sách công ty và công ty con
     const companies = await new Promise((resolve, reject) => {
-      const query = `
-        SELECT DISTINCT c.id_cong_ty as ma_dien_luc, c.ten_cong_ty as ten_dien_luc
+      let query = `
+        SELECT 
+          c.id_cong_ty,
+          c.ten_cong_ty,
+          c.zone,
+          cc.ma_cong_ty_con,
+          cc.ten_cong_ty_con
         FROM cong_ty_dien_luc c
-        WHERE c.zone = ?
-        ORDER BY c.ten_cong_ty
+        LEFT JOIN cong_ty_con cc ON c.id_cong_ty = cc.id_cong_ty_cha
       `;
       
-      db.all(query, [zone], (err, rows) => {
+      const params = [];
+      if (zone) {
+        query += ' WHERE c.zone = ?';
+        params.push(zone);
+      }
+      
+      query += ' ORDER BY c.ten_cong_ty, cc.ten_cong_ty_con';
+      
+      db.all(query, params, (err, rows) => {
         if (err) reject(err);
-        else resolve(rows || []);
+        else resolve(rows);
       });
     });
-    
-    res.json(companies);
+
+    // Chuyển đổi dữ liệu thành cấu trúc phân cấp
+    const companiesMap = new Map();
+    companies.forEach(row => {
+      if (!companiesMap.has(row.id_cong_ty)) {
+        companiesMap.set(row.id_cong_ty, {
+          id_cong_ty: row.id_cong_ty,
+          ten_cong_ty: row.ten_cong_ty,
+          zone: row.zone,
+          cong_ty_con: []
+        });
+      }
+      
+      if (row.ma_cong_ty_con) {
+        companiesMap.get(row.id_cong_ty).cong_ty_con.push({
+          ma_cong_ty_con: row.ma_cong_ty_con,
+          ten_cong_ty_con: row.ten_cong_ty_con
+        });
+      }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        companies: Array.from(companiesMap.values())
+      }
+    });
   } catch (error) {
     console.error('Lỗi:', error);
-    res.status(500).json({ error: 'Lỗi server' });
+    res.status(500).json({
+      success: false,
+      error: 'Lỗi server'
+    });
   }
 });
 
-// API lấy danh sách điện lực theo công ty
-app.get('/api/subcompanies', async (req, res) => {
-  const { company } = req.query;
+// API lấy danh sách lịch cúp điện
+app.get('/api/outages', async (req, res) => {
+  const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
   
   try {
-    const companies = await new Promise((resolve, reject) => {
-      const query = `
-        SELECT ma_cong_ty_con, ten_cong_ty_con
-        FROM cong_ty_con
-        WHERE id_cong_ty_cha = ?
-        ORDER BY ten_cong_ty_con
-      `;
-      
-      db.all(query, [company], (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows || []);
-      });
-    });
+    let query = `
+      SELECT 
+        lcd.*,
+        c.ten_cong_ty as ten_dien_luc,
+        cc.ten_cong_ty_con
+      FROM lich_cup_dien lcd
+      LEFT JOIN cong_ty_dien_luc c ON lcd.ma_dien_luc = c.id_cong_ty
+      LEFT JOIN cong_ty_con cc ON lcd.ma_cong_ty_con = cc.ma_cong_ty_con
+      WHERE 1=1
+    `;
     
-    res.json(companies);
+    let countQuery = `
+      SELECT COUNT(*) as total 
+      FROM lich_cup_dien lcd
+      WHERE 1=1
+    `;
+    
+    const params = [];
+    const countParams = [];
+
+    if (zone) {
+      const whereClause = ` AND lcd.zone = ?`;
+      query += whereClause;
+      countQuery += whereClause;
+      params.push(zone);
+      countParams.push(zone);
+    }
+    
+    if (date) {
+      const whereClause = ` AND date(lcd.thoi_gian_bat_dau) >= date(?)`;
+      query += whereClause;
+      countQuery += whereClause;
+      params.push(date);
+      countParams.push(date);
+    }
+
+    if (ma_dien_luc) {
+      const whereClause = ` AND lcd.ma_dien_luc = ?`;
+      query += whereClause;
+      countQuery += whereClause;
+      params.push(ma_dien_luc);
+      countParams.push(ma_dien_luc);
+    }
+
+    if (ma_cong_ty_con) {
+      const whereClause = ` AND lcd.ma_cong_ty_con = ?`;
+      query += whereClause;
+      countQuery += whereClause;
+      params.push(ma_cong_ty_con);
+      countParams.push(ma_cong_ty_con);
+    }
+    
+    query += ` ORDER BY lcd.thoi_gian_bat_dau DESC LIMIT ? OFFSET ?`;
+    params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
+
+    const [items, totalCount] = await Promise.all([
+      new Promise((resolve, reject) => {
+        db.all(query, params, (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        });
+      }),
+      new Promise((resolve, reject) => {
+        db.get(countQuery, countParams, (err, row) => {
+          if (err) reject(err);
+          else resolve(row.total);
+        });
+      })
+    ]);
+
+    const totalPages = Math.ceil(totalCount / parseInt(limit));
+
+    res.json({
+      success: true,
+      data: {
+        items: items.map(item => ({
+          id: item.id,
+          ma_dien_luc: item.ma_dien_luc,
+          ten_dien_luc: item.ten_dien_luc,
+          ma_cong_ty_con: item.ma_cong_ty_con,
+          ten_cong_ty_con: item.ten_cong_ty_con,
+          thoi_gian_bat_dau: item.thoi_gian_bat_dau,
+          thoi_gian_ket_thuc: item.thoi_gian_ket_thuc,
+          khu_vuc: item.khu_vuc,
+          ly_do: item.ly_do,
+          zone: item.zone
+        })),
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalItems: totalCount,
+          totalPages
+        }
+      }
+    });
   } catch (error) {
     console.error('Lỗi:', error);
-    res.status(500).json({ error: 'Lỗi server' });
+    res.status(500).json({
+      success: false,
+      error: 'Lỗi server'
+    });
   }
 });
 
@@ -554,6 +678,11 @@ app.get('/auth/logout', (req, res) => {
     if (err) { return next(err); }
     res.redirect('/');
   });
+});
+
+// API Routes
+app.get('/api', (req, res) => {
+  res.render('api');
 });
 
 app.listen(port, () => {
