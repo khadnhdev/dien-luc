@@ -1,181 +1,391 @@
 <%- include('header', { 
   title: 'API Documentation',
   customStyles: `
+    /* API Documentation styles */
+    .api-header {
+      background: linear-gradient(135deg, var(--primary-color), #0143a3);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 3rem;
+      border-radius: 0 0 24px 24px;
+      text-align: center;
+    }
+
+    .api-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .api-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .api-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
     .api-section {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+      margin-bottom: 3rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     }
 
-    .api-endpoint {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .api-url {
-      position: relative;
-      background: #2d3436;
-      color: white;
-      padding: 1rem;
-      border-radius: 6px;
-      font-family: monospace;
-      margin: 1rem 0;
-    }
-
-    .api-method {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
+    .api-section h2 {
+      color: var(--primary-color);
+      font-size: 1.75rem;
       font-weight: 600;
-      margin-right: 0.5rem;
+      margin-bottom: 2rem;
     }
 
-    .api-method.get {
-      background: #e3f2fd;
-      color: #1976d2;
+    .endpoint {
+      margin-bottom: 3rem;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
     }
 
-    .api-params table {
-      width: 100%;
-      margin: 1rem 0;
+    .endpoint:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
     }
 
-    .api-params th {
-      text-align: left;
-      background: #f1f3f5;
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
     }
 
-    .api-response {
-      background: #263238;
-      color: #eeffff;
-      padding: 1rem;
+    .method {
+      padding: 0.5rem 1rem;
       border-radius: 6px;
-      font-family: monospace;
-      white-space: pre;
-      overflow-x: auto;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .copy-btn {
+    .method.get {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .endpoint-url {
+      font-family: 'Fira Code', monospace;
+      color: #495057;
+      font-size: 1rem;
+    }
+
+    .endpoint-content {
+      padding: 1.5rem;
+    }
+
+    .endpoint-section {
+      margin-bottom: 2rem;
+    }
+
+    .endpoint-section h3 {
+      font-size: 1.2rem;
+      color: #495057;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .endpoint-section h3 i {
+      color: var(--primary-color);
+    }
+
+    .params-table {
+      width: 100%;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .params-table th {
+      background: #f8f9fa;
+      padding: 1rem;
+      font-weight: 600;
+      color: #495057;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .params-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e9ecef;
+      color: #6c757d;
+    }
+
+    .param-name {
+      font-family: 'Fira Code', monospace;
+      color: #0d6efd;
+    }
+
+    .param-required {
+      color: #dc3545;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.5rem;
+      background: #dc35451a;
+      border-radius: 4px;
+    }
+
+    .param-optional {
+      color: #6c757d;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.5rem;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    .response-example {
+      background: #1a1a1a;
+      color: #e9ecef;
+      padding: 1.5rem;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .response-example code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .copy-button {
       position: absolute;
-      right: 0.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      padding: 0.25rem 0.75rem;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
       background: rgba(255,255,255,0.1);
       border: none;
       color: white;
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.875rem;
-      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
     }
 
-    .copy-btn:hover {
+    .copy-button:hover {
       background: rgba(255,255,255,0.2);
     }
 
-    .api-url code {
-      display: block;
-      padding-right: 4rem; /* Để không bị button đè */
-      color: inherit;
+    .copy-button i {
+      font-size: 1rem;
+    }
+
+    /* Syntax highlighting */
+    .token.string { color: #98c379; }
+    .token.number { color: #d19a66; }
+    .token.boolean { color: #56b6c2; }
+    .token.null { color: #56b6c2; }
+    .token.property { color: #e06c75; }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .api-header {
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .api-header h1 {
+        font-size: 2rem;
+      }
+
+      .api-section {
+        padding: 1.5rem;
+        border-radius: 12px;
+      }
+
+      .endpoint-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .endpoint-url {
+        font-size: 0.9rem;
+        word-break: break-all;
+      }
+
+      .table-responsive {
+        margin: 0 -1.5rem;
+        padding: 0 1.5rem;
+        overflow-x: auto;
+      }
+
+      .params-table {
+        min-width: 600px;
+      }
+
+      .response-example {
+        margin: 0 -1.5rem;
+        border-radius: 0;
+      }
     }
   `
 }) %>
 
-<div class="container mt-4">
+<div class="api-header">
+  <div class="container">
+    <h1>API Documentation</h1>
+    <p>Tài liệu hướng dẫn tích hợp API Lịch Cúp Điện vào ứng dụng của bạn</p>
+  </div>
+</div>
+
+<div class="api-content">
+  <!-- Authentication Section -->
   <div class="api-section">
-    <h1 class="mb-4">API Documentation</h1>
+    <h2>
+      <i class="bi bi-shield-lock"></i>
+      Authentication
+    </h2>
     <p class="text-muted mb-4">
-      API để truy xuất dữ liệu về công ty điện lực và lịch cúp điện.
-      Tất cả các requests phải có các headers sau:
+      Tất cả các API calls cần được xác thực bằng Google ID thông qua header. 
+      Để lấy Google ID, bạn cần đăng nhập vào hệ thống qua Google OAuth.
     </p>
 
-    <!-- Authentication Section -->
-    <div class="api-endpoint mb-4">
-      <h3>Authentication</h3>
-      <p>Tất cả các API calls cần có header sau:</p>
-      <div class="api-params">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Header</th>
-              <th>Value</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>X-Google-ID</td>
-              <td>string</td>
-              <td>Google ID của user đã đăng nhập (Lấy từ bảng users)</td>
-            </tr>
-            <tr>
-              <td>Content-Type</td>
-              <td>application/json</td>
-              <td>Định dạng dữ liệu request</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method">headers</span>
+        <span class="endpoint-url">Required Headers</span>
       </div>
+      <div class="endpoint-content">
+        <div class="table-responsive">
+          <table class="params-table">
+            <thead>
+              <tr>
+                <th>Header Name</th>
+                <th>Value</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="param-name">X-Google-ID</span>
+                  <span class="param-required">Required</span>
+                </td>
+                <td>string</td>
+                <td>Google ID của user đã đăng nhập (Lấy từ bảng users)</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-name">Content-Type</span>
+                  <td>application/json</td>
+                  <td>Định dạng dữ liệu request</td>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i>
-        <strong>Lưu ý:</strong> Để lấy Google ID, bạn cần đăng nhập vào hệ thống qua Google OAuth.
-        Google ID sẽ được lưu trong bảng users của database.
-      </div>
-
-      <h5>Error Response (401 Unauthorized):</h5>
-      <div class="api-response">
-{
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-exclamation-triangle"></i>
+            Error Response (401 Unauthorized)
+          </h3>
+          <div class="response-example">
+            <button class="copy-button" onclick="copyToClipboard(this)">
+              <i class="bi bi-clipboard"></i>
+              Copy
+            </button>
+            <code>{
   "success": false,
   "error": "Missing X-Google-ID header"
-}</div>
+}</code>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- API Lấy danh sách công ty -->
-    <div class="api-endpoint">
-      <h3>
-        <span class="api-method get">GET</span>
-        Lấy danh sách công ty điện lực
-      </h3>
-      <h5>Example Request:</h5>
-      <div class="api-response">
-curl -X GET "http://localhost:3000/api/companies?zone=mien_bac" \
+  <!-- API Endpoints Section -->
+  <div class="api-section">
+    <h2>
+      <i class="bi bi-hdd-network"></i>
+      API Endpoints
+    </h2>
+
+    <!-- Get Companies API -->
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-url">/api/companies</span>
+      </div>
+      <div class="endpoint-content">
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-search"></i>
+            Query Parameters
+          </h3>
+          <div class="table-responsive">
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="param-name">zone</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>string</td>
+                  <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-code-slash"></i>
+            Example Request
+          </h3>
+          <div class="response-example">
+            <button class="copy-button" onclick="copyToClipboard(this)">
+              <i class="bi bi-clipboard"></i>
+              Copy
+            </button>
+            <code>curl -X GET "http://localhost:3000/api/companies?zone=mien_bac" \
      -H "X-Google-ID: YOUR_GOOGLE_ID" \
-     -H "Content-Type: application/json"</div>
+     -H "Content-Type: application/json"</code>
+          </div>
+        </div>
 
-      <div class="api-url">
-        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-        <code>/api/companies</code>
-      </div>
-      
-      <h5>Query Parameters:</h5>
-      <div class="api-params">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Parameter</th>
-              <th>Type</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>zone</td>
-              <td>string</td>
-              <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h5>Response:</h5>
-      <div class="api-response">
-{
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-arrow-return-right"></i>
+            Response
+          </h3>
+          <div class="response-example">
+            <button class="copy-button" onclick="copyToClipboard(this)">
+              <i class="bi bi-clipboard"></i>
+              Copy
+            </button>
+            <code>{
   "success": true,
   "data": {
     "companies": [
@@ -185,81 +395,121 @@ curl -X GET "http://localhost:3000/api/companies?zone=mien_bac" \
         "zone": "mien_bac",
         "cong_ty_con": [
           {
-            "ma_cong_ty_con": "EVN_HN_01",
+            "ma_cong_ty_con": "EVN_HN_01", 
             "ten_cong_ty_con": "Công ty Điện lực Hoàn Kiếm"
           }
         ]
       }
     ]
   }
-}</div>
+}</code>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- API Lấy lịch cúp điện -->
-    <div class="api-endpoint">
-      <h3>
-        <span class="api-method get">GET</span>
-        Lấy danh sách lịch cúp điện
-      </h3>
-      <h5>Example Request:</h5>
-      <div class="api-response">
-curl -X GET "http://localhost:3000/api/outages?zone=mien_bac&date=2024-03-20" \
+    <!-- Get Outages API -->
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-url">/api/outages</span>
+      </div>
+      <div class="endpoint-content">
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-search"></i>
+            Query Parameters
+          </h3>
+          <div class="table-responsive">
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="param-name">zone</span>
+                    <span class="param-required">Required</span>
+                  </td>
+                  <td>string</td>
+                  <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="param-name">ma_dien_luc</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>string</td>
+                  <td>Mã công ty điện lực</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="param-name">ma_cong_ty_con</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>string</td>
+                  <td>Mã công ty con</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="param-name">date</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>string</td>
+                  <td>Ngày (YYYY-MM-DD)</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="param-name">page</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>number</td>
+                  <td>Trang (mặc định: 1)</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="param-name">limit</span>
+                    <span class="param-optional">Optional</span>
+                  </td>
+                  <td>number</td>
+                  <td>Số lượng kết quả mỗi trang (mặc định: 20)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-code-slash"></i>
+            Example Request
+          </h3>
+          <div class="response-example">
+            <button class="copy-button" onclick="copyToClipboard(this)">
+              <i class="bi bi-clipboard"></i>
+              Copy
+            </button>
+            <code>curl -X GET "http://localhost:3000/api/outages?zone=mien_bac&date=2024-03-20" \
      -H "X-Google-ID: YOUR_GOOGLE_ID" \
-     -H "Content-Type: application/json"</div>
+     -H "Content-Type: application/json"</code>
+          </div>
+        </div>
 
-      <div class="api-url">
-        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-        <code>/api/outages</code>
-      </div>
-
-      <h5>Query Parameters:</h5>
-      <div class="api-params">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Parameter</th>
-              <th>Type</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>zone</td>
-              <td>string</td>
-              <td>Lọc theo khu vực (mien_bac, mien_trung, mien_nam)</td>
-            </tr>
-            <tr>
-              <td>ma_dien_luc</td>
-              <td>string</td>
-              <td>Mã công ty điện lực</td>
-            </tr>
-            <tr>
-              <td>ma_cong_ty_con</td>
-              <td>string</td>
-              <td>Mã công ty con</td>
-            </tr>
-            <tr>
-              <td>date</td>
-              <td>string</td>
-              <td>Ngày (YYYY-MM-DD)</td>
-            </tr>
-            <tr>
-              <td>page</td>
-              <td>number</td>
-              <td>Trang (mặc định: 1)</td>
-            </tr>
-            <tr>
-              <td>limit</td>
-              <td>number</td>
-              <td>Số lượng kết quả mỗi trang (mặc định: 20)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h5>Response:</h5>
-      <div class="api-response">
-{
+        <div class="endpoint-section">
+          <h3>
+            <i class="bi bi-arrow-return-right"></i>
+            Response
+          </h3>
+          <div class="response-example">
+            <button class="copy-button" onclick="copyToClipboard(this)">
+              <i class="bi bi-clipboard"></i>
+              Copy
+            </button>
+            <code>{
   "success": true,
   "data": {
     "items": [
@@ -282,46 +532,43 @@ curl -X GET "http://localhost:3000/api/outages?zone=mien_bac&date=2024-03-20" \
       "totalPages": 3
     }
   }
-}</div>
+}</code>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
 async function copyToClipboard(button) {
-  // Lấy URL từ thẻ code trong container
-  const urlContainer = button.closest('.api-url');
-  const codeElement = urlContainer.querySelector('code');
-  const url = codeElement.textContent.trim();
+  const codeElement = button.nextElementSibling;
+  const text = codeElement.textContent;
   
   try {
-    // Thêm domain vào URL
-    const fullUrl = `${window.location.origin}${url}`;
+    await navigator.clipboard.writeText(text);
     
-    // Copy vào clipboard
-    await navigator.clipboard.writeText(fullUrl);
+    const icon = button.querySelector('i');
+    const originalIcon = icon.className;
     
-    // Thay đổi text của button
-    const originalText = button.textContent;
-    button.textContent = 'Copied!';
-    button.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+    button.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+    button.style.background = 'rgba(40, 167, 69, 0.2)';
     
-    // Reset button sau 2s
     setTimeout(() => {
-      button.textContent = originalText;
-      button.style.backgroundColor = 'rgba(255,255,255,0.1)';
+      button.innerHTML = `<i class="${originalIcon}"></i> Copy`;
+      button.style.background = 'rgba(255,255,255,0.1)';
     }, 2000);
   } catch (err) {
     console.error('Failed to copy:', err);
-    button.textContent = 'Error!';
-    button.style.backgroundColor = 'rgba(220, 53, 69, 0.2)';
+    button.innerHTML = '<i class="bi bi-x"></i> Error!';
+    button.style.background = 'rgba(220, 53, 69, 0.2)';
     
     setTimeout(() => {
-      button.textContent = 'Copy';
-      button.style.backgroundColor = 'rgba(255,255,255,0.1)';
+      button.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+      button.style.background = 'rgba(255,255,255,0.1)';
     }, 2000);
   }
 }
 </script>
 
-<%- include('footer') %> 
+<%- include('footer') %>
