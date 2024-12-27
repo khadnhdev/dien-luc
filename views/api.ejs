@@ -91,8 +91,50 @@
     <h1 class="mb-4">API Documentation</h1>
     <p class="text-muted mb-4">
       API để truy xuất dữ liệu về công ty điện lực và lịch cúp điện.
-      Tất cả các requests phải sử dụng <code>Content-Type: application/json</code>
+      Tất cả các requests phải có các headers sau:
     </p>
+
+    <!-- Authentication Section -->
+    <div class="api-endpoint mb-4">
+      <h3>Authentication</h3>
+      <p>Tất cả các API calls cần có header sau:</p>
+      <div class="api-params">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Header</th>
+              <th>Value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>X-Google-ID</td>
+              <td>string</td>
+              <td>Google ID của user đã đăng nhập (Lấy từ bảng users)</td>
+            </tr>
+            <tr>
+              <td>Content-Type</td>
+              <td>application/json</td>
+              <td>Định dạng dữ liệu request</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Lưu ý:</strong> Để lấy Google ID, bạn cần đăng nhập vào hệ thống qua Google OAuth.
+        Google ID sẽ được lưu trong bảng users của database.
+      </div>
+
+      <h5>Error Response (401 Unauthorized):</h5>
+      <div class="api-response">
+{
+  "success": false,
+  "error": "Missing X-Google-ID header"
+}</div>
+    </div>
 
     <!-- API Lấy danh sách công ty -->
     <div class="api-endpoint">
@@ -100,6 +142,12 @@
         <span class="api-method get">GET</span>
         Lấy danh sách công ty điện lực
       </h3>
+      <h5>Example Request:</h5>
+      <div class="api-response">
+curl -X GET "http://localhost:3000/api/companies?zone=mien_bac" \
+     -H "X-Google-ID: YOUR_GOOGLE_ID" \
+     -H "Content-Type: application/json"</div>
+
       <div class="api-url">
         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
         <code>/api/companies</code>
@@ -153,6 +201,12 @@
         <span class="api-method get">GET</span>
         Lấy danh sách lịch cúp điện
       </h3>
+      <h5>Example Request:</h5>
+      <div class="api-response">
+curl -X GET "http://localhost:3000/api/outages?zone=mien_bac&date=2024-03-20" \
+     -H "X-Google-ID: YOUR_GOOGLE_ID" \
+     -H "Content-Type: application/json"</div>
+
       <div class="api-url">
         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
         <code>/api/outages</code>

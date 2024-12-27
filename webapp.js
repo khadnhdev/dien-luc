@@ -243,8 +243,47 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware kiểm tra API authentication
+async function checkApiAuth(req, res, next) {
+  const googleId = req.headers['x-google-id'];
+  
+  if (!googleId) {
+    return res.status(401).json({
+      success: false,
+      error: 'Missing X-Google-ID header'
+    });
+  }
+
+  try {
+    // Kiểm tra google_id có tồn tại trong database không
+    const user = await new Promise((resolve, reject) => {
+      db.get('SELECT * FROM users WHERE google_id = ?', [googleId], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid X-Google-ID'
+      });
+    }
+
+    // Lưu thông tin user vào request để có thể sử dụng ở các middleware tiếp theo
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Lỗi xác thực API:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Lỗi server'
+    });
+  }
+}
+
 // API lấy danh sách công ty điện lực
-app.get('/api/companies', async (req, res) => {
+app.get('/api/companies', checkApiAuth, async (req, res) => {
   const { zone } = req.query;
   
   try {
@@ -311,7 +350,7 @@ app.get('/api/companies', async (req, res) => {
 });
 
 // API lấy danh sách lịch cúp điện
-app.get('/api/outages', async (req, res) => {
+app.get('/api/outages', checkApiAuth, async (req, res) => {
   const { zone, ma_dien_luc, ma_cong_ty_con, date, page = 1, limit = 20 } = req.query;
   
   try {
