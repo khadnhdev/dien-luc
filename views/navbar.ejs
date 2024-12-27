@@ -23,7 +23,9 @@
         <% if (locals.user) { %>
           <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-              <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle" width="24" height="24">
+              <% if (user.picture) { %>
+                <img src="<%= user.picture %>" alt="Avatar" class="rounded-circle" width="24" height="24">
+              <% } %>
               <%= user.name %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
