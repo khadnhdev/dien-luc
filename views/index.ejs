@@ -56,9 +56,6 @@
             <td><%= cty.so_cong_ty_con %></td>
             <td>
               <a href="/congty/<%= cty.id_cong_ty %>" class="btn btn-sm btn-info">Chi tiết</a>
-              <form action="/delete/<%= cty.id_cong_ty %>" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
-              </form>
             </td>
           </tr>
         <% }); %>

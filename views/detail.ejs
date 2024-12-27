@@ -29,25 +29,23 @@
     
     <h1>Chi tiết Công ty Điện lực</h1>
     
-    <form action="/update/<%= congty.id_cong_ty %>" method="POST" class="mb-4">
+    <div class="mb-4">
       <div class="mb-3">
         <label class="form-label">Mã công ty</label>
-        <input type="text" class="form-control" value="<%= congty.id_cong_ty %>" readonly>
+        <p class="form-control-plaintext"><%= congty.id_cong_ty %></p>
       </div>
       <div class="mb-3">
         <label class="form-label">Tên công ty</label>
-        <input type="text" name="ten_cong_ty" class="form-control" value="<%= congty.ten_cong_ty %>">
+        <p class="form-control-plaintext"><%= congty.ten_cong_ty %></p>
       </div>
       <div class="mb-3">
         <label class="form-label">Khu vực</label>
-        <select name="zone" class="form-control">
-          <option value="mien_bac" <%= congty.zone === 'mien_bac' ? 'selected' : '' %>>Miền Bắc</option>
-          <option value="mien_trung" <%= congty.zone === 'mien_trung' ? 'selected' : '' %>>Miền Trung</option>
-          <option value="mien_nam" <%= congty.zone === 'mien_nam' ? 'selected' : '' %>>Miền Nam</option>
-        </select>
+        <p class="form-control-plaintext">
+          <%= congty.zone === 'mien_bac' ? 'Miền Bắc' : 
+             congty.zone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
+        </p>
       </div>
-      <button type="submit" class="btn btn-primary">Cập nhật</button>
-    </form>
+    </div>
 
     <h2>Danh sách công ty con</h2>
     <table class="table">

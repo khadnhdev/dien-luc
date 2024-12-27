@@ -59,39 +59,6 @@ app.get('/congty/:id', (req, res) => {
   });
 });
 
-// API để xóa công ty
-app.post('/delete/:id', (req, res) => {
-  const { id } = req.params;
-  db.run('DELETE FROM cong_ty_con WHERE id_cong_ty_cha = ?', [id], (err) => {
-    if (err) {
-      return res.status(500).send('Lỗi khi xóa công ty con');
-    }
-    db.run('DELETE FROM cong_ty_dien_luc WHERE id_cong_ty = ?', [id], (err) => {
-      if (err) {
-        return res.status(500).send('Lỗi khi xóa công ty');
-      }
-      res.redirect('/');
-    });
-  });
-});
-
-// API để cập nhật công ty
-app.post('/update/:id', (req, res) => {
-  const { id } = req.params;
-  const { ten_cong_ty, zone } = req.body;
-  
-  db.run(
-    'UPDATE cong_ty_dien_luc SET ten_cong_ty = ?, zone = ? WHERE id_cong_ty = ?',
-    [ten_cong_ty, zone, id],
-    (err) => {
-      if (err) {
-        return res.status(500).send('Lỗi khi cập nhật công ty');
-      }
-      res.redirect(`/congty/${id}`);
-    }
-  );
-});
-
 app.get('/lich-cup-dien', async (req, res) => {
   const { zone, date, ma_dien_luc, ma_cong_ty_con, page = 1, limit = 20 } = req.query;
   const offset = (page - 1) * limit;
