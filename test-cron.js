@@ -1,4 +1,12 @@
+require('dotenv').config();
+
 const { runCrawler } = require('./cron-jobs');
+
+// Kiểm tra cờ ENABLE_CRAWLER
+if (process.env.ENABLE_CRAWLER !== 'true') {
+  console.log('Crawler đã bị tắt (ENABLE_CRAWLER=false)');
+  process.exit(0);
+}
 
 console.log('Bắt đầu test job cào dữ liệu...');
 runCrawler()

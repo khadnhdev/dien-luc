@@ -22,6 +22,14 @@ async function runCrawler() {
 
 // Khởi tạo các jobs
 function initializeCronJobs() {
+  // Kiểm tra cờ ENABLE_CRAWLER từ env
+  const enableCrawler = process.env.ENABLE_CRAWLER === 'true';
+  
+  if (!enableCrawler) {
+    console.log('Crawler đã bị tắt (ENABLE_CRAWLER=false)');
+    return null;
+  }
+
   // Chạy mỗi 2 tiếng
   const job = cron.schedule('0 */2 * * *', runCrawler, {
     scheduled: true,
