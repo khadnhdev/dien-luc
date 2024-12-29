@@ -1,0 +1,139 @@
+<%- include('header', { 
+  title: 'Về chúng tôi'
+}) %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">
+            <i class="bi bi-info-circle-fill text-primary"></i>
+            Về chúng tôi
+          </h1>
+
+          <div class="about-section mb-5">
+            <h2 class="h4 mb-3">
+              <i class="bi bi-lightning-charge-fill text-primary"></i>
+              Lịch Cúp Điện
+            </h2>
+            <p class="text-muted">
+              Lịch Cúp Điện là một dự án mã nguồn mở, được phát triển với mục tiêu cung cấp thông tin lịch cúp điện 
+              chính xác và kịp thời từ các công ty điện lực trên toàn quốc. Dự án này là một phần trong chuỗi thử thách 
+              "100 Phần mềm bằng Prompt".
+            </p>
+          </div>
+
+          <div class="project-section mb-5">
+            <h2 class="h4 mb-3">
+              <i class="bi bi-code-slash text-primary"></i>
+              Dự án 100 Phần mềm
+            </h2>
+            <p class="text-muted mb-3">
+              Đây là một trong những dự án trong chuỗi thử thách làm 100 phần mềm bằng prompt. 
+              Xem thêm chi tiết về chuỗi dự án tại:
+            </p>
+            <a href="https://100softwares.jobsum.works/" 
+               target="_blank" 
+               class="btn btn-outline-primary mb-3">
+              <i class="bi bi-box-arrow-up-right"></i>
+              100 Softwares Project
+            </a>
+          </div>
+
+          <div class="connect-section">
+            <h2 class="h4 mb-3">
+              <i class="bi bi-person-lines-fill text-primary"></i>
+              Kết nối với tôi
+            </h2>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <a href="https://github.com/khadnhdev" 
+                   target="_blank"
+                   class="card h-100 text-decoration-none connect-card">
+                  <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-github fs-2 text-dark me-3"></i>
+                    <div>
+                      <h3 class="h6 mb-1">GitHub</h3>
+                      <small class="text-muted">@khadnhdev</small>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="col-md-6">
+                <a href="https://www.linkedin.com/in/khadnh/" 
+                   target="_blank"
+                   class="card h-100 text-decoration-none connect-card">
+                  <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-linkedin fs-2 text-primary me-3"></i>
+                    <div>
+                      <h3 class="h6 mb-1">LinkedIn</h3>
+                      <small class="text-muted">@khadnh</small>
+                    </div>
+                  </div>
+                </a>
+              </div>
+
+              <div class="col-md-6">
+                <a href="https://www.tiktok.com/@kha.luoi.code" 
+                   target="_blank"
+                   class="card h-100 text-decoration-none connect-card">
+                  <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-tiktok fs-2 text-dark me-3"></i>
+                    <div>
+                      <h3 class="h6 mb-1">TikTok</h3>
+                      <small class="text-muted">@kha.luoi.code</small>
+                    </div>
+                  </div>
+                </a>
+              </div>
+
+              <div class="col-md-6">
+                <a href="https://github.com/khadnhdev/dien-luc" 
+                   target="_blank"
+                   class="card h-100 text-decoration-none connect-card">
+                  <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-code-square fs-2 text-success me-3"></i>
+                    <div>
+                      <h3 class="h6 mb-1">Source Code</h3>
+                      <small class="text-muted">Lịch Cúp Điện</small>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.connect-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+.connect-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+.card-title i {
+  margin-right: 0.5rem;
+}
+
+h2 i {
+  margin-right: 0.5rem;
+}
+
+.about-section, .project-section {
+  position: relative;
+  padding-left: 1rem;
+  border-left: 3px solid var(--primary-color);
+}
+</style>
+
+<%- include('footer') %> 

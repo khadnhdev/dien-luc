@@ -1,51 +1,194 @@
 <%- include('header', { 
-  title: 'Chi tiết Công ty Điện lực'
+  title: congty.ten_cong_ty
 }) %>
 
 <div class="container mt-4">
-  <a href="/" class="btn btn-secondary mb-3">Quay lại</a>
-  
-  <h1>Chi tiết Công ty Điện lực</h1>
-  
-  <div class="mb-4">
-    <div class="mb-3">
-      <label class="form-label">Mã công ty</label>
-      <p class="form-control-plaintext"><%= congty.id_cong_ty %></p>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Chi tiết công ty</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <!-- Thông tin công ty -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="card-title mb-0">
+              <i class="bi bi-building text-primary"></i>
+              <%= congty.ten_cong_ty %>
+            </h1>
+            <span class="badge bg-primary">
+              <%= congty.zone === 'mien_bac' ? 'Miền Bắc' : 
+                 congty.zone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
+            </span>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="detail-item">
+                <label class="text-muted">Mã công ty</label>
+                <p class="mb-0 fw-bold"><%= congty.id_cong_ty %></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="detail-item">
+                <label class="text-muted">Số công ty con</label>
+                <p class="mb-0 fw-bold"><%= congtycon.length %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danh sách công ty con -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title h4 mb-4">
+            <i class="bi bi-diagram-3 text-primary"></i>
+            Danh sách công ty con
+          </h2>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Mã công ty con</th>
+                  <th>Tên công ty con</th>
+                  <th>Khu vực</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% congtycon.forEach(function(con) { %>
+                  <tr>
+                    <td><code><%= con.ma_cong_ty_con %></code></td>
+                    <td><%= con.ten_cong_ty_con %></td>
+                    <td><%= con.zone %></td>
+                    <td>
+                      <a href="/lich-cup-dien?ma_cong_ty_con=<%= con.ma_cong_ty_con %>" 
+                         class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-search"></i> Tra cứu
+                      </a>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Tên công ty</label>
-      <p class="form-control-plaintext"><%= congty.ten_cong_ty %></p>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Khu vực</label>
-      <p class="form-control-plaintext">
-        <%= congty.zone === 'mien_bac' ? 'Miền Bắc' : 
-           congty.zone === 'mien_trung' ? 'Miền Trung' : 'Miền Nam' %>
-      </p>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h3 class="h5 card-title mb-3">
+            <i class="bi bi-bell text-primary"></i>
+            Nhận thông báo
+          </h3>
+          <p class="text-muted">
+            Đăng nhập để nhận thông báo khi có lịch cúp điện mới từ các công ty điện lực bạn quan tâm.
+          </p>
+          <% if (!locals.user) { %>
+            <a href="/auth/google" class="btn btn-primary w-100">
+              <i class="bi bi-google"></i>
+              Đăng nhập với Google
+            </a>
+          <% } else { %>
+            <a href="/subscriptions" class="btn btn-primary w-100">
+              <i class="bi bi-bell"></i>
+              Quản lý đăng ký
+            </a>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="h5 card-title mb-3">
+            <i class="bi bi-info-circle text-primary"></i>
+            Thông tin thêm
+          </h3>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <i class="bi bi-clock text-muted"></i>
+              Cập nhật mỗi 2 giờ
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-envelope text-muted"></i>
+              Thông báo qua email
+            </li>
+            <li>
+              <i class="bi bi-shield-check text-muted"></i>
+              Dữ liệu chính thống
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
-
-  <h2>Danh sách công ty con</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Mã công ty con</th>
-        <th>Tên công ty con</th>
-        <th>Khu vực</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% congtycon.forEach(function(con) { %>
-        <tr>
-          <td><%= con.ma_cong_ty_con %></td>
-          <td><%= con.ten_cong_ty_con %></td>
-          <td><%= con.zone %></td>
-        </tr>
-      <% }); %>
-    </tbody>
-  </table>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> 
+<style>
+.detail-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.detail-item label {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.breadcrumb {
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  border: none;
+  border-radius: 1rem;
+}
+
+.card-title {
+  color: #2d3436;
+}
+
+.card-title i {
+  margin-right: 0.5rem;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+
+code {
+  background: #f8f9fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  color: #2d3436;
+}
+
+.list-unstyled i {
+  margin-right: 0.5rem;
+}
+</style>
+
+<%- include('footer') %> 

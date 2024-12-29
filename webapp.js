@@ -888,6 +888,14 @@ app.post('/send-schedule-summary', ensureAuthenticated, async (req, res) => {
 // Khởi tạo các cron jobs
 initializeCronJobs();
 
+// Route về chúng tôi
+app.get('/about', (req, res) => {
+  res.render('about', {
+    user: req.user,
+    path: '/about'
+  });
+});
+
 app.listen(port, () => {
   console.log(`Webapp đang chạy tại http://localhost:${port}`);
 }); 
