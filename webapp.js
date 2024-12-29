@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 const { initializeOutagesDatabase } = require('./database-outages');
 const emailService = require('./email-service');
+const { initializeCronJobs } = require('./cron-jobs');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -883,6 +884,9 @@ app.post('/send-schedule-summary', ensureAuthenticated, async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi server' });
   }
 });
+
+// Khởi tạo các cron jobs
+initializeCronJobs();
 
 app.listen(port, () => {
   console.log(`Webapp đang chạy tại http://localhost:${port}`);
